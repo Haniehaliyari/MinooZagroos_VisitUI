@@ -1,0 +1,74 @@
+﻿@inherits LayoutComponentBase
+@using MyProject.Services.Auth
+@inject AuthService AuthService
+@inject CustomAuthStateProvider AuthStateProvider
+@inject NavigationManager Navigation
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <main>
+        @* ===== هدر بالای صفحه ===== *@
+        <div style="background: white;
+                    border-bottom: 1px solid #f0f0f0;
+                    padding: 12px 24px;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="font-size: 20px;">👤</span>
+                <span style="font-weight: 600; color: #262626;">@username</span>
+            </div>
+
+            <Button Type="ButtonType.Text"
+                    Danger="true"
+                    OnClick="Logout">
+                <span style="font-size: 16px;">🚪 خروج</span>
+            </Button>
+        </div>
+
+        <article style="padding: 0;">
+            @Body
+        </article>
+    </main>
+</div>
+
+<div id="blazor-error-ui" data-nosnippet>
+    An unhandled error has occurred.
+    <a href="." class="reload">Reload</a>
+    <span class="dismiss">🗙</span>
+</div>
+
+@code {
+    private string username = "کاربر";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var token = await AuthService.GetTokenAsync();
+        if (!string.IsNullOrEmpty(token))
+        {
+            try
+            {
+                var handler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
+                var jwt = handler.ReadJwtToken(token);
+                username = jwt.Claims.FirstOrDefault(c => c.Type == "unique_name")?.Value
+                           ?? jwt.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Name)?.Value
+                           ?? "کاربر";
+            }
+            catch
+            {
+                username = "کاربر";
+            }
+        }
+    }
+
+    private async Task Logout()
+    {
+        await AuthStateProvider.LogoutAsync();
+        Navigation.NavigateTo("/login", forceLoad: true);
+    }
+}

@@ -1,0 +1,33 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Authorization
+@using Web.Components.Layout
+
+<Router AppAssembly="@typeof(Program).Assembly">
+
+    <Found Context="routeData">
+
+        <AuthorizeRouteView RouteData="@routeData"
+                            DefaultLayout="@typeof(MainLayout)">
+
+            <NotAuthorized>
+                <RedirectToLogin />
+            </NotAuthorized>
+
+        </AuthorizeRouteView>
+
+        <FocusOnNavigate RouteData="@routeData"
+                         Selector="h1" />
+
+    </Found>
+
+    <NotFound>
+        <PageTitle>صفحه یافت نشد</PageTitle>
+
+        <LayoutView Layout="@typeof(MainLayout)">
+            <p>صفحه مورد نظر یافت نشد.</p>
+        </LayoutView>
+    </NotFound>
+
+</Router>

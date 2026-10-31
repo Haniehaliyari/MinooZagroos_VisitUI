@@ -1,0 +1,76 @@
+﻿@page "/login"
+@layout LoginLayout
+@using MyProject.Services.Auth
+@using Web.Components.Layout
+@using Web.Models.Auth
+@inject AuthService AuthService
+@inject CustomAuthStateProvider AuthStateProvider
+@inject NavigationManager Navigation
+@inject MessageService Message
+
+<PageTitle>ورود به سیستم</PageTitle>
+
+<Card Bordered="false" Style="width: 420px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); border-radius: 12px;">
+    <div style="text-align: center; margin-bottom: 32px;">
+        <h2 style="font-weight: 700; color: #1890ff; margin-bottom: 8px;">مینوزارگرس</h2>
+        <p style="color: #8c8c8c;">سیستم فروش مویرگی و ویزیت</p>
+    </div>
+
+    <Form Model="loginModel" OnFinish="HandleLogin" Layout="FormLayout.Vertical">
+        <FormItem Label="نام کاربری">
+            <Input @bind-Value="loginModel.Username"
+                   Placeholder="نام کاربری خود را وارد کنید"
+                   Size="InputSize.Large" />
+        </FormItem>
+
+        <FormItem Label="رمز عبور">
+            <InputPassword @bind-Value="loginModel.Password"
+                           Placeholder="رمز عبور خود را وارد کنید"
+                           Size="InputSize.Large" />
+        </FormItem>
+
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <Alert Type="AlertType.Error" Message="@errorMessage" ShowIcon="true" Style="margin-bottom: 16px;" />
+        }
+
+        <FormItem>
+            <Button Type="ButtonType.Primary"
+                    HtmlType="submit"
+                    Size="ButtonSize.Large"
+                    Style="width: 100%;"
+                    Loading="isLoading">
+                ورود به سیستم
+            </Button>
+        </FormItem>
+    </Form>
+</Card>
+
+@code {
+    private LoginRequestDTO loginModel = new();
+    private string? errorMessage;
+    private bool isLoading;
+
+    private async Task HandleLogin()
+    {
+        try
+        {
+            isLoading = true;
+            errorMessage = null;
+
+            await AuthService.LoginAsync(loginModel);
+            AuthStateProvider.RefreshAuthenticationState();
+
+             Message.Success("ورود با موفقیت انجام شد");
+            Navigation.NavigateTo("/dashboard");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+}

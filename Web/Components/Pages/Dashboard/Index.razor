@@ -1,0 +1,145 @@
+﻿@page "/dashboard"
+@attribute [Authorize]
+@layout MainLayout
+@using Microsoft.AspNetCore.Authorization
+@using Web.Components.Layout
+
+<PageTitle>داشبورد</PageTitle>
+
+<div dir="rtl" style="padding: 24px;">
+
+    @* ===== هدر خوش‌آمدگویی ===== *@
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                border-radius: 16px;
+                padding: 32px;
+                color: white;
+                margin-bottom: 24px;
+                box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);">
+        <h1 style="font-size: 28px; font-weight: 700; margin: 0 0 8px 0;">
+            <svg class="icon"><use href="#i-list" /></svg>
+            خوش آمدید 
+        </h1>
+        <p style="font-size: 16px; opacity: 0.9; margin: 0;">
+            به پنل مدیریت مینوزارگرس خوش آمدید. امروز چه کاری انجام می‌دهیم؟
+        </p>
+    </div>
+
+    @* ===== کارت‌های آمار ===== *@
+    <Row Gutter="16" Style="margin-bottom: 24px;">
+        <Col Span="6">
+        <Card Bordered="false" Style="border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-align: center;">
+            <div style="font-size: 32px; color: #1890ff; margin-bottom: 8px;">📦</div>
+            <div style="font-size: 24px; font-weight: 700; color: #262626;">۰</div>
+            <div style="font-size: 14px; color: #8c8c8c;">سفارشات امروز</div>
+        </Card>
+        </Col>
+        <Col Span="6">
+        <Card Bordered="false" Style="border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-align: center;">
+            <div style="font-size: 32px; color: #52c41a; margin-bottom: 8px;">👥</div>
+            <div style="font-size: 24px; font-weight: 700; color: #262626;">۰</div>
+            <div style="font-size: 14px; color: #8c8c8c;">مشتریان فعال</div>
+        </Card>
+        </Col>
+        <Col Span="6">
+        <Card Bordered="false" Style="border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-align: center;">
+            <div style="font-size: 32px; color: #faad14; margin-bottom: 8px;">🚚</div>
+            <div style="font-size: 24px; font-weight: 700; color: #262626;">۰</div>
+            <div style="font-size: 14px; color: #8c8c8c;">مامورین پخش</div>
+        </Card>
+        </Col>
+        <Col Span="6">
+        <Card Bordered="false" Style="border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-align: center;">
+            <div style="font-size: 32px; color: #f5222d; margin-bottom: 8px;">💰</div>
+            <div style="font-size: 24px; font-weight: 700; color: #262626;">۰</div>
+            <div style="font-size: 14px; color: #8c8c8c;">فروش امروز</div>
+        </Card>
+        </Col>
+    </Row>
+
+    @* ===== دکمه‌های عملیات سریع ===== *@
+    <Card Bordered="false" Title="عملیات سریع"
+          Style="border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+        <Row Gutter="(16, 16)">
+            <Col Span="8">
+            <Button Type="ButtonType.Primary"
+                    Size="ButtonSize.Large"
+                    Style="width: 100%; height: 80px; border-radius: 12px; font-size: 16px; font-weight: 600;"
+                    OnClick="@(() => Navigation.NavigateTo("/order/create"))">
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                    <span style="font-size: 28px;">📝</span>
+                    <span>ثبت درخواست جدید</span>
+                </div>
+            </Button>
+            </Col>
+            <Col Span="8">
+            <Button Type="ButtonType.Default"
+                    Size="ButtonSize.Large"
+                    Style="width: 100%; height: 80px; border-radius: 12px; font-size: 16px; font-weight: 600; background: #f6ffed; border-color: #52c41a; color: #52c41a;"
+                    OnClick="@(() => Navigation.NavigateTo("/customers"))">
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                    <span style="font-size: 28px;">👤</span>
+                    <span>مشتریان</span>
+                </div>
+            </Button>
+            </Col>
+            <Col Span="8">
+            <Button Type="ButtonType.Default"
+                    Size="ButtonSize.Large"
+                    Style="width: 100%; height: 80px; border-radius: 12px; font-size: 16px; font-weight: 600; background: #fff7e6; border-color: #faad14; color: #faad14;"
+                    OnClick="@(() => Navigation.NavigateTo("/products"))">
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                    <span style="font-size: 28px;">📦</span>
+                    <span>محصولات</span>
+                </div>
+            </Button>
+            </Col>
+            <Col Span="8">
+            <Button Type="ButtonType.Default"
+                    Size="ButtonSize.Large"
+                    Style="width: 100%; height: 80px; border-radius: 12px; font-size: 16px; font-weight: 600; background: #e6f7ff; border-color: #1890ff; color: #1890ff;"
+                    OnClick="@(() => Navigation.NavigateTo("/orders"))">
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                    <span style="font-size: 28px;">📋</span>
+                    <span>سفارشات</span>
+                </div>
+            </Button>
+            </Col>
+            <Col Span="8">
+            <Button Type="ButtonType.Default"
+                    Size="ButtonSize.Large"
+                    Style="width: 100%; height: 80px; border-radius: 12px; font-size: 16px; font-weight: 600; background: #f9f0ff; border-color: #722ed1; color: #722ed1;"
+                    OnClick="@(() => Navigation.NavigateTo("/reports"))">
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                    <span style="font-size: 28px;">📊</span>
+                    <span>گزارشات</span>
+                </div>
+            </Button>
+            </Col>
+            <Col Span="8">
+            <Button Type="ButtonType.Default"
+                    Size="ButtonSize.Large"
+                    Style="width: 100%; height: 80px; border-radius: 12px; font-size: 16px; font-weight: 600; background: #fff1f0; border-color: #f5222d; color: #f5222d;"
+                    OnClick="@(() => Navigation.NavigateTo("/settings"))">
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                    <span style="font-size: 28px;">⚙️</span>
+                    <span>تنظیمات</span>
+                </div>
+            </Button>
+            </Col>
+        </Row>
+    </Card>
+
+    @* ===== آخرین فعالیت‌ها ===== *@
+    <Card Bordered="false" Title="آخرین فعالیت‌ها"
+          Style="border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-top: 24px;">
+        <div style="text-align: center; padding: 32px; color: #8c8c8c;">
+            <div style="font-size: 48px; margin-bottom: 16px;">📭</div>
+            <p>هنوز فعالیتی ثبت نشده است.</p>
+        </div>
+    </Card>
+
+</div>
+
+@code {
+    [Inject] private NavigationManager Navigation { get; set; }
+}

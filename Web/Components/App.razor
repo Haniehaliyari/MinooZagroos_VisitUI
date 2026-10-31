@@ -1,0 +1,29 @@
+﻿<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <base href="/" />
+
+    <link rel="stylesheet" href="app.css" />
+    <link rel="stylesheet" href="Web.styles.css" />
+    <link href="_content/AntDesign/css/ant-design-blazor.css" rel="stylesheet" />
+
+    <HeadOutlet @rendermode="new InteractiveServerRenderMode(prerender: false)" />
+</head>
+
+<body>
+
+    <CascadingAuthenticationState>
+        <Routes @rendermode="new InteractiveServerRenderMode(prerender: false)" />
+    </CascadingAuthenticationState>
+
+    <AntContainer />
+
+    <script src="_content/AntDesign/js/ant-design-blazor.js"></script>
+    <script src="_framework/blazor.web.js"></script>
+
+</body>
+</html>
