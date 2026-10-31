@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#102b27" />
+  <title>ورود | مینو زاگرس</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap');
+    :root{font-family:"Vazirmatn",Tahoma,sans-serif;color:#172b27;background:#f3f5f1;font-synthesis:none}
+    *{box-sizing:border-box}
+    body{margin:0;min-height:100vh;display:grid;place-items:center;padding:28px;background:radial-gradient(circle at 12% 12%,#e2e9df 0,transparent 28%),#f3f5f1}
+    .shell{width:min(1040px,100%);min-height:650px;background:#fff;border:1px solid #e7ece6;border-radius:28px;overflow:hidden;display:grid;grid-template-columns:1fr 1fr;box-shadow:0 28px 90px #18372a18}
+    .visual{position:relative;overflow:hidden;background:linear-gradient(155deg,#163b34 0%,#24594b 55%,#9baf91 100%);color:white;padding:46px;display:flex;flex-direction:column;justify-content:space-between;isolation:isolate}
+    .visual:before,.visual:after{content:"";position:absolute;z-index:-1;border-radius:50%;filter:blur(1px)}
+    .visual:before{width:420px;height:420px;background:#d9c89b22;top:-190px;left:-120px}
+    .visual:after{width:520px;height:520px;background:#0b292b55;bottom:-340px;right:-120px}
+    .brand{display:flex;align-items:center;gap:13px;font-weight:800;font-size:18px}
+    .brand-mark{width:44px;height:44px;border:1px solid #ffffff66;border-radius:14px;display:grid;place-items:center;background:#ffffff12;font-size:22px}
+    .visual-copy{max-width:390px;margin-top:auto;margin-bottom:42px}
+    .eyebrow{font-size:12px;letter-spacing:1px;color:#d8e4d8;font-weight:700}
+    .visual h1{font-size:36px;line-height:1.55;margin:14px 0 12px;font-weight:800}
+    .visual p{color:#e0e9e0;line-height:2;font-size:14px;margin:0}
+    .landscape{position:absolute;inset:auto -5% 0;height:44%;z-index:-1;opacity:.8}
+    .ridge{position:absolute;bottom:0;width:120%;height:100%;background:#d4d8b2;clip-path:polygon(0 75%,18% 30%,32% 56%,51% 8%,72% 61%,86% 28%,100% 68%,100% 100%,0 100%)}
+    .ridge.back{height:78%;background:#a8bd9d;opacity:.8;transform:translateX(-8%)}
+    .visual-foot{font-size:11px;color:#d7e2d8}
+    .panel{padding:64px clamp(30px,6vw,76px);display:flex;flex-direction:column;justify-content:center}
+    .mobile-brand{display:none}
+    .kicker{color:#648273;font-size:12px;font-weight:700;margin-bottom:12px}
+    h2{font-size:29px;margin:0 0 8px;color:#18342d}
+    .sub{font-size:13px;color:#78857e;margin:0 0 34px;line-height:1.9}
+    label{display:block;font-size:12px;font-weight:700;color:#344d43;margin-bottom:9px}
+    .field{margin-bottom:21px}
+    .input-wrap{position:relative}
+    input[type="text"],input[type="password"]{width:100%;height:52px;border:1px solid #e0e8e1;border-radius:12px;padding:0 15px;background:#fbfcfa;color:#1c342c;font:inherit;font-size:13px;outline:none;transition:.2s}
+    input:focus{border-color:#638a72;box-shadow:0 0 0 4px #648d741a;background:#fff}
+    input::placeholder{color:#a5afa8}
+    .toggle{position:absolute;left:12px;top:50%;transform:translateY(-50%);border:0;background:none;color:#718078;font:inherit;font-size:11px;cursor:pointer}
+    .options{display:flex;justify-content:space-between;align-items:center;margin:2px 0 25px;font-size:11px;color:#718078}
+    .remember{display:flex;align-items:center;gap:8px;cursor:pointer}
+    .remember input{accent-color:#285b49}
+    a{color:#356c56;text-decoration:none;font-weight:600}
+    .submit{height:53px;width:100%;border:0;border-radius:12px;background:#1d4b3c;color:white;font:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 10px 20px #1d4b3c22;transition:.2s}
+    .submit:hover{background:#153d31;transform:translateY(-1px)}
+    .notice{display:none;margin-top:16px;padding:12px 14px;border-radius:10px;background:#f1f7f1;color:#356448;font-size:12px;line-height:1.8}
+    .divider{display:flex;align-items:center;gap:12px;color:#a0aaa3;font-size:10px;margin:27px 0 18px}
+    .divider:before,.divider:after{content:"";height:1px;background:#edf0ec;flex:1}
+    .support{text-align:center;color:#87928b;font-size:11px;line-height:2}
+    @media(max-width:760px){body{padding:14px}.shell{grid-template-columns:1fr;min-height:auto;border-radius:22px}.visual{display:none}.panel{padding:42px 26px}.mobile-brand{display:flex;align-items:center;gap:10px;margin-bottom:36px;color:#1d4b3c;font-weight:800}.mobile-brand .brand-mark{background:#edf3ee;border-color:#e0e9e1}}
+    @media(min-width:761px) and (max-height:720px){.shell{min-height:590px}.panel{padding-top:35px;padding-bottom:35px}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="visual" aria-label="معرفی سامانه">
+      <div class="brand"><span class="brand-mark">م</span><span>مینو زاگرس</span></div>
+      <div class="visual-copy">
+        <div class="eyebrow">سامانه مدیریت بازدیدکنندگان</div>
+        <h1>به فضای کاری<br>مینو زاگرس خوش آمدید</h1>
+        <p>برای ادامه، وارد حساب کاربری خود شوید و تجربه‌ای ساده، امن و یکپارچه داشته باشید.</p>
+      </div>
+      <div class="landscape"><div class="ridge back"></div><div class="ridge"></div></div>
+      <div class="visual-foot">© مینو زاگرس — تمامی حقوق محفوظ است</div>
+    </section>
+    <section class="panel">
+      <div class="mobile-brand"><span class="brand-mark">م</span><span>مینو زاگرس</span></div>
+      <div class="kicker">خوش آمدید</div>
+      <h2>ورود به حساب کاربری</h2>
+      <p class="sub">برای دسترسی به پنل، اطلاعات حساب خود را وارد کنید.</p>
+      <form id="loginForm">
+        <div class="field">
+          <label for="username">نام کاربری یا ایمیل</label>
+          <input id="username" name="username" type="text" placeholder="نام کاربری یا ایمیل خود را وارد کنید" autocomplete="username" required />
+        </div>
+        <div class="field">
+          <label for="password">رمز عبور</label>
+          <div class="input-wrap">
+            <input id="password" name="password" type="password" placeholder="رمز عبور خود را وارد کنید" autocomplete="current-password" required />
+            <button class="toggle" type="button" id="togglePassword" aria-label="نمایش رمز عبور">نمایش</button>
+          </div>
+        </div>
+        <div class="options">
+          <label class="remember"><input type="checkbox" name="remember" /> مرا به خاطر بسپار</label>
+          <a href="#" id="forgotLink">فراموشی رمز عبور؟</a>
+        </div>
+        <button class="submit" type="submit">ورود به سامانه</button>
+        <div class="notice" id="notice" role="status">این صفحه فعلاً نمونه‌ی ظاهری است؛ برای ورود واقعی باید به سرویس احراز هویت پروژه متصل شود.</div>
+      </form>
+      <div class="divider">ورود امن به سامانه</div>
+      <div class="support">در صورت بروز مشکل برای ورود، با پشتیبانی سامانه تماس بگیرید.</div>
+    </section>
+  </main>
+  <script>
+    const password = document.getElementById('password');
+    document.getElementById('togglePassword').addEventListener('click', function () {
+      const visible = password.type === 'password';
+      password.type = visible ? 'text' : 'password';
+      this.textContent = visible ? 'پنهان' : 'نمایش';
+    });
+    document.getElementById('loginForm').addEventListener('submit', function (event) {
+      event.preventDefault();
+      document.getElementById('notice').style.display = 'block';
+    });
+    document.getElementById('forgotLink').addEventListener('click', function (event) {
+      event.preventDefault();
+      document.getElementById('notice').textContent = 'بخش بازیابی رمز عبور در نسخه‌ی بعدی به سامانه متصل می‌شود.';
+      document.getElementById('notice').style.display = 'block';
+    });
+  </script>
+</body>
+</html>
