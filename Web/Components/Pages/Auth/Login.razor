@@ -6,75 +6,86 @@
 @inject IJSRuntime JSRuntime
 @inject NavigationManager Navigation
 
-<PageTitle>ورود به سامانه | مینو زاگرس</PageTitle>
+<PageTitle>ورود به سامانه مدیریت فروش و ویزیت | مینو زاگرس</PageTitle>
 
-<main class="mino-login @(isDarkTheme ? "theme-dark" : "theme-light")" dir="rtl">
-    <div class="login-backdrop" aria-hidden="true">
-        <div class="industrial-scene">
-            <div class="scene-grid"></div>
-            <div class="scene-glow"></div>
-            <div class="scene-horizon"></div>
-            <div class="factory-block factory-main"><span></span><i></i><b></b></div>
-            <div class="factory-block factory-side"><span></span><i></i></div>
-            <div class="factory-tower"><i></i><b></b></div>
-            <div class="scene-pipeline pipeline-one"></div>
-            <div class="scene-pipeline pipeline-two"></div>
-            <div class="scene-scan"></div>
-            <div class="scene-index">MZ / OPERATIONS&nbsp;&nbsp; — &nbsp;&nbsp;EST. 2006</div>
-        </div>
-        <div class="backdrop-shade"></div>
-    </div>
-
+<main class="mino-login" dir="rtl">
     <header class="login-header">
         <a class="brand-lockup" href="https://minoozagros.com/" aria-label="وب‌سایت مینو زاگرس">
             <img src="https://minoozagros.com/wp-content/uploads/2026/01/logo-minoozagros.png" alt="لوگوی مینو زاگرس" />
             <span class="brand-divider"></span>
-            <span class="brand-slogan"><strong>طراوت، سلامت، زندگی بهتر</strong><small>از دل زاگرس، برای تمام ایران</small></span>
+            <span class="brand-slogan"><strong>سامانه مدیریت فروش و ویزیت</strong><small>شرکت صنایع غذایی و آشامیدنی مینو زاگرس</small></span>
         </a>
-        <div class="header-actions">
-            <button class="theme-toggle" type="button" @onclick="ToggleTheme" aria-label="@(isDarkTheme ? "فعال‌سازی حالت روشن" : "فعال‌سازی حالت تاریک")" title="@(isDarkTheme ? "حالت روشن" : "حالت تاریک")">
-                @if (isDarkTheme)
-                {
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg>
-                }
-                else
-                {
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 15.5A8.5 8.5 0 0 1 8.5 3.5 8.5 8.5 0 1 0 20.5 15.5Z"/></svg>
-                }
-            </button>
-        </div>
+        <span class="portal-label"><i></i> درگاه کاربران سازمان</span>
     </header>
 
     <section class="login-layout" aria-label="ورود به سامانه">
-        <div class="brand-showcase">
+        <section class="brand-showcase" aria-label="معرفی سامانه">
             <div class="showcase-copy">
-                <span class="showcase-kicker">MINOO ZAGROS <i></i> ENTERPRISE PORTAL</span>
-                <h2>یکپارچگی در کار،<br /><em>اعتماد در هر گام</em></h2>
-                <p>درگاه یکپارچه مدیریت عملیات و ارتباطات سازمانی شرکت صنایع غذایی و آشامیدنی مینو زاگرس.</p>
+                <span class="showcase-kicker">MINOO ZAGROS <b></b> SALES &amp; VISIT</span>
+                <h2>از ارتباط با مشتری<br />تا <em>ثبت و پیگیری سفارش</em></h2>
+                <p>ابزار یکپارچه تیم فروش مینو زاگرس برای مدیریت مشتریان، برنامه‌ریزی ویزیت‌های میدانی، ثبت سفارش و دسترسی به گزارش‌های عملکرد.</p>
             </div>
-            <div class="enterprise-visual" aria-hidden="true">
-                <div class="visual-orbit orbit-one"></div>
-                <div class="visual-orbit orbit-two"></div>
-                <div class="visual-core"><span class="core-mark">M</span><span class="core-caption">MINOO ZAGROS</span></div>
-                <span class="visual-node node-one"></span><span class="visual-node node-two"></span><span class="visual-node node-three"></span>
-                <span class="visual-line line-one"></span><span class="visual-line line-two"></span>
-                <div class="visual-coordinate">33°29′ N&nbsp;&nbsp; 48°21′ E</div>
-            </div>
-            <div class="showcase-trust">
-                <span><b>01</b> دسترسی متمرکز</span><i></i>
-                <span><b>02</b> گردش کار یکپارچه</span><i></i>
-                <span><b>03</b> امنیت سازمانی</span>
-            </div>
-        </div>
 
-        <div class="login-card">
-            <div class="card-brand-emblem">
-                <img src="https://minoozagros.com/wp-content/uploads/2026/01/logo-minoozagros.png" alt="نشان مینو زاگرس" />
+            <div class="workflow" aria-label="فرآیندهای سامانه">
+                <article class="workflow-step">
+                    <span class="step-number">۰۱</span>
+                    <span class="step-icon customer-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3.5 19c.5-3.2 2.3-4.8 5.5-4.8 1.2 0 2.2.2 3 .7M16 11v8m-4-4h8"/></svg>
+                    </span>
+                    <strong>مدیریت مشتریان</strong>
+                    <small>اطلاعات و سوابق ارتباط</small>
+                </article>
+                <span class="workflow-connector" aria-hidden="true"></span>
+                <article class="workflow-step">
+                    <span class="step-number">۰۲</span>
+                    <span class="step-icon visit-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10" r="2.3"/></svg>
+                    </span>
+                    <strong>ویزیت میدانی</strong>
+                    <small>برنامه و ثبت بازدیدها</small>
+                </article>
+                <span class="workflow-connector" aria-hidden="true"></span>
+                <article class="workflow-step">
+                    <span class="step-number">۰۳</span>
+                    <span class="step-icon order-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24"><path d="M6 3h12v18H6zM9 8h6M9 12h6M9 16h4"/></svg>
+                    </span>
+                    <strong>ثبت سفارش</strong>
+                    <small>پیگیری درخواست‌ها</small>
+                </article>
             </div>
+
+            <div class="product-strip">
+                <div class="product-strip-heading">
+                    <span>سبد محصولات مینو زاگرس</span>
+                    <span class="product-strip-line"></span>
+                </div>
+                <div class="product-list">
+                    <div class="product-item">
+                        <img src="https://minoozagros.com/wp-content/uploads/2023/08/P-14.png" alt="آب معدنی آیسلند" />
+                        <span>آب معدنی آیسلند</span>
+                    </div>
+                    <div class="product-item">
+                        <img src="https://minoozagros.com/wp-content/uploads/2023/08/P-8.png" alt="نوشابه کولا آیسلند" />
+                        <span>نوشابه کولا</span>
+                    </div>
+                    <div class="product-item">
+                        <img src="https://minoozagros.com/wp-content/uploads/2023/08/P-12.png" alt="لیموناد آیسلند" />
+                        <span>لیموناد</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="login-card" aria-labelledby="login-title">
+            <div class="card-topline"><span>MINOO ZAGROS</span><span class="card-topline-dot"></span><span>SECURE ACCESS</span></div>
             <div class="card-heading">
+                <div class="card-brand-emblem">
+                    <img src="https://minoozagros.com/wp-content/uploads/2026/01/logo-minoozagros.png" alt="نشان مینو زاگرس" />
+                </div>
                 <p class="eyebrow">خوش آمدید</p>
-                <h1>ورود به سامانه</h1>
-                <p class="intro-copy">به دنیای مینو زاگرس خوش آمدید</p>
+                <h1 id="login-title">ورود به سامانه</h1>
+                <p class="intro-copy">برای ادامه، اطلاعات حساب سازمانی خود را وارد کنید.</p>
             </div>
 
             <form class="login-form" @onsubmit="HandleLogin" @onsubmit:preventDefault>
@@ -121,46 +132,21 @@
                     }
                 </button>
             </form>
-            <div class="card-footnote"><span class="secure-icon">✓</span><span>دسترسی فقط برای کاربران مجاز سازمان امکان‌پذیر است.</span></div>
-        </div>
+            <div class="card-footnote"><span class="secure-icon">✓</span><span>این درگاه ویژه کاربران مجاز شرکت مینو زاگرس است.</span></div>
+        </section>
     </section>
 
     <footer class="page-footer">
-        <span>© @DateTime.Now.Year شرکت مینو زاگرس · تمامی حقوق محفوظ است.</span>
-        <span class="footer-location">خرم‌آباد، لرستان</span>
+        <span>© @DateTime.Now.Year شرکت صنایع غذایی و آشامیدنی مینو زاگرس</span>
+        <span>خرم‌آباد، لرستان <b>·</b> سامانه مدیریت فروش و ویزیت</span>
     </footer>
 </main>
+
 @code {
     private LoginRequestDTO loginModel = new();
     private string? errorMessage;
     private bool isLoading;
     private bool showPassword;
-    private bool isDarkTheme = true;
-    private bool themeInitialized;
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (!firstRender || themeInitialized)
-            return;
-
-        try
-        {
-            isDarkTheme = await JSRuntime.InvokeAsync<bool>("authCookie.getTheme");
-        }
-        catch (JSException)
-        {
-            isDarkTheme = true;
-        }
-
-        themeInitialized = true;
-        StateHasChanged();
-    }
-
-    private async Task ToggleTheme()
-    {
-        isDarkTheme = !isDarkTheme;
-        await JSRuntime.InvokeVoidAsync("authCookie.setTheme", isDarkTheme ? "dark" : "light");
-    }
 
     private void TogglePassword() => showPassword = !showPassword;
 
