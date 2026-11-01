@@ -170,3 +170,30 @@
 @media (prefers-reduced-motion:reduce) {
   .mino-login *, .mino-login *::before, .mino-login *::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; scroll-behavior:auto !important; }
 }
+
+/* Login refinement: right-aligned glass panel, premium product motion, responsive layout */
+.login-layout { direction:ltr; }
+.login-card { direction:rtl; justify-self:end; background:rgba(242,249,250,.68); border:1px solid rgba(255,255,255,.72); box-shadow:0 28px 80px rgba(5,28,39,.3),inset 0 1px 0 rgba(255,255,255,.85); backdrop-filter:blur(30px) saturate(1.35); -webkit-backdrop-filter:blur(30px) saturate(1.35); }
+.brand-showcase { direction:rtl; }
+.product-item { transform-origin:center bottom; animation:product-arrive .9s cubic-bezier(.2,.8,.2,1) both; }
+.product-item img { transform-origin:center bottom; animation:product-float 4.8s ease-in-out infinite; transition:filter .35s ease,transform .45s cubic-bezier(.2,.8,.2,1); will-change:transform; }
+.product-water img { animation-delay:-.8s; }
+.product-cola img { animation-delay:-2.1s; }
+.product-lemon img { animation-delay:-3.3s; }
+.product-malt img { animation-delay:-1.4s; }
+.product-item:hover img { transform:translateY(-13px) scale(1.075) rotate(-2deg); filter:drop-shadow(0 25px 19px rgba(0,25,30,.34)) saturate(1.12); animation-play-state:paused; }
+@keyframes product-float { 0%,100% { transform:translate3d(0,0,0) rotate(0); } 50% { transform:translate3d(0,-11px,0) rotate(1deg); } }
+@keyframes product-arrive { from { opacity:0; transform:translateY(24px) scale(.94); } to { opacity:1; transform:translateY(0) scale(1); } }
+@media (max-width:1100px) {
+ .login-layout { direction:ltr; }
+ .login-card { justify-self:end; }
+}
+@media (max-width:760px) {
+ .login-layout { direction:rtl; }
+ .login-card { order:0; justify-self:center; }
+ .brand-showcase { order:1; }
+ .product-item img { animation-duration:5.4s; }
+}
+@media (prefers-reduced-motion:reduce) {
+ .product-item,.product-item img { animation:none !important; transition:none !important; }
+}
