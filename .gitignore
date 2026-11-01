@@ -361,14 +361,3 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-
-# Keep generated .NET and IDE files out of source control (including nested projects)
-**/bin/
-**/obj/
-**/TestResults/
-**/artifacts/
-.vs/
-**/.vs/
-*.user
-*.suo
-*.userosscache

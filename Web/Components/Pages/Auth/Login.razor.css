@@ -152,3 +152,124 @@
 @media (prefers-reduced-motion: reduce) {
     .mino-login *, .mino-login *::before, .mino-login *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
 }
+
+
+/* Immersive Zagros landscape: layered artwork with a subtle 3D camera plane. */
+.scene-image {
+    position: absolute;
+    z-index: -1;
+    left: 50%;
+    bottom: -9%;
+    width: min(1320px, 112vw);
+    height: min(760px, 78vh);
+    transform: translateX(-50%) perspective(1250px) rotateX(11deg) rotateY(-2deg) scale(1.04);
+    transform-origin: 50% 100%;
+    opacity: .94;
+    filter: drop-shadow(0 38px 50px rgba(0, 12, 10, .32));
+    pointer-events: none;
+}
+.scene-image::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(8, 43, 35, .08), transparent 32%, rgba(5, 31, 27, .2));
+    border-radius: 48%;
+}
+.scene-image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center bottom;
+}
+.mino-login { perspective: 1600px; }
+.login-card {
+    transform: translateZ(34px);
+    backdrop-filter: blur(18px);
+}
+.context-label { transform-style: preserve-3d; }
+.context-top { transform: translateZ(70px); }
+.context-right { transform: translateZ(55px); }
+.context-bottom { transform: translateZ(65px); }
+
+/* Tablet: keep the form dominant and let the landscape frame it, not compete. */
+@media (min-width: 641px) and (max-width: 1024px) {
+    .mino-login { padding: 104px 28px 76px; }
+    .page-brand { top: 24px; right: 28px; }
+    .login-stage { width: min(100%, 620px); min-height: 0; margin: auto 0; }
+    .login-card { width: min(100%, 470px); padding: 30px 40px 25px; }
+    .context-label { display: none; }
+    .scene-image {
+        width: 132vw;
+        height: 58vh;
+        bottom: -4%;
+        opacity: .72;
+        transform: translateX(-50%) perspective(1000px) rotateX(8deg) scale(1.08);
+    }
+    .orbit-one { width: 120vw; height: 78vw; }
+    .orbit-two { width: 96vw; height: 62vw; }
+}
+
+/* Mobile: full-width, touch-friendly form with a compact scenic horizon. */
+@media (max-width: 640px) {
+    .mino-login {
+        min-height: 100svh;
+        padding: 88px 16px 68px;
+        justify-content: center;
+    }
+    .page-brand { top: 17px; right: 16px; }
+    .login-stage { width: 100%; min-height: 0; margin: auto 0; }
+    .login-card {
+        width: min(100%, 440px);
+        padding: clamp(22px, 5vw, 28px) clamp(17px, 5vw, 25px) 20px;
+        border-radius: 22px;
+        box-shadow: 0 24px 70px rgba(0,0,0,.34), 0 5px 18px rgba(0,0,0,.14), inset 0 1px 0 #fff;
+        transform: translateZ(12px);
+    }
+    .scene-image {
+        width: 165vw;
+        height: 43svh;
+        min-height: 250px;
+        max-height: 390px;
+        bottom: -2%;
+        opacity: .58;
+        transform: translateX(-50%) perspective(850px) rotateX(5deg) scale(1.12);
+    }
+    .context-label { display: none; }
+    .card-heading { margin-top: 22px; }
+    .card-heading h1 { font-size: clamp(19px, 5.2vw, 22px); }
+    .intro-copy { font-size: 10px; }
+    .login-form { margin-top: 22px; gap: 15px; }
+    .field-control { min-height: 54px; }
+    .field-control input { height: 52px; font-size: 12px; }
+    .field-control input::placeholder { font-size: 10px; }
+    .field-block label { font-size: 11px; }
+    .login-submit { min-height: 54px; font-size: 12px; }
+    .card-footnote { font-size: 8px; line-height: 1.8; }
+    .page-footer { bottom: 15px; right: 16px; left: 16px; gap: 7px; flex-wrap: wrap; }
+    .footer-location { display: none; }
+    .orbit-one { width: 160vw; height: 110vw; }
+    .orbit-two { width: 132vw; height: 90vw; }
+}
+@media (max-width: 380px) {
+    .mino-login { padding: 78px 11px 62px; }
+    .page-brand { top: 13px; right: 12px; }
+    .brand-mark { width: 39px; height: 39px; }
+    .brand-copy strong { font-size: 14px; }
+    .login-card { padding: 20px 15px 17px; }
+    .card-heading h1 { font-size: 18px; }
+    .intro-copy { font-size: 9px; }
+    .field-control { gap: 8px; padding: 0 11px; }
+    .page-footer { font-size: 7px; }
+}
+@media (max-height: 720px) and (min-width: 641px) {
+    .mino-login { padding-top: 80px; padding-bottom: 54px; }
+    .login-stage { min-height: 0; }
+    .login-card { padding-top: 22px; padding-bottom: 18px; }
+    .card-heading { margin-top: 18px; }
+    .login-form { margin-top: 18px; gap: 12px; }
+    .field-control, .field-control input { min-height: 47px; height: 47px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .scene-image, .scene-image::after { animation: none !important; transition: none !important; }
+}
