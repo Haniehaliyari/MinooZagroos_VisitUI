@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "MinooZagroos.Web": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:36775;http://localhost:36776"
+    }
+  }
+}
