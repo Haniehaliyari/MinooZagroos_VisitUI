@@ -1,12 +1,10 @@
 ﻿@page "/login"
 @layout LoginLayout
-@using MyProject.Services.Auth
+@using Microsoft.JSInterop
 @using Web.Components.Layout
 @using Web.Models.Auth
-@inject AuthService AuthService
-@inject CustomAuthStateProvider AuthStateProvider
+@inject IJSRuntime JSRuntime
 @inject NavigationManager Navigation
-@inject MessageService Message
 
 <PageTitle>ورود به سیستم</PageTitle>
 
@@ -58,11 +56,16 @@
             isLoading = true;
             errorMessage = null;
 
-            await AuthService.LoginAsync(loginModel);
-            AuthStateProvider.RefreshAuthenticationState();
+            await JSRuntime.InvokeAsync<bool>(
+                "authCookie.login",
+                loginModel.Username,
+                loginModel.Password);
 
-             Message.Success("ورود با موفقیت انجام شد");
-            Navigation.NavigateTo("/dashboard");
+            Navigation.NavigateTo("/dashboard", forceLoad: true);
+        }
+        catch (JSException ex)
+        {
+            errorMessage = ex.Message;
         }
         catch (Exception ex)
         {
