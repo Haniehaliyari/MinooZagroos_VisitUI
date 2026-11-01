@@ -1,145 +1,57 @@
-﻿@page "/dashboard"
+@page "/dashboard"
 @attribute [Authorize]
 @layout MainLayout
 @using Microsoft.AspNetCore.Authorization
 @using Web.Components.Layout
 
-<PageTitle>داشبورد</PageTitle>
+<PageTitle>@(English ? "Dashboard | Minoo Zagros" : "داشبورد | مینو زاگرس")</PageTitle>
 
-<div dir="rtl" style="padding: 24px;">
-
-    @* ===== هدر خوش‌آمدگویی ===== *@
-    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                border-radius: 16px;
-                padding: 32px;
-                color: white;
-                margin-bottom: 24px;
-                box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);">
-        <h1 style="font-size: 28px; font-weight: 700; margin: 0 0 8px 0;">
-            <svg class="icon"><use href="#i-list" /></svg>
-            خوش آمدید 
-        </h1>
-        <p style="font-size: 16px; opacity: 0.9; margin: 0;">
-            به پنل مدیریت مینوزارگرس خوش آمدید. امروز چه کاری انجام می‌دهیم؟
-        </p>
-    </div>
-
-    @* ===== کارت‌های آمار ===== *@
-    <Row Gutter="16" Style="margin-bottom: 24px;">
-        <Col Span="6">
-        <Card Bordered="false" Style="border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-align: center;">
-            <div style="font-size: 32px; color: #1890ff; margin-bottom: 8px;">📦</div>
-            <div style="font-size: 24px; font-weight: 700; color: #262626;">۰</div>
-            <div style="font-size: 14px; color: #8c8c8c;">سفارشات امروز</div>
-        </Card>
-        </Col>
-        <Col Span="6">
-        <Card Bordered="false" Style="border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-align: center;">
-            <div style="font-size: 32px; color: #52c41a; margin-bottom: 8px;">👥</div>
-            <div style="font-size: 24px; font-weight: 700; color: #262626;">۰</div>
-            <div style="font-size: 14px; color: #8c8c8c;">مشتریان فعال</div>
-        </Card>
-        </Col>
-        <Col Span="6">
-        <Card Bordered="false" Style="border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-align: center;">
-            <div style="font-size: 32px; color: #faad14; margin-bottom: 8px;">🚚</div>
-            <div style="font-size: 24px; font-weight: 700; color: #262626;">۰</div>
-            <div style="font-size: 14px; color: #8c8c8c;">مامورین پخش</div>
-        </Card>
-        </Col>
-        <Col Span="6">
-        <Card Bordered="false" Style="border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-align: center;">
-            <div style="font-size: 32px; color: #f5222d; margin-bottom: 8px;">💰</div>
-            <div style="font-size: 24px; font-weight: 700; color: #262626;">۰</div>
-            <div style="font-size: 14px; color: #8c8c8c;">فروش امروز</div>
-        </Card>
-        </Col>
-    </Row>
-
-    @* ===== دکمه‌های عملیات سریع ===== *@
-    <Card Bordered="false" Title="عملیات سریع"
-          Style="border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
-        <Row Gutter="(16, 16)">
-            <Col Span="8">
-            <Button Type="ButtonType.Primary"
-                    Size="ButtonSize.Large"
-                    Style="width: 100%; height: 80px; border-radius: 12px; font-size: 16px; font-weight: 600;"
-                    OnClick="@(() => Navigation.NavigateTo("/order/create"))">
-                <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
-                    <span style="font-size: 28px;">📝</span>
-                    <span>ثبت درخواست جدید</span>
-                </div>
-            </Button>
-            </Col>
-            <Col Span="8">
-            <Button Type="ButtonType.Default"
-                    Size="ButtonSize.Large"
-                    Style="width: 100%; height: 80px; border-radius: 12px; font-size: 16px; font-weight: 600; background: #f6ffed; border-color: #52c41a; color: #52c41a;"
-                    OnClick="@(() => Navigation.NavigateTo("/customers"))">
-                <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
-                    <span style="font-size: 28px;">👤</span>
-                    <span>مشتریان</span>
-                </div>
-            </Button>
-            </Col>
-            <Col Span="8">
-            <Button Type="ButtonType.Default"
-                    Size="ButtonSize.Large"
-                    Style="width: 100%; height: 80px; border-radius: 12px; font-size: 16px; font-weight: 600; background: #fff7e6; border-color: #faad14; color: #faad14;"
-                    OnClick="@(() => Navigation.NavigateTo("/products"))">
-                <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
-                    <span style="font-size: 28px;">📦</span>
-                    <span>محصولات</span>
-                </div>
-            </Button>
-            </Col>
-            <Col Span="8">
-            <Button Type="ButtonType.Default"
-                    Size="ButtonSize.Large"
-                    Style="width: 100%; height: 80px; border-radius: 12px; font-size: 16px; font-weight: 600; background: #e6f7ff; border-color: #1890ff; color: #1890ff;"
-                    OnClick="@(() => Navigation.NavigateTo("/orders"))">
-                <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
-                    <span style="font-size: 28px;">📋</span>
-                    <span>سفارشات</span>
-                </div>
-            </Button>
-            </Col>
-            <Col Span="8">
-            <Button Type="ButtonType.Default"
-                    Size="ButtonSize.Large"
-                    Style="width: 100%; height: 80px; border-radius: 12px; font-size: 16px; font-weight: 600; background: #f9f0ff; border-color: #722ed1; color: #722ed1;"
-                    OnClick="@(() => Navigation.NavigateTo("/reports"))">
-                <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
-                    <span style="font-size: 28px;">📊</span>
-                    <span>گزارشات</span>
-                </div>
-            </Button>
-            </Col>
-            <Col Span="8">
-            <Button Type="ButtonType.Default"
-                    Size="ButtonSize.Large"
-                    Style="width: 100%; height: 80px; border-radius: 12px; font-size: 16px; font-weight: 600; background: #fff1f0; border-color: #f5222d; color: #f5222d;"
-                    OnClick="@(() => Navigation.NavigateTo("/settings"))">
-                <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
-                    <span style="font-size: 28px;">⚙️</span>
-                    <span>تنظیمات</span>
-                </div>
-            </Button>
-            </Col>
-        </Row>
-    </Card>
-
-    @* ===== آخرین فعالیت‌ها ===== *@
-    <Card Bordered="false" Title="آخرین فعالیت‌ها"
-          Style="border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-top: 24px;">
-        <div style="text-align: center; padding: 32px; color: #8c8c8c;">
-            <div style="font-size: 48px; margin-bottom: 16px;">📭</div>
-            <p>هنوز فعالیتی ثبت نشده است.</p>
+<div class="dashboard-page" dir="@(English ? "ltr" : "rtl")">
+    <section class="dashboard-hero">
+        <div class="hero-image"></div><div class="hero-content">
+            <span class="hero-eyebrow">MINOO ZAGROS · @(English ? "BUSINESS OVERVIEW" : "نمای کلی کسب‌وکار")</span>
+            <h1>@(English ? "A fresh view of your business." : "نگاهی تازه به کسب‌وکار شما.")</h1>
+            <p>@(English ? "Manage visits, customers and products from one clear workspace." : "ویزیت‌ها، مشتریان و محصولات را از یک فضای کاری یکپارچه مدیریت کنید.")</p>
+            <a class="hero-cta" href="/orders">@(English ? "Explore workspace" : "مشاهده فضای کاری") <span>↗</span></a>
         </div>
-    </Card>
+        <div class="hero-orbit orbit-one"></div><div class="hero-orbit orbit-two"></div>
+        <div class="hero-stamp"><span>✦</span><strong>20+</strong><small>@(English ? "YEARS OF QUALITY" : "سال همراهی و کیفیت")</small></div>
+    </section>
 
+    <div class="section-heading"><div><span class="section-kicker">@(English ? "AT A GLANCE" : "نگاه سریع")</span><h2>@(English ? "Business overview" : "نمای کلی عملکرد")</h2></div><span class="live-label"><i></i>@(English ? "Live workspace" : "فضای کاری")</span></div>
+    <section class="metrics-grid">
+        <article class="metric-card"><span class="metric-icon mint">▤</span><span class="metric-label">@(English ? "Today's orders" : "سفارش‌های امروز")</span><strong>۰</strong><small>@(English ? "No new records yet" : "هنوز رکوردی ثبت نشده")</small></article>
+        <article class="metric-card"><span class="metric-icon blue">♙</span><span class="metric-label">@(English ? "Active customers" : "مشتریان فعال")</span><strong>۰</strong><small>@(English ? "Customer portfolio" : "پرونده مشتریان")</small></article>
+        <article class="metric-card"><span class="metric-icon amber">♧</span><span class="metric-label">@(English ? "Field visits" : "ویزیت‌های امروز")</span><strong>۰</strong><small>@(English ? "Daily visit activity" : "فعالیت روزانه ویزیت")</small></article>
+        <article class="metric-card"><span class="metric-icon rose">↗</span><span class="metric-label">@(English ? "Today's sales" : "فروش امروز")</span><strong>۰</strong><small>@(English ? "Sales performance" : "عملکرد فروش")</small></article>
+    </section>
+
+    <div class="dashboard-columns">
+        <section class="workspace-panel">
+            <div class="section-heading compact"><div><span class="section-kicker">@(English ? "GET THINGS DONE" : "شروع سریع")</span><h2>@(English ? "Quick actions" : "دسترسی سریع")</h2></div></div>
+            <div class="quick-grid">
+                <a href="/order/create" class="quick-action"><span class="quick-icon green">＋</span><span><b>@(English ? "Create order" : "ثبت سفارش")</b><small>@(English ? "Add a new request" : "ثبت درخواست جدید")</small></span><i>↗</i></a>
+                <a href="/customers" class="quick-action"><span class="quick-icon blue">♙</span><span><b>@(English ? "Customers" : "مشتریان")</b><small>@(English ? "Manage customer records" : "مدیریت اطلاعات مشتریان")</small></span><i>↗</i></a>
+                <a href="/products" class="quick-action"><span class="quick-icon amber">▣</span><span><b>@(English ? "Product catalog" : "فهرست محصولات")</b><small>@(English ? "Browse the portfolio" : "مرور سبد محصولات")</small></span><i>↗</i></a>
+                <a href="/reports" class="quick-action"><span class="quick-icon violet">▥</span><span><b>@(English ? "Reports" : "گزارش‌ها")</b><small>@(English ? "Review performance" : "بررسی عملکرد")</small></span><i>↗</i></a>
+            </div>
+        </section>
+        <section class="workspace-panel products-panel">
+            <div class="section-heading compact"><div><span class="section-kicker">@(English ? "MADE WITH CARE" : "با کیفیت و دقت")</span><h2>@(English ? "Our products" : "محصولات ما")</h2></div><a href="/products">@(English ? "View all" : "همه محصولات") ↗</a></div>
+            <div class="product-showcase">
+                <article class="showcase-product"><div class="product-art"><img src="https://minoozagros.com/wp-content/uploads/2023/08/P-14.png" alt="آب معدنی آیسلند" /></div><b>@(English ? "Iceland Water" : "آب معدنی آیسلند")</b><small>@(English ? "Pure mountain water" : "آب زلال و گوارا")</small></article>
+                <article class="showcase-product"><div class="product-art"><img src="https://minoozagros.com/wp-content/uploads/2023/08/P-8.png" alt="نوشابه کولا آیسلند" /></div><b>@(English ? "Iceland Cola" : "نوشابه کولا آیسلند")</b><small>@(English ? "A sparkling moment" : "لحظه‌ای پر از طراوت")</small></article>
+                <article class="showcase-product"><div class="product-art"><img src="https://minoozagros.com/wp-content/uploads/2023/08/P-12.png" alt="لیموناد آیسلند" /></div><b>@(English ? "Iceland Lemonade" : "لیموناد آیسلند")</b><small>@(English ? "Fresh citrus taste" : "طعم تازه مرکبات")</small></article>
+            </div>
+        </section>
+    </div>
+    <footer class="dashboard-footer">© @DateTime.Now.Year @(English ? "Minoo Zagros Food & Beverage Industries" : "شرکت صنایع غذایی و آشامیدنی مینو زاگرس") <span>@(English ? "Freshness from Zagros" : "طراوت از دل زاگرس") ✦</span></footer>
 </div>
 
+<style>
+.dashboard-page{--panel:var(--surface);--ink:var(--text);--soft:var(--surface-soft);color:var(--ink)}.dashboard-hero{position:relative;overflow:hidden;min-height:255px;border-radius:24px;background:linear-gradient(100deg,rgba(8,38,29,.92),rgba(13,69,47,.73)),url('/images/OIG1.jpg') center 48%/cover;color:#fff;padding:38px 42px;display:flex;align-items:center;box-shadow:0 18px 40px rgba(13,55,37,.18)}.hero-content{position:relative;z-index:2;max-width:600px}.hero-eyebrow,.section-kicker{font-size:9px;letter-spacing:2px;font-weight:900;color:#8bd6ad}.hero-content h1{font-size:clamp(24px,3vw,36px);line-height:1.5;margin:14px 0 5px;font-weight:800}.hero-content p{font-size:12px;color:rgba(255,255,255,.78);margin:0 0 20px}.hero-cta{display:inline-flex;gap:18px;align-items:center;background:#e8f5ed;color:#18583d;text-decoration:none;padding:11px 17px;border-radius:10px;font-size:11px;font-weight:800}.hero-stamp{position:absolute;z-index:2;right:8%;bottom:30px;width:112px;height:112px;border:1px solid rgba(255,255,255,.4);border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(255,255,255,.08);backdrop-filter:blur(8px)}[dir=ltr] .hero-stamp{right:auto;left:8%}.hero-stamp span{color:#a5e1bd}.hero-stamp strong{font-size:24px}.hero-stamp small{font-size:7px;letter-spacing:1px}.hero-orbit{position:absolute;border:1px solid rgba(255,255,255,.12);border-radius:50%;width:300px;height:300px;right:48%;top:-120px}.orbit-two{width:420px;height:420px;right:43%;top:-180px}.section-heading{display:flex;align-items:center;justify-content:space-between;margin:30px 0 14px}.section-heading h2{font-size:17px;margin:5px 0 0}.section-kicker{color:var(--accent);letter-spacing:1.5px}.live-label{font-size:10px;color:var(--muted)}.live-label i{display:inline-block;width:7px;height:7px;background:#39b77a;border-radius:50%;margin-inline-end:7px}.metrics-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}.metric-card,.workspace-panel{background:var(--panel);border:1px solid var(--line);border-radius:17px;box-shadow:var(--shadow)}.metric-card{padding:18px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;transition:transform .25s}.metric-card:hover{transform:translateY(-5px)}.metric-icon{width:35px;height:35px;border-radius:11px;display:grid;place-items:center;font-size:17px}.mint{background:#e0f4e8;color:#1a8050}.blue{background:#e3efff;color:#3979c6}.amber{background:#fff1d8;color:#c38a25}.rose{background:#fde7e4;color:#c65b50}.metric-label{font-size:10px;color:var(--muted)}.metric-card strong{font-size:25px}.metric-card small{font-size:9px;color:var(--muted)}.dashboard-columns{display:grid;grid-template-columns:1fr 1.15fr;gap:14px;margin-top:16px}.workspace-panel{padding:20px}.compact{margin:0 0 15px}.compact h2{font-size:15px}.compact>a{font-size:10px;color:var(--accent);text-decoration:none}.quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.quick-action{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);padding:12px 10px;border:1px solid var(--line);border-radius:12px;transition:.2s}.quick-action:hover{border-color:var(--accent);transform:translateY(-2px)}.quick-icon{width:33px;height:33px;display:grid;place-items:center;border-radius:10px;font-size:18px}.green{background:#e1f4e8;color:#268252}.quick-icon.blue{background:#e3efff}.quick-icon.amber{background:#fff1d8}.quick-icon.violet{background:#eee7ff;color:#7955ba}.quick-action b,.quick-action small{display:block}.quick-action b{font-size:10px}.quick-action small{font-size:8px;color:var(--muted);margin-top:4px}.quick-action i{font-style:normal;margin-inline-start:auto;color:var(--muted)}.product-showcase{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.showcase-product{text-align:center;min-width:0}.product-art{height:135px;border-radius:13px;background:var(--soft);display:grid;place-items:center;overflow:hidden;position:relative}.product-art:after{content:'';position:absolute;width:90px;height:90px;border-radius:50%;background:rgba(74,165,112,.09);filter:blur(5px)}.product-art img{height:118px;max-width:90%;object-fit:contain;position:relative;z-index:1;transition:transform .55s cubic-bezier(.2,.8,.2,1);filter:drop-shadow(0 10px 9px rgba(0,0,0,.12));animation:productFloat 4.5s ease-in-out infinite}.showcase-product:nth-child(2) img{animation-delay:-1.5s}.showcase-product:nth-child(3) img{animation-delay:-3s}.showcase-product:hover img{transform:translateY(-9px) scale(1.08) rotate(-3deg);animation-play-state:paused}.showcase-product b,.showcase-product small{display:block}.showcase-product b{font-size:9px;margin-top:9px}.showcase-product small{font-size:8px;color:var(--muted);margin-top:3px}.dashboard-footer{display:flex;justify-content:space-between;color:var(--muted);font-size:9px;padding:20px 3px 0}.dashboard-footer span{color:var(--accent)}@keyframes productFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}@media(max-width:1100px){.dashboard-columns{grid-template-columns:1fr}.product-art{height:155px}}@media(max-width:720px){.dashboard-hero{min-height:245px;padding:25px 22px}.hero-stamp{width:78px;height:78px;right:5%;bottom:15px}.hero-stamp strong{font-size:18px}.hero-stamp small{font-size:6px}.metrics-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.metric-card{padding:14px}.product-art{height:125px}.dashboard-footer{gap:10px;flex-direction:column}}@media(max-width:420px){.quick-grid{grid-template-columns:1fr}.product-art{height:105px}.product-art img{height:95px}.workspace-panel{padding:14px}}
+</style>
 @code {
-    [Inject] private NavigationManager Navigation { get; set; }
+    [CascadingParameter] public bool English { get; set; }
+    [CascadingParameter] public bool DarkMode { get; set; }
 }

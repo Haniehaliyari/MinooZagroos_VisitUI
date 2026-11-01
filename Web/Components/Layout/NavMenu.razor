@@ -1,36 +1,16 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">Web</a>
-    </div>
+<div class="brand-panel">
+    <a href="/dashboard" class="brand-mark"><img src="https://minoozagros.com/wp-content/uploads/2026/01/logo-minoozagros.png" alt="Minoo Zagros" /></a>
+    <div><strong>مینو زاگرس</strong><small>MINOO ZAGROS</small></div>
 </div>
-
-<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
-
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-    <nav class="nav flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="login">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Login
-            </NavLink>
-        </div>
-    </nav>
-</div>
-
+<nav class="side-navigation">
+    <span class="nav-caption">@(English ? "WORKSPACE" : "فضای کاری")</span>
+    <NavLink href="/dashboard" Match="NavLinkMatch.All" class="side-link"><span class="side-icon">⌂</span>@(English ? "Overview" : "نمای کلی")<span class="link-arrow">›</span></NavLink>
+    <NavLink href="/customers" class="side-link"><span class="side-icon">♙</span>@(English ? "Customers" : "مشتریان")</NavLink>
+    <NavLink href="/products" class="side-link"><span class="side-icon">▣</span>@(English ? "Products" : "محصولات")</NavLink>
+    <NavLink href="/orders" class="side-link"><span class="side-icon">▤</span>@(English ? "Orders" : "سفارش‌ها")</NavLink>
+    <NavLink href="/reports" class="side-link"><span class="side-icon">▥</span>@(English ? "Reports" : "گزارش‌ها")</NavLink>
+    <span class="nav-caption nav-caption-spaced">@(English ? "MANAGEMENT" : "مدیریت")</span>
+    <NavLink href="/settings" class="side-link"><span class="side-icon">⚙</span>@(English ? "Settings" : "تنظیمات")</NavLink>
+</nav>
+<div class="sidebar-brand-note"><span>✦</span><p>@(English ? "Freshness from Zagros, quality in every step." : "طراوت زاگرس، کیفیت در هر قدم")</p></div>
+@code { [Parameter] public bool English { get; set; } }
