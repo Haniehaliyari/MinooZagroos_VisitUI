@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Authorization;
 using System.Security.Claims;
 using MyProject.Services.Auth;
+using MyProject.Services.Api;
 using Web.Components;
 using Web.Models.Auth;
 
