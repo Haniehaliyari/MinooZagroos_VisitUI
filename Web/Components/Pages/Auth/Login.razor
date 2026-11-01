@@ -6,67 +6,45 @@
 @inject IJSRuntime JSRuntime
 @inject NavigationManager Navigation
 
-<PageTitle>ورود | مینو زاگرس</PageTitle>
+<PageTitle>ورود به سامانه | مینو زاگرس</PageTitle>
 
 <div class="login-page" dir="rtl">
-    <section class="login-visual" aria-label="مینو زاگرس">
-        <div class="visual-glow visual-glow-one"></div>
-        <div class="visual-glow visual-glow-two"></div>
-        <div class="brand-lockup">
-            <div class="brand-mark" aria-hidden="true">
-                <svg viewBox="0 0 52 52" role="img">
-                    <path d="M26 4C20 15 11 25 11 34a15 15 0 0 0 30 0C41 25 32 15 26 4Z" fill="none" stroke="currentColor" stroke-width="2.6"/>
-                    <path d="M16 34c5 4 15 4 20 0M20 27c2-2 4-3 6-3s4 1 6 3" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
-                </svg>
-            </div>
-            <div>
-                <div class="brand-name">مینو زاگرس</div>
-                <div class="brand-caption">طراوت زاگرس، جریان زندگی</div>
-            </div>
-        </div>
-
-        <div class="visual-copy">
-            <span class="visual-kicker"><span></span> از دل طبیعت زاگرس</span>
-            <h1>هر قطره،<br />روایتی از <em>طراوت</em></h1>
-            <p>از سرسبزی خرم‌آباد تا لحظه‌های تازه زندگی؛ همراه شما در مسیر پخش و فروش محصولات مینو زاگرس.</p>
-            <div class="visual-tags">
-                <span><i>✦</i> آب آشامیدنی</span>
-                <span><i>✦</i> دلستر و نوشیدنی</span>
-                <span><i>✦</i> پخش هوشمند</span>
-            </div>
-        </div>
-
-        <div class="landscape" aria-hidden="true">
-            <svg viewBox="0 0 760 340" preserveAspectRatio="xMidYMax slice">
-                <path d="M0 170 95 90l70 57 93-105 105 120 82-73 95 80 78-48 142 90v129H0Z" fill="#a5d7a6" opacity=".25"/>
-                <path d="m0 210 105-93 85 65 105-117 112 124 90-70 105 91 83-50 75 53v127H0Z" fill="#72bd83" opacity=".45"/>
-                <path d="M0 250c112-62 180-18 278-57s160-30 246 14 157 5 236-18v151H0Z" fill="#2d8e69" opacity=".8"/>
-                <path d="M0 283c108-42 198-14 285-35s163-19 245 15 147 13 230-6v83H0Z" fill="#176c59"/>
-                <path d="M325 340c-9-38 15-62 50-81 33-18 54-33 55-58 1-19-11-33-27-42 43 12 67 38 60 68-7 29-43 47-73 66-25 16-36 29-35 47Z" fill="#b9e9e8" opacity=".92"/>
-            </svg>
-        </div>
-        <div class="visual-footer"><span></span> خرم‌آباد، سرزمین چشمه‌ها و بلوط‌ها</div>
-    </section>
-
-    <section class="login-panel">
-        <div class="mobile-brand">
-            <div class="brand-mark" aria-hidden="true">💧</div>
-            <span>مینو زاگرس</span>
+    <section class="login-panel" aria-labelledby="login-title">
+        <div class="panel-topline">
+            <a class="brand-lockup" href="/" aria-label="مینو زاگرس">
+                <span class="brand-symbol" aria-hidden="true">
+                    <svg viewBox="0 0 48 48">
+                        <path d="M24 4C18.5 14.2 10 23.1 10 31.2a14 14 0 0 0 28 0C38 23.1 29.5 14.2 24 4Z" />
+                        <path d="M15.5 31.5c4.8 3.4 12.2 3.4 17 0M19 25.5c3.1-2.5 6.9-2.5 10 0" />
+                    </svg>
+                </span>
+                <span class="brand-words">
+                    <strong>مینو زاگرس</strong>
+                    <small>طراوت زاگرس، جریان زندگی</small>
+                </span>
+            </a>
+            <span class="secure-chip"><span></span> سامانه سازمانی</span>
         </div>
 
         <div class="login-card">
-            <div class="form-heading">
-                <span class="form-eyebrow">پنل یکپارچه سازمانی</span>
-                <h2>خوش آمدید</h2>
-                <p>برای ورود به سامانه، اطلاعات حساب کاربری خود را وارد کنید.</p>
+            <div class="welcome-mark" aria-hidden="true">
+                <svg viewBox="0 0 48 48">
+                    <path d="M24 5C18.5 15 11 22.7 11 31a13 13 0 0 0 26 0C37 22.7 29.5 15 24 5Z" />
+                    <path d="M17 31c3.8 2.7 10.2 2.7 14 0" />
+                </svg>
             </div>
+            <span class="form-overline">خوش آمدید به خانواده مینو زاگرس</span>
+            <h1 id="login-title">ورود به حساب کاربری</h1>
+            <p class="form-description">برای ادامه فعالیت در سامانه، اطلاعات حساب خود را وارد کنید.</p>
 
             <form class="login-form" @onsubmit="HandleLogin" @onsubmit:preventDefault>
                 <div class="field-group">
                     <label for="username">نام کاربری</label>
-                    <div class="input-wrap">
-                        <span class="field-icon" aria-hidden="true">♙</span>
-                        <input id="username" type="text" @bind="loginModel.Username"
+                    <div class="input-shell">
+                        <span class="input-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.6-3.5 3-5.3 7-5.3s6.4 1.8 7 5.3"/></svg>
+                        </span>
+                        <input id="username" type="text" @bind="loginModel.Username" @bind:event="oninput"
                                placeholder="نام کاربری خود را وارد کنید"
                                autocomplete="username" required disabled="@isLoading" />
                     </div>
@@ -74,15 +52,25 @@
 
                 <div class="field-group">
                     <label for="password">رمز عبور</label>
-                    <div class="input-wrap">
-                        <span class="field-icon lock-icon" aria-hidden="true">▣</span>
+                    <div class="input-shell">
+                        <span class="input-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v2"/></svg>
+                        </span>
                         <input id="password" type="@(showPassword ? "text" : "password")"
-                               @bind="loginModel.Password"
+                               @bind="loginModel.Password" @bind:event="oninput"
                                placeholder="رمز عبور خود را وارد کنید"
                                autocomplete="current-password" required disabled="@isLoading" />
                         <button class="password-toggle" type="button" @onclick="TogglePassword"
-                                aria-label="نمایش یا مخفی کردن رمز عبور">
-                            @(showPassword ? "مخفی" : "نمایش")
+                                aria-label="@(showPassword ? "مخفی کردن رمز عبور" : "نمایش رمز عبور")"
+                                disabled="@isLoading">
+                            @if (showPassword)
+                            {
+                                <svg viewBox="0 0 24 24"><path d="M3 3l18 18M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.2A10.8 10.8 0 0 1 12 5c5.2 0 8.5 5.2 8.5 7s-1.2 3.1-3.1 4.7M6.2 6.3C3.8 7.8 2.5 10.5 2.5 12c0 1.8 3.3 7 9.5 7 1 0 2-.2 2.8-.5"/></svg>
+                            }
+                            else
+                            {
+                                <svg viewBox="0 0 24 24"><path d="M2.5 12s3.3-7 9.5-7 9.5 7 9.5 7-3.3 7-9.5 7-9.5-7-9.5-7Z"/><circle cx="12" cy="12" r="2.7"/></svg>
+                            }
                         </button>
                     </div>
                 </div>
@@ -90,7 +78,7 @@
                 @if (!string.IsNullOrWhiteSpace(errorMessage))
                 {
                     <div class="login-error" role="alert">
-                        <span aria-hidden="true">!</span>
+                        <span class="error-symbol">!</span>
                         <span>@errorMessage</span>
                     </div>
                 }
@@ -99,26 +87,151 @@
                     @if (isLoading)
                     {
                         <span class="loading-spinner" aria-hidden="true"></span>
-                        <span>در حال بررسی اطلاعات...</span>
+                        <span>در حال ورود به سامانه...</span>
                     }
                     else
                     {
-                        <span>ورود به سامانه</span>
-                        <span class="button-arrow" aria-hidden="true">←</span>
+                        <span>ورود امن به سامانه</span>
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg>
                     }
                 </button>
             </form>
 
             <div class="security-note">
-                <span aria-hidden="true">◈</span>
-                ورود شما از طریق ارتباط امن سازمانی انجام می‌شود.
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 19 6v5c0 4.7-2.8 8-7 10-4.2-2-7-5.3-7-10V6l7-3Z"/><path d="m9 12 2 2 4-4"/></svg>
+                <span>اطلاعات شما با اتصال امن سازمانی محافظت می‌شود.</span>
             </div>
         </div>
 
-        <footer class="login-footer">
+        <footer class="panel-footer">
             <span>© @DateTime.Now.Year مینو زاگرس</span>
             <span>سامانه مدیریت فروش و ویزیت</span>
         </footer>
+    </section>
+
+    <section class="brand-stage" aria-label="طبیعت زاگرس و محصولات مینو زاگرس">
+        <img class="stage-photo"
+             src="https://irangashttour.com/wp-content/uploads/2021/06/Lorestan-1.jpg"
+             alt="آبشار و طبیعت سرسبز لرستان"
+             loading="eager" />
+        <div class="stage-shade"></div>
+        <div class="stage-grain"></div>
+
+        <div class="stage-header">
+            <span class="location-pill">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10" r="2.2"/></svg>
+                خرم‌آباد، قلب زاگرس
+            </span>
+            <span class="stage-edition">MINOO ZAGROS <i>·</i> SINCE NATURE</span>
+        </div>
+
+        <div class="stage-copy">
+            <span class="stage-kicker"><i></i> الهام‌گرفته از طبیعت زاگرس</span>
+            <h2>طراوتی از دل<br /><em>کوهستان‌های زاگرس</em></h2>
+            <p>از زلالی چشمه‌ها تا طعم دلنشین نوشیدنی‌ها؛ همراه هر روز شما با کیفیت و تازگی.</p>
+        </div>
+
+        <div class="product-showcase" aria-hidden="true">
+            <div class="product-orbit orbit-one"></div>
+            <div class="product-orbit orbit-two"></div>
+            <svg class="product-art" viewBox="0 0 620 430">
+                <defs>
+                    <linearGradient id="waterBody" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0" stop-color="#b8f4ff" stop-opacity=".35"/>
+                        <stop offset=".22" stop-color="#e8fdff" stop-opacity=".94"/>
+                        <stop offset=".48" stop-color="#6cc7e8" stop-opacity=".62"/>
+                        <stop offset=".72" stop-color="#f5ffff" stop-opacity=".9"/>
+                        <stop offset="1" stop-color="#62b8d5" stop-opacity=".42"/>
+                    </linearGradient>
+                    <linearGradient id="waterLabel" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0" stop-color="#faffff"/>
+                        <stop offset="1" stop-color="#b8e8e8"/>
+                    </linearGradient>
+                    <linearGradient id="greenGlass" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0" stop-color="#0c4b35"/>
+                        <stop offset=".25" stop-color="#64b77b"/>
+                        <stop offset=".52" stop-color="#0b573d"/>
+                        <stop offset=".78" stop-color="#2b8a58"/>
+                        <stop offset="1" stop-color="#073d2e"/>
+                    </linearGradient>
+                    <linearGradient id="amberCan" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0" stop-color="#a64d18"/>
+                        <stop offset=".28" stop-color="#ffc36c"/>
+                        <stop offset=".54" stop-color="#d87524"/>
+                        <stop offset=".8" stop-color="#f4a94c"/>
+                        <stop offset="1" stop-color="#8d3d14"/>
+                    </linearGradient>
+                    <linearGradient id="capBlue" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0" stop-color="#64d9f2"/>
+                        <stop offset="1" stop-color="#0876aa"/>
+                    </linearGradient>
+                    <filter id="productShadow" x="-40%" y="-30%" width="180%" height="190%">
+                        <feGaussianBlur in="SourceAlpha" stdDeviation="12"/>
+                        <feOffset dy="18"/>
+                        <feComponentTransfer><feFuncA type="linear" slope=".35"/></feComponentTransfer>
+                        <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+                    </filter>
+                </defs>
+
+                <ellipse cx="320" cy="375" rx="225" ry="28" fill="#062c27" opacity=".35" filter="url(#productShadow)"/>
+
+                <g class="can-product" filter="url(#productShadow)">
+                    <path d="M390 105h93l-5 16 13 14v190q0 14-14 14h-71q-14 0-14-14V135l13-14Z" fill="url(#amberCan)" stroke="#ffe0a5" stroke-opacity=".65" stroke-width="2"/>
+                    <ellipse cx="436.5" cy="107" rx="46.5" ry="8" fill="#e7e7dc"/>
+                    <ellipse cx="436.5" cy="108" rx="39" ry="4" fill="#8c8f88"/>
+                    <ellipse cx="436.5" cy="339" rx="46.5" ry="8" fill="#9b4b1b" opacity=".7"/>
+                    <path d="M404 155q33-20 65 0v8q-32-18-65 0Z" fill="#fff3d8" opacity=".65"/>
+                    <path d="M404 175q32 10 65 0v88q-33 17-65 0Z" fill="#f5b24c" opacity=".32"/>
+                    <path d="M412 201q24-28 49 0-1 35-25 43-24-8-24-43Z" fill="#fff2d6" opacity=".88"/>
+                    <path d="M420 210q17-17 32 0l-16 20Z" fill="#e97724"/>
+                    <path d="M404 144v178" stroke="#fff3d5" stroke-width="5" opacity=".32" stroke-linecap="round"/>
+                    <text x="436" y="288" text-anchor="middle" font-size="17" font-weight="800" fill="#fff9e9">نوشیدنی</text>
+                </g>
+
+                <g class="green-product" filter="url(#productShadow)">
+                    <path d="M245 123q0-13 14-13h44q14 0 14 13v20q0 9 9 18 14 15 14 33v137q0 22-22 22h-74q-22 0-22-22V194q0-18 14-33 9-9 9-18Z" fill="url(#greenGlass)" stroke="#b5f0c4" stroke-opacity=".5" stroke-width="2"/>
+                    <path d="M258 110h46v-19q0-8-8-8h-30q-8 0-8 8Z" fill="#d2e7d6"/>
+                    <rect x="254" y="75" width="54" height="27" rx="7" fill="#1e7648" stroke="#8ad59e" stroke-width="2"/>
+                    <path d="M258 81h46M258 87h46M258 93h46" stroke="#b3e4b8" stroke-opacity=".55" stroke-width="2"/>
+                    <path d="M239 175q42 13 83 0" stroke="#d8f7df" stroke-width="5" opacity=".2"/>
+                    <path d="M241 193v118" stroke="#d9ffe2" stroke-width="7" opacity=".28" stroke-linecap="round"/>
+                    <path d="M245 215q38-12 75 0v69q-37 12-75 0Z" fill="#eff9e8" opacity=".94"/>
+                    <path d="M254 229q28-18 56 0" stroke="#2b8050" stroke-width="4" fill="none"/>
+                    <text x="282" y="254" text-anchor="middle" font-size="16" font-weight="800" fill="#17583b">دلستر</text>
+                    <text x="282" y="272" text-anchor="middle" font-size="9" fill="#4a805d">MALTED DRINK</text>
+                    <path d="M306 152q9 7 14 18" stroke="#fff" stroke-width="4" opacity=".35" fill="none" stroke-linecap="round"/>
+                </g>
+
+                <g class="water-product" filter="url(#productShadow)">
+                    <path d="M105 88h48v28q0 9 8 17 14 15 14 34v171q0 24-24 24H91q-24 0-24-24V167q0-19 14-34 8-8 8-17V88Z" fill="url(#waterBody)" stroke="#e4ffff" stroke-width="2.5"/>
+                    <path d="M105 88h48V70q0-7-7-7h-34q-7 0-7 7Z" fill="#b7e8f4" opacity=".8"/>
+                    <rect x="100" y="42" width="58" height="34" rx="7" fill="url(#capBlue)" stroke="#c3f5ff" stroke-width="2"/>
+                    <path d="M104 49h50M104 56h50M104 63h50M104 70h50" stroke="#d9faff" stroke-opacity=".6" stroke-width="2"/>
+                    <path d="M76 181q48 12 97 0v111q-49 12-97 0Z" fill="url(#waterLabel)" stroke="#fff" stroke-width="1.5"/>
+                    <path d="m92 211 29-21 27 21" fill="none" stroke="#1b7557" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M100 212q21-8 42 0" fill="none" stroke="#55a978" stroke-width="3"/>
+                    <text x="124" y="244" text-anchor="middle" font-size="16" font-weight="800" fill="#17624b">آب آشامیدنی</text>
+                    <text x="124" y="264" text-anchor="middle" font-size="9" fill="#448b83">PURE WATER</text>
+                    <path d="M83 160v164" stroke="#fff" stroke-width="8" opacity=".65" stroke-linecap="round"/>
+                    <path d="M158 167q9 30 6 70" stroke="#fff" stroke-width="3" opacity=".6" fill="none" stroke-linecap="round"/>
+                    <g fill="#fff" opacity=".75"><circle cx="91" cy="146" r="3"/><circle cx="148" cy="157" r="2.5"/><circle cx="161" cy="300" r="3"/></g>
+                </g>
+
+                <g fill="#e9ffff" opacity=".85">
+                    <circle cx="188" cy="100" r="5"/><circle cx="365" cy="78" r="3"/><circle cx="527" cy="167" r="5"/>
+                    <circle cx="354" cy="290" r="4"/><circle cx="191" cy="330" r="3"/><circle cx="520" cy="286" r="2.5"/>
+                </g>
+                <g fill="none" stroke="#d6ffff" stroke-width="2" opacity=".65">
+                    <circle cx="188" cy="100" r="9"/><circle cx="527" cy="167" r="9"/><circle cx="354" cy="290" r="7"/>
+                </g>
+            </svg>
+            <div class="showcase-caption"><span>تازگی، در هر لحظه</span><i></i><span>آب آشامیدنی و نوشیدنی‌های مالت</span></div>
+        </div>
+
+        <div class="stage-bottom">
+            <div class="quality-note"><span class="quality-icon">✦</span><span>الهام از طبیعت، همراه با کیفیت</span></div>
+            <span class="stage-copyright">MINOO ZAGROS <b>•</b> KHORRAMABAD</span>
+        </div>
     </section>
 </div>
 
