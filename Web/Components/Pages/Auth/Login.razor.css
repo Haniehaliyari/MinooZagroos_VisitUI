@@ -665,3 +665,117 @@
  .mino-login { background:radial-gradient(ellipse at 0% 8%,rgba(39,206,163,.28),transparent 43%),radial-gradient(ellipse at 100% 92%,rgba(220,169,91,.2),transparent 40%),linear-gradient(145deg,#062c35 0%,#075b4c 58%,#10383c 100%); }
  .theme-light.mino-login { background:radial-gradient(ellipse at 0% 8%,rgba(55,180,139,.25),transparent 43%),radial-gradient(ellipse at 100% 92%,rgba(211,166,101,.22),transparent 40%),linear-gradient(145deg,#e9f5ee 0%,#d0ebdd 58%,#f2ebdc 100%); }
 }
+
+
+/* New direction: cinematic full-bleed photo wall instead of abstract gradient scenery. */
+.mino-login,
+.mino-login.theme-dark {
+    background: #101f1d;
+}
+.landscape {
+    background: #101f1d;
+}
+.brand-gallery {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    background: #101f1d;
+}
+.gallery-photo {
+    position: absolute;
+    display: block;
+    object-fit: cover;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    filter: saturate(.82) contrast(1.08);
+}
+.gallery-photo-one {
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: .76;
+    transform: none;
+    object-position: center;
+}
+.gallery-photo-two {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 34%;
+    height: 100%;
+    opacity: .30;
+    transform: none;
+    object-position: center;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 38%);
+    mask-image: linear-gradient(90deg, transparent, #000 38%);
+}
+.gallery-photo-three {
+    left: 0;
+    bottom: 0;
+    width: 38%;
+    height: 38%;
+    opacity: .22;
+    transform: none;
+    object-position: center;
+    -webkit-mask-image: linear-gradient(0deg, #000, transparent 100%);
+    mask-image: linear-gradient(0deg, #000, transparent 100%);
+}
+.landscape::before {
+    z-index: 1;
+    background:
+        linear-gradient(90deg, rgba(4,17,19,.48) 0%, rgba(5,23,22,.56) 48%, rgba(4,17,19,.72) 100%),
+        linear-gradient(0deg, rgba(3,16,17,.72), transparent 48%, rgba(3,16,17,.28));
+}
+.landscape::after,
+.landscape-glow,
+.topography,
+.orbit,
+.ambient-dot {
+    display: none;
+}
+.login-card {
+    border-color: rgba(255,255,255,.76);
+    box-shadow: 0 34px 100px rgba(0,0,0,.42), 0 8px 28px rgba(0,0,0,.2), inset 0 1px 0 #fff;
+}
+.context-label {
+    border-color: rgba(255,255,255,.25);
+    background: rgba(10,34,31,.56);
+    backdrop-filter: blur(18px);
+}
+.theme-light.mino-login {
+    background: #dce8df;
+}
+.theme-light .brand-gallery {
+    background: #dce8df;
+}
+.theme-light .gallery-photo-one {
+    opacity: .38;
+    filter: saturate(.78) contrast(.96);
+}
+.theme-light .gallery-photo-two { opacity: .18; }
+.theme-light .gallery-photo-three { opacity: .14; }
+.theme-light .landscape::before {
+    background:
+        linear-gradient(90deg, rgba(237,245,237,.58), rgba(237,245,237,.68) 48%, rgba(237,245,237,.78)),
+        linear-gradient(0deg, rgba(230,239,230,.48), transparent 55%);
+}
+.theme-light .context-label {
+    border-color: rgba(45,84,61,.18);
+    background: rgba(245,249,241,.7);
+}
+@media (max-width: 640px) {
+    .gallery-photo-one { inset: 0; width: 100%; height: 100%; opacity: .48; }
+    .gallery-photo-two {
+        top: auto; right: 0; bottom: 0; width: 56%; height: 36%;
+        opacity: .2; -webkit-mask-image: linear-gradient(0deg,#000,transparent);
+        mask-image: linear-gradient(0deg,#000,transparent);
+    }
+    .gallery-photo-three { display: none; }
+    .landscape::before {
+        background: linear-gradient(180deg,rgba(4,17,19,.38),rgba(4,17,19,.68) 55%,rgba(4,17,19,.78));
+    }
+    .theme-light .landscape::before {
+        background: linear-gradient(180deg,rgba(237,245,237,.52),rgba(237,245,237,.72) 55%,rgba(237,245,237,.82));
+    }
+}
