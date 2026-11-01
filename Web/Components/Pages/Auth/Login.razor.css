@@ -931,3 +931,64 @@
     .showcase-trust { gap:5px; }
     .showcase-trust span { font-size:7px; }
 }
+
+
+/* Ensure the official full-bleed background photo sits above the page canvas. */
+.mino-login {
+    position: relative;
+    isolation: isolate;
+    background: transparent !important;
+}
+.login-backdrop {
+    position: absolute;
+    z-index: 0;
+    inset: 0;
+    overflow: hidden;
+    background: #193b3c;
+    pointer-events: none;
+}
+.backdrop-photo {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.backdrop-photo-one {
+    opacity: 1;
+    object-position: center 52%;
+    filter: saturate(.9) contrast(1.04);
+}
+.backdrop-photo-two {
+    opacity: .24;
+    mix-blend-mode: soft-light;
+    object-position: center 60%;
+}
+.backdrop-shade {
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(90deg, rgba(5,25,24,.28) 0%, rgba(5,25,24,.12) 42%, rgba(5,25,24,.58) 100%),
+        linear-gradient(0deg, rgba(3,19,19,.48) 0%, transparent 48%, rgba(3,19,19,.16) 100%);
+}
+.login-header,
+.login-layout,
+.page-footer {
+    position: relative;
+    z-index: 1;
+}
+.login-card {
+    background: rgba(247, 250, 246, .88);
+    border-color: rgba(255,255,255,.72);
+    box-shadow: 0 28px 80px rgba(0,18,20,.34), 0 5px 22px rgba(0,18,20,.18);
+    backdrop-filter: blur(18px) saturate(1.12);
+    -webkit-backdrop-filter: blur(18px) saturate(1.12);
+}
+@media (max-width: 640px) {
+    .login-backdrop { position: absolute; }
+    .backdrop-photo-one { object-position: 54% center; }
+    .backdrop-shade {
+        background: linear-gradient(180deg, rgba(4,24,23,.22), rgba(4,24,23,.42) 52%, rgba(4,24,23,.64));
+    }
+}
