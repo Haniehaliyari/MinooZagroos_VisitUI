@@ -358,3 +358,10 @@
         scroll-behavior: auto !important;
     }
 }
+
+.stage-attribution { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; text-align: left; }
+.stage-attribution a { color: rgba(255,255,255,.62); font-size: 8px; text-decoration: none; }
+.stage-attribution a:hover { color: #fff; text-decoration: underline; }
+@media (max-width: 520px) {
+    .stage-attribution a { font-size: 7px; }
+}
