@@ -9,85 +9,73 @@
 <PageTitle>ورود به سامانه | مینو زاگرس</PageTitle>
 
 <main class="mino-login @(isDarkTheme ? "theme-dark" : "theme-light")" dir="rtl">
-    <div class="landscape" aria-hidden="true">
-        <div class="brand-gallery" aria-hidden="true">
-            <img class="gallery-photo gallery-photo-one" src="https://minoozagros.com/wp-content/uploads/2023/08/P-1-768x513.jpg" alt="" />
-            <img class="gallery-photo gallery-photo-two" src="https://minoozagros.com/wp-content/uploads/2023/08/P-5-768x513.jpg" alt="" />
-            <img class="gallery-photo gallery-photo-three" src="https://minoozagros.com/wp-content/uploads/2023/08/P-8-768x513.jpg" alt="" />
-        </div>
-        <div class="landscape-glow glow-top"></div>
-        <div class="landscape-glow glow-bottom"></div>
-        <svg class="topography" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice">
-            <g fill="none" stroke="currentColor" stroke-width="1.15">
-                <path d="M-80 210C130 50 250 80 390 190S650 340 830 180 1120 40 1320 170s250 190 390 40"/>
-                <path d="M-90 235C120 75 255 110 400 215S655 365 850 205 1135 70 1335 195s240 190 390 55"/>
-                <path d="M-100 260C110 100 260 140 410 240S660 390 870 230 1150 100 1350 220s230 190 390 70"/>
-                <path d="M-110 285C100 125 265 170 420 265S665 415 890 255 1165 130 1365 245s220 190 390 85"/>
-                <path d="M-120 310C90 150 270 200 430 290S670 440 910 280 1180 160 1380 270s210 190 390 100"/>
-                <path d="M-120 720C80 570 250 560 410 680s300 180 470 45 300-210 480-80 230 220 380 95"/>
-                <path d="M-130 745C70 595 250 590 420 705s300 180 480 50 300-210 490-85 220 220 370 110"/>
-                <path d="M-140 770C60 620 250 620 430 730s300 180 490 55 300-210 500-90 210 220 360 125"/>
-                <path d="M-150 795C50 645 250 650 440 755s300 180 500 60 300-210 510-95 200 220 350 140"/>
-                <path d="M-160 820C40 670 250 680 450 780s300 180 510 65 300-210 520-100 190 220 340 155"/>
-            </g>
-        </svg>
-        <div class="orbit orbit-one"></div>
-        <div class="orbit orbit-two"></div>
-        <div class="ambient-dot dot-one"></div>
-        <div class="ambient-dot dot-two"></div>
-        <div class="ambient-dot dot-three"></div>
+    <div class="login-backdrop" aria-hidden="true">
+        <img class="backdrop-photo backdrop-photo-one" src="https://minoozagros.com/wp-content/uploads/2023/08/P-1-768x513.jpg" alt="" />
+        <img class="backdrop-photo backdrop-photo-two" src="https://minoozagros.com/wp-content/uploads/2023/08/P-5-768x513.jpg" alt="" />
+        <div class="backdrop-shade"></div>
     </div>
 
+    <header class="login-header">
+        <a class="brand-lockup" href="https://minoozagros.com/" aria-label="وب‌سایت مینو زاگرس">
+            <img src="https://minoozagros.com/wp-content/uploads/2026/01/logo-minoozagros.png" alt="لوگوی مینو زاگرس" />
+            <span class="brand-divider"></span>
+            <span class="brand-slogan"><strong>طراوت، سلامت، زندگی بهتر</strong><small>از دل زاگرس، برای تمام ایران</small></span>
+        </a>
+        <div class="header-actions">
+            <span class="language-chip"><span aria-hidden="true">◎</span> فارسی</span>
             <button class="theme-toggle" type="button" @onclick="ToggleTheme" aria-label="@(isDarkTheme ? "فعال‌سازی حالت روشن" : "فعال‌سازی حالت تاریک")" title="@(isDarkTheme ? "حالت روشن" : "حالت تاریک")">
-            @if (isDarkTheme)
-            {
-                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg>
-                <span>حالت روشن</span>
-            }
-            else
-            {
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 15.5A8.5 8.5 0 0 1 8.5 3.5 8.5 8.5 0 1 0 20.5 15.5Z"/></svg>
-                <span>حالت تاریک</span>
-            }
-        </button>
-
-    <header class="page-brand">
-        <div class="brand-mark">
-            <img src="https://minoozagros.com/wp-content/uploads/2026/01/logo-minoozagros.png"
-                 alt="لوگوی رسمی شرکت صنایع غذایی و آشامیدنی مینو زاگرس" />
+                @if (isDarkTheme)
+                {
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg>
+                }
+                else
+                {
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 15.5A8.5 8.5 0 0 1 8.5 3.5 8.5 8.5 0 1 0 20.5 15.5Z"/></svg>
+                }
+            </button>
         </div>
     </header>
 
-    <section class="login-stage" aria-label="فرم ورود">
-        <div class="context-label context-top">
-            <span class="context-icon">
-                <svg viewBox="0 0 24 24"><path d="M4 19V9l8-5 8 5v10M8 19v-6h8v6M2 19h20"/></svg>
-            </span>
-            <span><b>بیشه</b><small>آب معدنی و آشامیدنی</small></span>
-        </div>
-        <div class="context-label context-right">
-            <span class="context-icon">
-                <svg viewBox="0 0 24 24"><path d="M3 7h18l-2 13H5L3 7ZM8 7l4-4 4 4M8 11v5m8-5v5"/></svg>
-            </span>
-            <span><b>آیسلند</b><small>تنوعی از نوشیدنی‌های خنک</small></span>
-        </div>
-        <div class="context-label context-bottom">
-            <span class="context-icon">
-                <svg viewBox="0 0 24 24"><path d="M4 19V5m0 14h17M8 16v-4m5 4V8m5 8v-7"/></svg>
-            </span>
-            <span><b>ماراتن</b><small>انرژی و نشاط</small></span>
+    <section class="login-layout" aria-label="ورود به سامانه">
+        <div class="brand-showcase">
+            <div class="showcase-copy">
+                <span class="showcase-kicker">MINOO ZAGROS · SINCE 2006</span>
+                <h2>طراوت زاگرس،<br /><em>در هر لحظه</em> همراه شما</h2>
+                <p>از آب معدنی تا نوشیدنی‌های گازدار؛ کیفیتی از دل طبیعت برای سفره‌های ایرانی.</p>
+            </div>
+            <div class="product-stage" aria-label="محصولات مینو زاگرس">
+                <div class="product-item product-water">
+                    <img src="https://minoozagros.com/wp-content/uploads/2023/08/P-14.png" alt="آب معدنی آیسلند" />
+                    <span>آب معدنی آیسلند</span>
+                </div>
+                <div class="product-item product-cola">
+                    <img src="https://minoozagros.com/wp-content/uploads/2023/08/P-8.png" alt="نوشابه گازدار آیسلند" />
+                    <span>نوشابه آیسلند</span>
+                </div>
+                <div class="product-item product-lemon">
+                    <img src="https://minoozagros.com/wp-content/uploads/2023/08/P-12.png" alt="نوشیدنی لیموناد آیسلند" />
+                    <span>لیموناد آیسلند</span>
+                </div>
+                <div class="product-item product-malt">
+                    <img src="https://minoozagros.com/wp-content/uploads/2023/08/P-3.png" alt="ماءالشعیر کلاسیک آیسلند" />
+                    <span>ماءالشعیر آیسلند</span>
+                </div>
+            </div>
+            <div class="showcase-trust">
+                <span><b>✓</b> کیفیت تضمینی</span><i></i>
+                <span><b>✧</b> تولید سالم و طبیعی</span><i></i>
+                <span><b>♡</b> همراه اعتماد شما</span>
+            </div>
         </div>
 
         <div class="login-card">
-            <div class="card-topline"><span class="status-dot"></span><span>درگاه امن سازمانی</span><span class="topline-rule"></span><span class="topline-en">MINOO / PORTAL</span></div>
-
+            <div class="card-brand-emblem">
+                <img src="https://minoozagros.com/wp-content/uploads/2026/01/logo-minoozagros.png" alt="نشان مینو زاگرس" />
+            </div>
             <div class="card-heading">
-                <div class="heading-icon" aria-hidden="true">
-                    <svg viewBox="0 0 48 48"><path d="M24 5 8 13v11c0 9 6.5 15.5 16 19 9.5-3.5 16-10 16-19V13L24 5Z"/><path d="m17 24 4.5 4.5L31 19"/></svg>
-                </div>
                 <p class="eyebrow">خوش آمدید</p>
-                <h1>به مینو زاگرس وارد شوید</h1>
-                <p class="intro-copy">برای ورود به سامانه فروش و ویزیت شرکت صنایع غذایی و آشامیدنی مینو زاگرس، اطلاعات حساب خود را وارد کنید.</p>
+                <h1>ورود به سامانه</h1>
+                <p class="intro-copy">به دنیای مینو زاگرس خوش آمدید</p>
             </div>
 
             <form class="login-form" @onsubmit="HandleLogin" @onsubmit:preventDefault>
@@ -99,7 +87,6 @@
                                placeholder="نام کاربری خود را وارد کنید" autocomplete="username" required disabled="@isLoading" />
                     </div>
                 </div>
-
                 <div class="field-block">
                     <label for="password">رمز عبور</label>
                     <div class="field-control">
@@ -120,43 +107,30 @@
                         </button>
                     </div>
                 </div>
-
                 @if (!string.IsNullOrWhiteSpace(errorMessage))
                 {
-                    <div class="form-error" role="alert">
-                        <span class="error-mark">!</span>
-                        <span>@errorMessage</span>
-                    </div>
+                    <div class="form-error" role="alert"><span class="error-mark">!</span><span>@errorMessage</span></div>
                 }
-
                 <button class="login-submit" type="submit" disabled="@isLoading">
                     @if (isLoading)
                     {
-                        <span class="submit-spinner" aria-hidden="true"></span>
-                        <span>در حال بررسی اطلاعات...</span>
+                        <span class="submit-spinner" aria-hidden="true"></span><span>در حال بررسی اطلاعات...</span>
                     }
                     else
                     {
-                        <span>ورود به سامانه</span>
-                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+                        <span>ورود به سامانه</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
                     }
                 </button>
             </form>
-
-            <div class="card-footnote">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 19 6v5c0 4.7-2.8 8-7 10-4.2-2-7-5.3-7-10V6l7-3Z"/><path d="m9 12 2 2 4-4"/></svg>
-                <span>دسترسی فقط برای کاربران مجاز سازمان امکان‌پذیر است.</span>
-            </div>
+            <div class="card-footnote"><span class="secure-icon">✓</span><span>دسترسی فقط برای کاربران مجاز سازمان امکان‌پذیر است.</span></div>
         </div>
     </section>
 
     <footer class="page-footer">
-        <span>© @DateTime.Now.Year مینو زاگرس</span>
-        <span class="footer-separator"></span>
-        <span class="footer-location">لرستان، خرم‌آباد، کیلومتر ۱۸ جاده خرم‌آباد–کرمانشاه</span>
+        <span>© @DateTime.Now.Year شرکت مینو زاگرس · تمامی حقوق محفوظ است.</span>
+        <span class="footer-location">خرم‌آباد، لرستان</span>
     </footer>
 </main>
-
 @code {
     private LoginRequestDTO loginModel = new();
     private string? errorMessage;
