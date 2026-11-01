@@ -330,3 +330,109 @@
     .brand-mark { width: 48px; height: 48px; padding: 3px; }
     .footer-location { display: none; }
 }
+
+
+/* Minoo Zagros: beverage-led identity (replace the unrelated generic mountain artwork). */
+.landscape {
+    background:
+        radial-gradient(ellipse at 18% 78%, rgba(26, 126, 102, .34), transparent 34%),
+        radial-gradient(ellipse at 84% 18%, rgba(202, 173, 112, .18), transparent 30%),
+        linear-gradient(135deg, #082c27 0%, #10483a 48%, #092f2c 100%);
+}
+.scene-image, .topography { display: none !important; }
+.landscape-glow { opacity: .16; }
+.beverage-identity {
+    position: absolute;
+    z-index: 0;
+    left: clamp(20px, 7vw, 112px);
+    bottom: clamp(86px, 13vh, 150px);
+    width: clamp(230px, 27vw, 390px);
+    min-height: 330px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 22px;
+    color: #f5f1df;
+    pointer-events: none;
+    opacity: .92;
+}
+.identity-copy { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
+.identity-kicker { color: #d5bd87; font: 700 9px Arial, sans-serif; letter-spacing: 4px; }
+.identity-copy strong { font-size: clamp(17px, 1.8vw, 23px); font-weight: 850; letter-spacing: -.4px; }
+.identity-copy > span:last-child { color: rgba(238, 241, 222, .62); font-size: 10px; }
+.bottle-line { height: 175px; display: flex; align-items: flex-end; justify-content: center; gap: 22px; }
+.bottle {
+    position: relative;
+    display: block;
+    width: 48px;
+    height: 132px;
+    border: 1px solid rgba(237, 244, 225, .48);
+    border-radius: 13px 13px 10px 10px;
+    background: linear-gradient(100deg, rgba(255,255,255,.18), rgba(255,255,255,.035) 38%, rgba(255,255,255,.14));
+    box-shadow: inset 5px 0 10px rgba(255,255,255,.07), 0 16px 30px rgba(0,0,0,.18);
+}
+.bottle::before {
+    content: "";
+    position: absolute;
+    width: 19px;
+    height: 22px;
+    left: 13px;
+    top: -21px;
+    border: 1px solid rgba(237,244,225,.45);
+    border-bottom: 0;
+    border-radius: 5px 5px 0 0;
+    background: rgba(232,239,220,.15);
+}
+.bottle::after {
+    content: "";
+    position: absolute;
+    left: 5px; right: 5px; top: 48px;
+    height: 35px;
+    border-radius: 5px;
+    background: rgba(219, 198, 143, .78);
+    box-shadow: 0 0 18px rgba(219,198,143,.12);
+}
+.bottle i { position: absolute; inset: 8px auto 8px 7px; width: 3px; border-radius: 4px; background: rgba(255,255,255,.22); }
+.bottle-bisheh { height: 145px; border-color: rgba(173,214,221,.7); }
+.bottle-bisheh::after { background: rgba(103,174,190,.78); }
+.bottle-iceland { height: 124px; width: 54px; border-radius: 17px 17px 11px 11px; }
+.bottle-iceland::after { background: rgba(142,177,111,.82); }
+.bottle-marathon { height: 158px; width: 43px; border-radius: 10px 10px 8px 8px; }
+.bottle-marathon::after { background: rgba(191,91,68,.82); }
+.identity-brands { width: 100%; display: flex; justify-content: center; gap: 18px; color: rgba(245,241,223,.82); font-size: 10px; font-weight: 800; }
+.identity-brands span { min-width: 58px; text-align: center; }
+.context-label { border-color: rgba(219,198,143,.28); background: linear-gradient(135deg, rgba(13,65,53,.78), rgba(13,65,53,.42)); }
+.context-icon { color: #d8c18c; border-color: rgba(216,193,140,.35); }
+.page-brand .brand-mark {
+    width: 68px; height: 68px; padding: 7px;
+    border: 1px solid rgba(255,255,255,.55); border-radius: 16px;
+    background: #fff; box-shadow: 0 12px 28px rgba(0,0,0,.2);
+}
+.page-brand .brand-mark img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: normal; }
+.theme-light .landscape {
+    background:
+        radial-gradient(ellipse at 18% 78%, rgba(112,164,129,.24), transparent 34%),
+        radial-gradient(ellipse at 84% 18%, rgba(202,173,112,.2), transparent 30%),
+        linear-gradient(135deg, #e8eee2 0%, #d5e5d8 48%, #f0ecdf 100%);
+}
+.theme-light .beverage-identity { color: #1c4b38; }
+.theme-light .identity-copy > span:last-child,
+.theme-light .identity-brands { color: rgba(28,75,56,.7); }
+.theme-light .bottle { border-color: rgba(38,94,70,.48); background: linear-gradient(100deg, rgba(255,255,255,.72), rgba(255,255,255,.16) 38%, rgba(255,255,255,.48)); }
+.theme-light .bottle::before { border-color: rgba(38,94,70,.42); background: rgba(255,255,255,.45); }
+.theme-light .context-label { color: #214a38; border-color: rgba(57,103,73,.2); background: rgba(255,255,255,.72); }
+.theme-light .context-label small { color: #66816c; }
+@media (max-width: 1024px) {
+    .beverage-identity { left: 50%; bottom: 16px; width: 230px; min-height: 0; gap: 8px; transform: translateX(-50%); opacity: .36; }
+    .identity-copy { display: none; }
+    .bottle-line { height: 104px; gap: 15px; transform: scale(.72); transform-origin: bottom center; }
+    .identity-brands { display: none; }
+}
+@media (max-width: 640px) {
+    .beverage-identity { bottom: 0; opacity: .18; }
+    .page-brand .brand-mark { width: 48px; height: 48px; padding: 4px; }
+}
+@media (max-width: 380px) {
+    .page-brand .brand-mark { width: 43px; height: 43px; }
+}

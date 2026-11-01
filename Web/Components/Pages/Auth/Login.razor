@@ -10,7 +10,19 @@
 
 <main class="mino-login @(isDarkTheme ? "theme-dark" : "theme-light")" dir="rtl">
     <div class="landscape" aria-hidden="true">
-        <div class="scene-image"><img src="/images/login-zagros-scene.svg" alt="" /></div>
+        <div class="beverage-identity" aria-hidden="true">
+            <div class="identity-copy">
+                <span class="identity-kicker">MINOO ZAGROS</span>
+                <strong>طراوت، کیفیت، اعتماد</strong>
+                <span>از تولید تا همراهی با مشتریان</span>
+            </div>
+            <div class="bottle-line">
+                <span class="bottle bottle-bisheh"><i></i></span>
+                <span class="bottle bottle-iceland"><i></i></span>
+                <span class="bottle bottle-marathon"><i></i></span>
+            </div>
+            <div class="identity-brands"><span>بیشه</span><span>آیسلند</span><span>ماراتن</span></div>
+        </div>
         <div class="landscape-glow glow-top"></div>
         <div class="landscape-glow glow-bottom"></div>
         <svg class="topography" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice">
@@ -53,7 +65,7 @@
         </div>
         <div class="brand-copy">
             <strong>مینو زاگرس</strong>
-            <span>سامانه یکپارچه فروش و ویزیت</span>
+            <span>صنایع غذایی و آشامیدنی</span>
         </div>
     </header>
 
@@ -62,19 +74,19 @@
             <span class="context-icon">
                 <svg viewBox="0 0 24 24"><path d="M4 19V9l8-5 8 5v10M8 19v-6h8v6M2 19h20"/></svg>
             </span>
-            <span><b>مدیریت مشتریان</b><small>ارتباطات و پیگیری</small></span>
+            <span><b>بیشه</b><small>آب معدنی و آشامیدنی</small></span>
         </div>
         <div class="context-label context-right">
             <span class="context-icon">
                 <svg viewBox="0 0 24 24"><path d="M3 7h18l-2 13H5L3 7ZM8 7l4-4 4 4M8 11v5m8-5v5"/></svg>
             </span>
-            <span><b>سفارش و محصولات</b><small>فرآیند فروش یکپارچه</small></span>
+            <span><b>آیسلند</b><small>تنوعی از نوشیدنی‌های خنک</small></span>
         </div>
         <div class="context-label context-bottom">
             <span class="context-icon">
                 <svg viewBox="0 0 24 24"><path d="M4 19V5m0 14h17M8 16v-4m5 4V8m5 8v-7"/></svg>
             </span>
-            <span><b>گزارش‌های مدیریتی</b><small>دید روشن از عملکرد</small></span>
+            <span><b>ماراتن</b><small>انرژی و نشاط</small></span>
         </div>
 
         <div class="login-card">
@@ -86,7 +98,7 @@
                 </div>
                 <p class="eyebrow">خوش آمدید</p>
                 <h1>به مینو زاگرس وارد شوید</h1>
-                <p class="intro-copy">برای دسترسی به میز کار فروش و ویزیت، اطلاعات حساب خود را وارد کنید.</p>
+                <p class="intro-copy">برای ورود به سامانه فروش و ویزیت شرکت صنایع غذایی و آشامیدنی مینو زاگرس، اطلاعات حساب خود را وارد کنید.</p>
             </div>
 
             <form class="login-form" @onsubmit="HandleLogin" @onsubmit:preventDefault>
