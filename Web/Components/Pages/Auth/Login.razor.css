@@ -197,3 +197,91 @@
 @media (prefers-reduced-motion:reduce) {
  .product-item,.product-item img { animation:none !important; transition:none !important; }
 }
+
+
+/* Brand refresh: crisp CSS-only Zagros landscape, no raster background asset */
+.mino-login {
+  --ink:#123b4a;
+  --green:#18794e;
+  --deep:#075c50;
+  --mint:#d9f0df;
+  color:var(--ink);
+  background:#dff1e9;
+}
+.login-backdrop {
+  background:
+    radial-gradient(ellipse at 76% 17%,rgba(255,244,194,.95) 0 5%,rgba(255,244,194,.28) 13%,transparent 27%),
+    linear-gradient(180deg,#a9dce0 0%,#d4eee5 49%,#e5f0d9 100%);
+  isolation:isolate;
+}
+.login-backdrop::before {
+  content:"";
+  position:absolute;
+  inset:18% -4% 17%;
+  z-index:0;
+  background:
+    linear-gradient(145deg,transparent 0 38%,rgba(255,255,255,.42) 38.2% 39%,transparent 39.2%),
+    linear-gradient(35deg,transparent 0 46%,rgba(255,255,255,.32) 46.2% 47%,transparent 47.2%),
+    linear-gradient(180deg,#8bbab0 0%,#4e8d7c 100%);
+  clip-path:polygon(0 65%,12% 38%,20% 53%,34% 15%,46% 52%,58% 26%,70% 55%,82% 20%,100% 62%,100% 100%,0 100%);
+  opacity:.82;
+}
+.login-backdrop::after {
+  content:"";
+  position:absolute;
+  z-index:1;
+  inset:43% -8% -12%;
+  background:
+    radial-gradient(ellipse at 15% 90%,#397d61 0 28%,transparent 29%),
+    radial-gradient(ellipse at 53% 104%,#75a978 0 37%,transparent 38%),
+    radial-gradient(ellipse at 91% 94%,#286b56 0 31%,transparent 32%),
+    linear-gradient(180deg,transparent 0 35%,rgba(228,242,210,.45) 36%,#9ecb9b 100%);
+}
+.backdrop-shade {
+  z-index:2;
+  background:
+    linear-gradient(90deg,rgba(239,250,244,.34),rgba(239,250,244,.12) 52%,rgba(8,48,48,.12)),
+    linear-gradient(0deg,rgba(8,45,40,.3),transparent 42%,rgba(255,255,255,.08));
+}
+.backdrop-photo { display:none; }
+.brand-lockup { color:#104a49; }
+.brand-slogan strong { color:#124c43; }
+.brand-slogan small { color:#315f61; }
+.showcase-copy { color:#103f49; text-shadow:0 2px 18px rgba(242,255,247,.7); }
+.showcase-kicker { color:#16784e; }
+.showcase-copy h2 em { color:#147b50; }
+.showcase-copy p { color:#245a5c; }
+.theme-toggle { background:rgba(13,75,68,.86); }
+.login-card {
+  background:rgba(250,255,252,.78);
+  border-color:rgba(255,255,255,.88);
+  box-shadow:0 24px 70px rgba(15,65,57,.2),inset 0 1px 0 rgba(255,255,255,.95);
+  backdrop-filter:blur(26px) saturate(1.2);
+  -webkit-backdrop-filter:blur(26px) saturate(1.2);
+}
+.card-brand-emblem { background:linear-gradient(145deg,#fff,#e2f2e7); }
+.card-heading h1 { color:#143d42; }
+.field-control { border-color:rgba(73,132,112,.3); background:rgba(255,255,255,.92); }
+.field-control:focus-within { border-color:#279366; box-shadow:0 0 0 4px rgba(39,147,102,.13); }
+.login-submit {
+  background:linear-gradient(105deg,#43a95f 0%,#16835b 52%,#087c78 100%);
+  box-shadow:0 10px 24px rgba(20,126,83,.22),inset 0 1px 0 rgba(255,255,255,.35);
+}
+.login-submit:hover:not(:disabled) { box-shadow:0 14px 28px rgba(20,126,83,.3); }
+.showcase-trust { background:rgba(13,65,54,.68); border-color:rgba(255,255,255,.42); }
+.footer-location { color:#174e43; background:rgba(246,255,246,.86); }
+.theme-dark.mino-login { background:#dff1e9; }
+.theme-dark .backdrop-shade {
+  background:
+    linear-gradient(90deg,rgba(225,246,237,.24),rgba(225,246,237,.06) 55%,rgba(5,39,42,.22)),
+    linear-gradient(0deg,rgba(4,34,33,.4),transparent 42%,rgba(255,255,255,.08));
+}
+.theme-light .backdrop-shade {
+  background:linear-gradient(90deg,rgba(245,255,248,.38),rgba(245,255,248,.16) 55%,rgba(14,70,58,.08)),
+    linear-gradient(0deg,rgba(11,55,44,.22),transparent 42%);
+}
+@media (max-width:760px) {
+  .login-backdrop::before { inset:24% -20% 22%; }
+  .login-backdrop::after { inset:55% -15% -5%; }
+  .backdrop-shade { background:linear-gradient(180deg,rgba(240,251,245,.28),rgba(231,247,237,.14) 48%,rgba(7,43,39,.22)); }
+}
