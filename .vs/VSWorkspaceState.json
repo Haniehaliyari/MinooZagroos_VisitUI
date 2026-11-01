@@ -1,9 +1,9 @@
 {
   "ExpandedNodes": [
     "",
-    "\\src",
-    "\\src\\MinooZagroos.Web"
+    "\\.github",
+    "\\Web"
   ],
-  "SelectedNode": "\\index.html",
+  "SelectedNode": "\\MinooZagroos_VisitUI.slnx",
   "PreviewInSolutionExplorer": false
 }
