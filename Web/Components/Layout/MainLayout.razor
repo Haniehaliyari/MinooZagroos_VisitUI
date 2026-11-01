@@ -1,7 +1,7 @@
 ﻿@inherits LayoutComponentBase
-@using MyProject.Services.Auth
-@inject AuthService AuthService
-@inject CustomAuthStateProvider AuthStateProvider
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.JSInterop
+@inject IJSRuntime JSRuntime
 @inject NavigationManager Navigation
 
 <div class="page">
@@ -10,7 +10,6 @@
     </div>
 
     <main>
-        @* ===== هدر بالای صفحه ===== *@
         <div style="background: white;
                     border-bottom: 1px solid #f0f0f0;
                     padding: 12px 24px;
@@ -44,31 +43,23 @@
 </div>
 
 @code {
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthenticationStateTask { get; set; }
+
     private string username = "کاربر";
 
     protected override async Task OnInitializedAsync()
     {
-        var token = await AuthService.GetTokenAsync();
-        if (!string.IsNullOrEmpty(token))
-        {
-            try
-            {
-                var handler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
-                var jwt = handler.ReadJwtToken(token);
-                username = jwt.Claims.FirstOrDefault(c => c.Type == "unique_name")?.Value
-                           ?? jwt.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Name)?.Value
-                           ?? "کاربر";
-            }
-            catch
-            {
-                username = "کاربر";
-            }
-        }
+        if (AuthenticationStateTask is null)
+            return;
+
+        var state = await AuthenticationStateTask;
+        username = state.User.Identity?.Name ?? "کاربر";
     }
 
     private async Task Logout()
     {
-        await AuthStateProvider.LogoutAsync();
+        await JSRuntime.InvokeVoidAsync("authCookie.logout");
         Navigation.NavigateTo("/login", forceLoad: true);
     }
 }
