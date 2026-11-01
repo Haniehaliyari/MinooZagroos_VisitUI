@@ -509,3 +509,89 @@
             linear-gradient(145deg, #e8f2ec 0%, #d9eee3 58%, #f3ebdc 100%);
     }
 }
+
+
+/* Use genuine photography from the official Minoo Zagros website gallery. */
+.beverage-identity { display: none !important; }
+.brand-gallery {
+    position: absolute;
+    z-index: 0;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+.gallery-photo {
+    position: absolute;
+    display: block;
+    width: clamp(280px, 34vw, 560px);
+    height: clamp(190px, 25vw, 390px);
+    object-fit: cover;
+    border: 1px solid rgba(231, 239, 226, .22);
+    border-radius: 26px;
+    opacity: .19;
+    filter: saturate(.82) contrast(1.04);
+    box-shadow: 0 28px 70px rgba(0, 12, 10, .2);
+}
+.gallery-photo-one {
+    top: 8%;
+    left: -5%;
+    transform: rotate(-8deg);
+}
+.gallery-photo-two {
+    right: -7%;
+    bottom: 5%;
+    transform: rotate(7deg);
+}
+.gallery-photo-three {
+    top: 39%;
+    left: 13%;
+    width: clamp(220px, 25vw, 390px);
+    height: clamp(150px, 18vw, 280px);
+    opacity: .11;
+    transform: rotate(5deg);
+}
+.landscape-glow { z-index: 1; }
+.topography, .orbit, .ambient-dot { z-index: 2; }
+
+/* Larger blue-only brand mark: remove the white tile and blend white pixels away. */
+.page-brand .brand-mark {
+    width: 104px;
+    height: 88px;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+}
+.page-brand .brand-mark img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    mix-blend-mode: multiply;
+    filter: brightness(1.45) saturate(1.12);
+}
+.theme-light .page-brand .brand-mark img {
+    filter: brightness(1.18) saturate(1.1);
+}
+@media (max-width: 640px) {
+    .page-brand .brand-mark {
+        width: 76px;
+        height: 64px;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        box-shadow: none;
+    }
+    .gallery-photo {
+        width: 76vw;
+        height: 34vw;
+        opacity: .14;
+        border-radius: 18px;
+    }
+    .gallery-photo-one { top: 13%; left: -25%; }
+    .gallery-photo-two { right: -28%; bottom: 8%; }
+    .gallery-photo-three { display: none; }
+}
+@media (max-width: 380px) {
+    .page-brand .brand-mark { width: 68px; height: 58px; }
+}
