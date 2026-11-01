@@ -33,6 +33,7 @@ builder.Services.AddHttpClient("BackendApi", client =>
 });
 
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<BackendApiClient>();
 
 var app = builder.Build();
 
