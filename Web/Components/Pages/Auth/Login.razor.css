@@ -595,3 +595,15 @@
 @media (max-width: 380px) {
     .page-brand .brand-mark { width: 68px; height: 58px; }
 }
+
+
+/* Keep the theme switch in the upper-left corner, independent of the brand logo. */
+.page-brand { right: clamp(24px, 5vw, 76px); left: auto; }
+.theme-toggle { position: fixed; z-index: 20; top: 32px; left: clamp(24px, 5vw, 76px); right: auto; }
+@media (max-width: 640px) {
+    .page-brand { top: 19px; right: 18px; left: auto; }
+    .theme-toggle { top: 19px; left: 18px; min-height: 38px; padding: 0 10px; font-size: 9px; }
+}
+@media (max-width: 380px) {
+    .theme-toggle { gap: 5px; padding: 0 8px; }
+}

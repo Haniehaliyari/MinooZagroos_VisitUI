@@ -38,8 +38,7 @@
         <div class="ambient-dot dot-three"></div>
     </div>
 
-    <header class="page-brand">
-        <button class="theme-toggle" type="button" @onclick="ToggleTheme" aria-label="@(isDarkTheme ? "فعال‌سازی حالت روشن" : "فعال‌سازی حالت تاریک")" title="@(isDarkTheme ? "حالت روشن" : "حالت تاریک")">
+            <button class="theme-toggle" type="button" @onclick="ToggleTheme" aria-label="@(isDarkTheme ? "فعال‌سازی حالت روشن" : "فعال‌سازی حالت تاریک")" title="@(isDarkTheme ? "حالت روشن" : "حالت تاریک")">
             @if (isDarkTheme)
             {
                 <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg>
@@ -51,13 +50,11 @@
                 <span>حالت تاریک</span>
             }
         </button>
+
+    <header class="page-brand">
         <div class="brand-mark">
             <img src="https://minoozagros.com/wp-content/uploads/2026/01/logo-minoozagros.png"
                  alt="لوگوی رسمی شرکت صنایع غذایی و آشامیدنی مینو زاگرس" />
-        </div>
-        <div class="brand-copy">
-            <strong>مینو زاگرس</strong>
-            <span>صنایع غذایی و آشامیدنی</span>
         </div>
     </header>
 
