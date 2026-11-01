@@ -1,8 +1,21 @@
-﻿@page "/"
+@page "/"
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager Navigation
 
-<PageTitle>Home</PageTitle>
+<PageTitle>مینو زاگرس</PageTitle>
 
-<h1>Hello, world!</h1>
+<div class="root-redirect" dir="rtl">
+    در حال انتقال به سامانه...
+</div>
 
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var destination = authenticationState.User.Identity?.IsAuthenticated == true
+            ? "/dashboard"
+            : "/login";
 
-Welcome to your new app.
+        Navigation.NavigateTo(destination, replace: true);
+    }
+}

@@ -1,4 +1,4 @@
-﻿@page "/login"
+@page "/login"
 @layout LoginLayout
 @using Microsoft.JSInterop
 @using Web.Components.Layout
@@ -6,70 +6,149 @@
 @inject IJSRuntime JSRuntime
 @inject NavigationManager Navigation
 
-<PageTitle>ورود به سیستم</PageTitle>
+<PageTitle>ورود | مینو زاگرس</PageTitle>
 
-<Card Bordered="false" Style="width: 420px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); border-radius: 12px;">
-    <div style="text-align: center; margin-bottom: 32px;">
-        <h2 style="font-weight: 700; color: #1890ff; margin-bottom: 8px;">مینوزارگرس</h2>
-        <p style="color: #8c8c8c;">سیستم فروش مویرگی و ویزیت</p>
-    </div>
+<div class="login-page" dir="rtl">
+    <section class="login-visual" aria-label="مینو زاگرس">
+        <div class="visual-glow visual-glow-one"></div>
+        <div class="visual-glow visual-glow-two"></div>
+        <div class="brand-lockup">
+            <div class="brand-mark" aria-hidden="true">
+                <svg viewBox="0 0 52 52" role="img">
+                    <path d="M26 4C20 15 11 25 11 34a15 15 0 0 0 30 0C41 25 32 15 26 4Z" fill="none" stroke="currentColor" stroke-width="2.6"/>
+                    <path d="M16 34c5 4 15 4 20 0M20 27c2-2 4-3 6-3s4 1 6 3" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <div>
+                <div class="brand-name">مینو زاگرس</div>
+                <div class="brand-caption">طراوت زاگرس، جریان زندگی</div>
+            </div>
+        </div>
 
-    <Form Model="loginModel" OnFinish="HandleLogin" Layout="FormLayout.Vertical">
-        <FormItem Label="نام کاربری">
-            <Input @bind-Value="loginModel.Username"
-                   Placeholder="نام کاربری خود را وارد کنید"
-                   Size="InputSize.Large" />
-        </FormItem>
+        <div class="visual-copy">
+            <span class="visual-kicker"><span></span> از دل طبیعت زاگرس</span>
+            <h1>هر قطره،<br />روایتی از <em>طراوت</em></h1>
+            <p>از سرسبزی خرم‌آباد تا لحظه‌های تازه زندگی؛ همراه شما در مسیر پخش و فروش محصولات مینو زاگرس.</p>
+            <div class="visual-tags">
+                <span><i>✦</i> آب آشامیدنی</span>
+                <span><i>✦</i> دلستر و نوشیدنی</span>
+                <span><i>✦</i> پخش هوشمند</span>
+            </div>
+        </div>
 
-        <FormItem Label="رمز عبور">
-            <InputPassword @bind-Value="loginModel.Password"
-                           Placeholder="رمز عبور خود را وارد کنید"
-                           Size="InputSize.Large" />
-        </FormItem>
+        <div class="landscape" aria-hidden="true">
+            <svg viewBox="0 0 760 340" preserveAspectRatio="xMidYMax slice">
+                <path d="M0 170 95 90l70 57 93-105 105 120 82-73 95 80 78-48 142 90v129H0Z" fill="#a5d7a6" opacity=".25"/>
+                <path d="m0 210 105-93 85 65 105-117 112 124 90-70 105 91 83-50 75 53v127H0Z" fill="#72bd83" opacity=".45"/>
+                <path d="M0 250c112-62 180-18 278-57s160-30 246 14 157 5 236-18v151H0Z" fill="#2d8e69" opacity=".8"/>
+                <path d="M0 283c108-42 198-14 285-35s163-19 245 15 147 13 230-6v83H0Z" fill="#176c59"/>
+                <path d="M325 340c-9-38 15-62 50-81 33-18 54-33 55-58 1-19-11-33-27-42 43 12 67 38 60 68-7 29-43 47-73 66-25 16-36 29-35 47Z" fill="#b9e9e8" opacity=".92"/>
+            </svg>
+        </div>
+        <div class="visual-footer"><span></span> خرم‌آباد، سرزمین چشمه‌ها و بلوط‌ها</div>
+    </section>
 
-        @if (!string.IsNullOrEmpty(errorMessage))
-        {
-            <Alert Type="AlertType.Error" Message="@errorMessage" ShowIcon="true" Style="margin-bottom: 16px;" />
-        }
+    <section class="login-panel">
+        <div class="mobile-brand">
+            <div class="brand-mark" aria-hidden="true">💧</div>
+            <span>مینو زاگرس</span>
+        </div>
 
-        <FormItem>
-            <Button Type="ButtonType.Primary"
-                    HtmlType="submit"
-                    Size="ButtonSize.Large"
-                    Style="width: 100%;"
-                    Loading="isLoading">
-                ورود به سیستم
-            </Button>
-        </FormItem>
-    </Form>
-</Card>
+        <div class="login-card">
+            <div class="form-heading">
+                <span class="form-eyebrow">پنل یکپارچه سازمانی</span>
+                <h2>خوش آمدید</h2>
+                <p>برای ورود به سامانه، اطلاعات حساب کاربری خود را وارد کنید.</p>
+            </div>
+
+            <form class="login-form" @onsubmit="HandleLogin" @onsubmit:preventDefault>
+                <div class="field-group">
+                    <label for="username">نام کاربری</label>
+                    <div class="input-wrap">
+                        <span class="field-icon" aria-hidden="true">♙</span>
+                        <input id="username" type="text" @bind="loginModel.Username"
+                               placeholder="نام کاربری خود را وارد کنید"
+                               autocomplete="username" required disabled="@isLoading" />
+                    </div>
+                </div>
+
+                <div class="field-group">
+                    <label for="password">رمز عبور</label>
+                    <div class="input-wrap">
+                        <span class="field-icon lock-icon" aria-hidden="true">▣</span>
+                        <input id="password" type="@(showPassword ? "text" : "password")"
+                               @bind="loginModel.Password"
+                               placeholder="رمز عبور خود را وارد کنید"
+                               autocomplete="current-password" required disabled="@isLoading" />
+                        <button class="password-toggle" type="button" @onclick="TogglePassword"
+                                aria-label="نمایش یا مخفی کردن رمز عبور">
+                            @(showPassword ? "مخفی" : "نمایش")
+                        </button>
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrWhiteSpace(errorMessage))
+                {
+                    <div class="login-error" role="alert">
+                        <span aria-hidden="true">!</span>
+                        <span>@errorMessage</span>
+                    </div>
+                }
+
+                <button class="submit-button" type="submit" disabled="@isLoading">
+                    @if (isLoading)
+                    {
+                        <span class="loading-spinner" aria-hidden="true"></span>
+                        <span>در حال بررسی اطلاعات...</span>
+                    }
+                    else
+                    {
+                        <span>ورود به سامانه</span>
+                        <span class="button-arrow" aria-hidden="true">←</span>
+                    }
+                </button>
+            </form>
+
+            <div class="security-note">
+                <span aria-hidden="true">◈</span>
+                ورود شما از طریق ارتباط امن سازمانی انجام می‌شود.
+            </div>
+        </div>
+
+        <footer class="login-footer">
+            <span>© @DateTime.Now.Year مینو زاگرس</span>
+            <span>سامانه مدیریت فروش و ویزیت</span>
+        </footer>
+    </section>
+</div>
 
 @code {
     private LoginRequestDTO loginModel = new();
     private string? errorMessage;
     private bool isLoading;
+    private bool showPassword;
+
+    private void TogglePassword() => showPassword = !showPassword;
 
     private async Task HandleLogin()
     {
+        if (isLoading)
+            return;
+
         try
         {
             isLoading = true;
             errorMessage = null;
-
-            await JSRuntime.InvokeAsync<bool>(
-                "authCookie.login",
-                loginModel.Username,
-                loginModel.Password);
-
+            await JSRuntime.InvokeAsync<bool>("authCookie.login", loginModel.Username, loginModel.Password);
             Navigation.NavigateTo("/dashboard", forceLoad: true);
         }
         catch (JSException ex)
         {
             errorMessage = ex.Message;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            errorMessage = ex.Message;
+            errorMessage = "در حال حاضر امکان ورود وجود ندارد. لطفاً دوباره تلاش کنید.";
         }
         finally
         {
