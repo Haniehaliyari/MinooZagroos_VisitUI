@@ -4,7 +4,7 @@
 @inject IJSRuntime JS
 @inject NavigationManager Navigation
 
-<div class="app-shell theme-@(selectedTheme)" dir="@(english ? "ltr" : "rtl")">
+<div class="app-shell theme-@(selectedTheme) @(sidebarCollapsed ? "sidebar-collapsed" : "")" dir="@(english ? "ltr" : "rtl")">
     @if (sidebarOpen)
     {
         <button class="sidebar-backdrop" @onclick="CloseSidebar" aria-label="Close navigation"></button>
@@ -30,10 +30,6 @@
                 </div>
             </div>
             <div class="topbar-actions">
-                <div class="user-pill">
-                    <span class="avatar"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5" /><path d="M4.8 20c.7-3.6 3.2-5.5 7.2-5.5s6.5 1.9 7.2 5.5" /></svg></span>
-                    <span class="user-details"><small>@(english ? "SIGNED IN AS" : "کاربر واردشده")</small><strong>@username</strong></span>
-                </div>
                 <div class="settings-wrap">
                     <button class="settings-button" @onclick="ToggleSettings" aria-label="@(english ? "General settings" : "تنظیمات عمومی")" aria-expanded="@settingsOpen">
                         <svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.6" /><circle cx="12" cy="12" r="1.6" /><circle cx="19" cy="12" r="1.6" /></svg>
@@ -64,7 +60,10 @@
                         </section>
                     }
                 </div>
-            </div>
+                <div class="user-pill">
+                    <span class="avatar"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5" /><path d="M4.8 20c.7-3.6 3.2-5.5 7.2-5.5s6.5 1.9 7.2 5.5" /></svg></span>
+                    <span class="user-details"><small>@(english ? "SIGNED IN AS" : "کاربر واردشده")</small><strong>@username</strong></span>
+                </div>            </div>
         </header>
         <CascadingValue Value="english">
             <CascadingValue Value="selectedTheme">
