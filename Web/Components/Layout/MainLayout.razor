@@ -14,18 +14,20 @@
             <span>@(english ? "MAIN MENU" : "منوی اصلی")</span>
             <button class="sidebar-close" @onclick="CloseSidebar" aria-label="Close menu"><svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18" /></svg></button>
         </div>
-        <NavMenu English="english" OnNavigate="CloseSidebar" OnToggleSidebar="ToggleSidebar" />
+        <NavMenu English="english" OnNavigate="CloseSidebar" />
         <div class="sidebar-foot"><span class="status-dot"></span></div>
     </aside>
 
     <main class="app-main">
         <header class="app-topbar">
             <div class="topbar-leading">
-                <button class="mobile-drawer-trigger" @onclick="ToggleSidebar" aria-label="@(english ? "Open navigation" : "باز کردن منو")"><svg viewBox="0 0 24 24"><path d="M4 6.5h16M4 12h16M4 17.5h16" /></svg></button>
                 <div class="topbar-title">
                 </div>
             </div>
             <div class="topbar-actions">
+                <button class="header-nav-toggle" @onclick="ToggleSidebar" aria-label="@(english ? "Toggle navigation" : "باز و بسته کردن منو")" title="@(english ? "Toggle navigation" : "باز و بسته کردن منو")">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6.5h16M4 12h16M4 17.5h16" /></svg>
+                </button>
                 <div class="settings-wrap">
                     <button class="settings-button" @onclick="ToggleSettings" aria-label="@(english ? "General settings" : "تنظیمات عمومی")" aria-expanded="@settingsOpen">
                         <svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.6" /><circle cx="12" cy="12" r="1.6" /><circle cx="19" cy="12" r="1.6" /></svg>
