@@ -31,12 +31,9 @@
  .app-shell.sidebar-collapsed .side-link span{display:inline}
 }
 
-/* Small-screen drawer needs an external icon-only opener while the drawer is closed */
-@media(max-width:760px){.app-topbar:before{content:"";display:block;position:absolute;left:14px;top:50%;width:0;height:0}}
-
-.mobile-drawer-trigger{display:none}
-@media(max-width:760px){
- .mobile-drawer-trigger{display:grid;place-items:center;width:40px;height:40px;flex:0 0 40px;border:1px solid var(--line);border-radius:12px;background:var(--surface-soft);color:var(--accent);cursor:pointer}
- .mobile-drawer-trigger svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
- .app-shell.sidebar-collapsed .app-sidebar.sidebar-open{transform:translateX(0)}
-}
+/* The navigation control sits at the far right of the header, opposite the sidebar */
+.header-nav-toggle{width:40px;height:40px;flex:0 0 40px;display:grid;place-items:center;border:1px solid color-mix(in srgb,var(--accent) 24%,var(--line));border-radius:12px;background:var(--surface-soft);color:var(--accent);cursor:pointer;transition:background .2s,border-color .2s,transform .2s,box-shadow .2s}
+.header-nav-toggle:hover{background:color-mix(in srgb,var(--accent-soft) 18%,var(--surface));border-color:var(--accent);transform:translateY(-1px);box-shadow:0 5px 14px rgba(20,40,60,.09)}
+.header-nav-toggle svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
+.topbar-actions{direction:rtl}
+@media(max-width:760px){.header-nav-toggle{width:38px;height:38px;flex-basis:38px}}
