@@ -8,6 +8,7 @@
 .mino-login:before{content:"";position:fixed;z-index:-2;inset:0;pointer-events:none;background-image:url('/images/OIG1.png');background-position:center center;background-repeat:no-repeat;background-size:cover}
 .mino-login:after{content:"";position:fixed;z-index:-1;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(4,27,22,.62) 0%,rgba(5,35,27,.38) 42%,rgba(7,35,27,.12) 100%)}
 .login-card{
+    transform:translateX(clamp(28px,4vw,64px));
     width:min(100%,470px);position:relative;box-sizing:border-box;margin:0;padding:clamp(32px,3.5vw,42px) clamp(28px,3.5vw,40px) 28px;
     border:1px solid rgba(255,255,255,.42);border-radius:22px;background:linear-gradient(145deg,rgba(12,48,37,.76),rgba(16,64,47,.64));
     backdrop-filter:blur(22px) saturate(125%);-webkit-backdrop-filter:blur(22px) saturate(125%);
@@ -61,7 +62,7 @@
 .theme-light .theme-toggle:hover{background:rgba(255,255,255,.9)}
 @media(max-width:760px){
     .mino-login{justify-content:center;padding:78px 18px 28px}
-    .login-card{width:min(100%,470px);margin:auto;padding:31px 27px 25px}
+    .login-card{width:min(100%,470px);margin:auto;padding:31px 27px 25px;transform:none}
     .theme-toggle{top:16px;left:16px}
 }
 @media(max-width:420px){
