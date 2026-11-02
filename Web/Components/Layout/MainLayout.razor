@@ -22,7 +22,6 @@
         <header class="app-topbar">
             <div class="topbar-leading">
                     <svg viewBox="0 0 24 24"><path d="M4 6.5h16M4 12h10M4 17.5h16" /><path d="m17 9 3 3-3 3" /></svg><span>@(english ? "Menu" : "منو")</span>
-                </button>
                 <div class="topbar-title">
                     <strong>@(english ? "Sales & Visit Management" : "مدیریت فروش و ویزیت")</strong>
                 </div>
@@ -59,7 +58,7 @@
 
             </div>
             <div class="topbar-actions">
-                <button class="mobile-menu-button" @onclick="ToggleSidebar" aria-label="@(english ? "Toggle navigation" : "باز و بسته کردن منو")" aria-expanded="@(!sidebarCollapsed)" title="@(english ? "Navigation" : "منوی اصلی")">
+                <button class="mobile-menu-button" @onclick="ToggleSidebar" aria-label="@(english ? "Toggle navigation" : "باز و بسته کردن منو")" aria-expanded="@(!sidebarCollapsed)" title="@(english ? "Navigation" : "منوی اصلی")"/>
 
                 <div class="user-pill">
                     <span class="avatar"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5" /><path d="M4.8 20c.7-3.6 3.2-5.5 7.2-5.5s6.5 1.9 7.2 5.5" /></svg></span>
