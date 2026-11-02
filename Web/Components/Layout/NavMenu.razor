@@ -4,13 +4,28 @@
 </div>
 <nav class="side-navigation">
     <span class="nav-caption">@(English ? "WORKSPACE" : "فضای کاری")</span>
-    <NavLink href="/dashboard" Match="NavLinkMatch.All" class="side-link"><span class="side-icon">⌂</span>@(English ? "Overview" : "نمای کلی")<span class="link-arrow">›</span></NavLink>
-    <NavLink href="/customers" class="side-link"><span class="side-icon">♙</span>@(English ? "Customers" : "مشتریان")</NavLink>
-    <NavLink href="/products" class="side-link"><span class="side-icon">▣</span>@(English ? "Products" : "محصولات")</NavLink>
-    <NavLink href="/orders" class="side-link"><span class="side-icon">▤</span>@(English ? "Orders" : "سفارش‌ها")</NavLink>
-    <NavLink href="/reports" class="side-link"><span class="side-icon">▥</span>@(English ? "Reports" : "گزارش‌ها")</NavLink>
+    <NavLink href="/dashboard" Match="NavLinkMatch.All" class="side-link" @onclick="OnNavigate">
+        <svg class="side-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z" /></svg>@(English ? "Overview" : "نمای کلی")<span class="link-arrow">›</span>
+    </NavLink>
+    <NavLink href="/customers" class="side-link" @onclick="OnNavigate">
+        <svg class="side-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5" /><path d="M2.5 20c.5-3.6 2.7-5.5 6.5-5.5 1.8 0 3.2.5 4.3 1.4M16 5.5a3.5 3.5 0 0 1 0 6.8M16 15c3.3.2 5.1 1.9 5.5 5" /></svg>@(English ? "Customers" : "مشتریان")
+    </NavLink>
+    <NavLink href="/products" class="side-link" @onclick="OnNavigate">
+        <svg class="side-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m4 7 8-4 8 4v10l-8 4-8-4zM4 7l8 4 8-4M12 11v10M8 5l8 4" /></svg>@(English ? "Products" : "محصولات")
+    </NavLink>
+    <NavLink href="/orders" class="side-link" @onclick="OnNavigate">
+        <svg class="side-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM14 3v5h5M8 13h8M8 17h8" /></svg>@(English ? "Orders" : "سفارش‌ها")
+    </NavLink>
+    <NavLink href="/reports" class="side-link" @onclick="OnNavigate">
+        <svg class="side-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" /></svg>@(English ? "Reports" : "گزارش‌ها")
+    </NavLink>
     <span class="nav-caption nav-caption-spaced">@(English ? "MANAGEMENT" : "مدیریت")</span>
-    <NavLink href="/settings" class="side-link"><span class="side-icon">⚙</span>@(English ? "Settings" : "تنظیمات")</NavLink>
+    <NavLink href="/settings" class="side-link" @onclick="OnNavigate">
+        <svg class="side-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3" /><path d="m19.4 15 .1.1 1.4 1.1-1.4 2.4-1.7-.6a8 8 0 0 1-1.6.9l-.3 1.8h-2.8l-.3-1.8a8 8 0 0 1-1.6-.9l-1.7.6-1.4-2.4 1.4-1.1a7 7 0 0 1 0-1.9l-1.4-1.1 1.4-2.4 1.7.6a8 8 0 0 1 1.6-.9l.3-1.8h2.8l.3 1.8a8 8 0 0 1 1.6.9l1.7-.6 1.4 2.4-1.4 1.1a7 7 0 0 1-.1 1.8z" /></svg>@(English ? "Settings" : "تنظیمات")
+    </NavLink>
 </nav>
 <div class="sidebar-brand-note"><span>✦</span><p>@(English ? "Freshness from Zagros, quality in every step." : "طراوت زاگرس، کیفیت در هر قدم")</p></div>
-@code { [Parameter] public bool English { get; set; } }
+@code {
+    [Parameter] public bool English { get; set; }
+    [Parameter] public EventCallback OnNavigate { get; set; }
+}
