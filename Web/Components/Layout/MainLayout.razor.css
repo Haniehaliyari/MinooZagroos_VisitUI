@@ -33,3 +33,10 @@
 
 /* Small-screen drawer needs an external icon-only opener while the drawer is closed */
 @media(max-width:760px){.app-topbar:before{content:"";display:block;position:absolute;left:14px;top:50%;width:0;height:0}}
+
+.mobile-drawer-trigger{display:none}
+@media(max-width:760px){
+ .mobile-drawer-trigger{display:grid;place-items:center;width:40px;height:40px;flex:0 0 40px;border:1px solid var(--line);border-radius:12px;background:var(--surface-soft);color:var(--accent);cursor:pointer}
+ .mobile-drawer-trigger svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
+ .app-shell.sidebar-collapsed .app-sidebar.sidebar-open{transform:translateX(0)}
+}
