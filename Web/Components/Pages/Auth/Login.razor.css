@@ -5,7 +5,7 @@
     box-sizing:border-box;padding:34px 24px 34px clamp(5vw,8vw,124px);position:relative;isolation:isolate;overflow:hidden;
     color:var(--card-text);background:#153f32;font-family:"Vazirmatn",Tahoma,sans-serif;
 }
-.mino-login:before{content:"";position:fixed;z-index:-2;inset:0;pointer-events:none;background-image:url('/images/OIG1.jpg');background-position:center center;background-repeat:no-repeat;background-size:cover}
+.mino-login:before{content:"";position:fixed;z-index:-2;inset:0;pointer-events:none;background-image:url('/images/OIG1.png');background-position:center center;background-repeat:no-repeat;background-size:cover}
 .mino-login:after{content:"";position:fixed;z-index:-1;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(4,27,22,.62) 0%,rgba(5,35,27,.38) 42%,rgba(7,35,27,.12) 100%)}
 .login-card{
     width:min(100%,470px);position:relative;box-sizing:border-box;margin:0;padding:clamp(32px,3.5vw,42px) clamp(28px,3.5vw,40px) 28px;
