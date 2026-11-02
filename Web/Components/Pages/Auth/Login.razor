@@ -8,7 +8,19 @@
 
 <PageTitle>ورود به سامانه مدیریت فروش و ویزیت | مینو زاگرس</PageTitle>
 
-<main class="mino-login" dir="rtl">
+<main class="mino-login @(isLightTheme ? "theme-light" : "theme-dark")" dir="rtl">
+    <button class="theme-toggle" type="button" @onclick="ToggleTheme" aria-label="@(isLightTheme ? "فعال‌سازی حالت تاریک" : "فعال‌سازی حالت روشن")">
+        @if (isLightTheme)
+        {
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4m0-12.8L17 7M7 17l-1.4 1.4"/><circle cx="12" cy="12" r="4"/></svg>
+            <span>حالت روشن</span>
+        }
+        else
+        {
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.7 8.7 0 1 0 20.5 14.2Z"/></svg>
+            <span>حالت تاریک</span>
+        }
+    </button>
   
         <section class="login-card" aria-labelledby="login-title">
             <div class="card-heading">
@@ -70,8 +82,10 @@
     private string? errorMessage;
     private bool isLoading;
     private bool showPassword;
+    private bool isLightTheme;
 
     private void TogglePassword() => showPassword = !showPassword;
+    private void ToggleTheme() => isLightTheme = !isLightTheme;
 
     private async Task HandleLogin()
     {
