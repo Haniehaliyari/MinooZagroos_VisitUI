@@ -4,52 +4,6 @@
 @using Microsoft.AspNetCore.Authorization
 @using Web.Components.Layout
 
-<PageTitle>@(English ? "Dashboard | Minoo Zagros" : "داشبورد | مینو زاگرس")</PageTitle>
+<PageTitle>مینو زاگرس | فضای کاری</PageTitle>
 
-<div class="dashboard-page" dir="@(English ? "ltr" : "rtl")">
-    <section class="dashboard-hero">
-        <div class="hero-image"></div><div class="hero-content">
-            <span class="hero-eyebrow">MINOO ZAGROS · @(English ? "BUSINESS OVERVIEW" : "نمای کلی کسب‌وکار")</span>
-            <h1>@(English ? "A fresh view of your business." : "نگاهی تازه به کسب‌وکار شما.")</h1>
-            <p>@(English ? "Manage visits, customers and products from one clear workspace." : "ویزیت‌ها، مشتریان و محصولات را از یک فضای کاری یکپارچه مدیریت کنید.")</p>
-            <a class="hero-cta" href="/orders">@(English ? "Explore workspace" : "مشاهده فضای کاری") <span>↗</span></a>
-        </div>
-        <div class="hero-orbit orbit-one"></div><div class="hero-orbit orbit-two"></div>
-        <div class="hero-stamp"><span>✦</span><strong>20+</strong><small>@(English ? "YEARS OF QUALITY" : "سال همراهی و کیفیت")</small></div>
-    </section>
-
-    <div class="section-heading"><div><span class="section-kicker">@(English ? "AT A GLANCE" : "نگاه سریع")</span><h2>@(English ? "Business overview" : "نمای کلی عملکرد")</h2></div><span class="live-label"><i></i>@(English ? "Live workspace" : "فضای کاری")</span></div>
-    <section class="metrics-grid">
-        <article class="metric-card"><span class="metric-icon mint">▤</span><span class="metric-label">@(English ? "Today's orders" : "سفارش‌های امروز")</span><strong>۰</strong><small>@(English ? "No new records yet" : "هنوز رکوردی ثبت نشده")</small></article>
-        <article class="metric-card"><span class="metric-icon blue">♙</span><span class="metric-label">@(English ? "Active customers" : "مشتریان فعال")</span><strong>۰</strong><small>@(English ? "Customer portfolio" : "پرونده مشتریان")</small></article>
-        <article class="metric-card"><span class="metric-icon amber">♧</span><span class="metric-label">@(English ? "Field visits" : "ویزیت‌های امروز")</span><strong>۰</strong><small>@(English ? "Daily visit activity" : "فعالیت روزانه ویزیت")</small></article>
-        <article class="metric-card"><span class="metric-icon rose">↗</span><span class="metric-label">@(English ? "Today's sales" : "فروش امروز")</span><strong>۰</strong><small>@(English ? "Sales performance" : "عملکرد فروش")</small></article>
-    </section>
-
-    <div class="dashboard-columns">
-        <section class="workspace-panel">
-            <div class="section-heading compact"><div><span class="section-kicker">@(English ? "GET THINGS DONE" : "شروع سریع")</span><h2>@(English ? "Quick actions" : "دسترسی سریع")</h2></div></div>
-            <div class="quick-grid">
-                <a href="/order/create" class="quick-action"><span class="quick-icon green">＋</span><span><b>@(English ? "Create order" : "ثبت سفارش")</b><small>@(English ? "Add a new request" : "ثبت درخواست جدید")</small></span><i>↗</i></a>
-                <a href="/customers" class="quick-action"><span class="quick-icon blue">♙</span><span><b>@(English ? "Customers" : "مشتریان")</b><small>@(English ? "Manage customer records" : "مدیریت اطلاعات مشتریان")</small></span><i>↗</i></a>
-                <a href="/products" class="quick-action"><span class="quick-icon amber">▣</span><span><b>@(English ? "Product catalog" : "فهرست محصولات")</b><small>@(English ? "Browse the portfolio" : "مرور سبد محصولات")</small></span><i>↗</i></a>
-                <a href="/reports" class="quick-action"><span class="quick-icon violet">▥</span><span><b>@(English ? "Reports" : "گزارش‌ها")</b><small>@(English ? "Review performance" : "بررسی عملکرد")</small></span><i>↗</i></a>
-            </div>
-        </section>
-        <section class="workspace-panel products-panel">
-            <div class="section-heading compact"><div><span class="section-kicker">@(English ? "MADE WITH CARE" : "با کیفیت و دقت")</span><h2>@(English ? "Our products" : "محصولات ما")</h2></div><a href="/products">@(English ? "View all" : "همه محصولات") ↗</a></div>
-            <div class="product-showcase">
-                <article class="showcase-product"><div class="product-art"><img src="https://minoozagros.com/wp-content/uploads/2023/08/P-14.png" alt="آب معدنی آیسلند" /></div><b>@(English ? "Iceland Water" : "آب معدنی آیسلند")</b><small>@(English ? "Pure mountain water" : "آب زلال و گوارا")</small></article>
-                <article class="showcase-product"><div class="product-art"><img src="https://minoozagros.com/wp-content/uploads/2023/08/P-8.png" alt="نوشابه کولا آیسلند" /></div><b>@(English ? "Iceland Cola" : "نوشابه کولا آیسلند")</b><small>@(English ? "A sparkling moment" : "لحظه‌ای پر از طراوت")</small></article>
-                <article class="showcase-product"><div class="product-art"><img src="https://minoozagros.com/wp-content/uploads/2023/08/P-12.png" alt="لیموناد آیسلند" /></div><b>@(English ? "Iceland Lemonade" : "لیموناد آیسلند")</b><small>@(English ? "Fresh citrus taste" : "طعم تازه مرکبات")</small></article>
-            </div>
-        </section>
-    </div>
-    <footer class="dashboard-footer">© @DateTime.Now.Year @(English ? "Minoo Zagros Food & Beverage Industries" : "شرکت صنایع غذایی و آشامیدنی مینو زاگرس") <span>@(English ? "Freshness from Zagros" : "طراوت از دل زاگرس") ✦</span></footer>
-</div>
-
-
-@code {
-    [CascadingParameter] public bool English { get; set; }
-    [CascadingParameter] public bool DarkMode { get; set; }
-}
+<div class="dashboard-empty" aria-label="فضای کاری آماده توسعه"></div>
