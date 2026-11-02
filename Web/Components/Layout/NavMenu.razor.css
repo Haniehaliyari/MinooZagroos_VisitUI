@@ -1,1 +1,20 @@
-.brand-panel{display:flex;align-items:center;gap:13px;padding:8px 8px 24px;border-bottom:1px solid rgba(255,255,255,.14);color:#fff}.brand-mark{width:50px;height:50px;flex:0 0 50px;background:#fff;border-radius:15px;display:grid;place-items:center;overflow:hidden;box-shadow:0 6px 18px rgba(0,0,0,.16)}.brand-mark img{width:90%;height:90%;object-fit:contain}.brand-panel div{display:flex;flex-direction:column;gap:4px}.brand-panel strong{font-size:15px;font-weight:800}.brand-panel small{font-size:8px;letter-spacing:2.2px;color:#b7d9c6}.side-navigation{display:flex;flex-direction:column;padding-top:24px}.side-link{display:flex;align-items:center;gap:13px;min-height:49px;padding:11px 13px;border:1px solid rgba(255,255,255,.13);border-radius:13px;background:rgba(255,255,255,.09);color:#fff;font-size:12px;font-weight:700;text-decoration:none;transition:background .2s,border-color .2s,transform .2s}.side-link:hover{background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.23);transform:translateX(-2px)}.side-link.active{background:linear-gradient(110deg,rgba(157,224,181,.23),rgba(255,255,255,.1));border-color:rgba(157,224,181,.32);box-shadow:inset -3px 0 #9de0b5}.side-icon{width:24px;height:24px;flex:0 0 24px;padding:3px;border-radius:8px;background:rgba(255,255,255,.1);fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}@media(max-width:760px){.brand-panel{padding:3px 5px 17px}.brand-mark{width:44px;height:44px;flex-basis:44px}.side-navigation{padding-top:20px}.side-link{min-height:47px}}
+<div class="brand-panel">
+    <a href="/dashboard" class="brand-mark"><img src="https://minoozagros.com/wp-content/uploads/2026/01/logo-minoozagros.png" alt="Minoo Zagros" /></a>
+    <div><strong>مینو زاگرس</strong><small>MINOO ZAGROS</small></div>
+</div>
+<nav class="side-navigation" aria-label="Main navigation">
+    <NavLink href="/dashboard" Match="NavLinkMatch.All" class="side-link" @onclick="OnNavigate">
+        <svg class="side-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z" /></svg>
+        <span>@(English ? "Dashboard" : "داشبورد")</span>
+    </NavLink>
+</nav>
+@code {
+    [Parameter] public bool English { get; set; }
+    [Parameter] public EventCallback OnNavigate { get; set; }
+}
+/* Toggle control is integrated into the navigation brand header */
+.brand-panel{gap:10px;padding-inline:5px}
+.brand-name{min-width:0}
+.nav-toggle-button{margin-inline-start:auto;width:38px;height:38px;flex:0 0 38px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.2);border-radius:12px;background:rgba(255,255,255,.1);color:#fff;cursor:pointer;transition:background .2s,border-color .2s,transform .2s}
+.nav-toggle-button:hover{background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.38);transform:translateY(-1px)}
+.nav-toggle-button svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
