@@ -14,18 +14,13 @@
             <span>@(english ? "MAIN MENU" : "منوی اصلی")</span>
             <button class="sidebar-close" @onclick="CloseSidebar" aria-label="Close menu"><svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18" /></svg></button>
         </div>
-        <NavMenu English="english" OnNavigate="CloseSidebar" />
+        <NavMenu English="english" OnNavigate="CloseSidebar" OnToggleSidebar="ToggleSidebar" />
         <div class="sidebar-foot"><span class="status-dot"></span></div>
     </aside>
 
     <main class="app-main">
         <header class="app-topbar">
             <div class="topbar-leading">
-                <button class="mobile-menu-button" @onclick="ToggleSidebar" aria-label="@(english ? "Toggle navigation" : "باز و بسته کردن منو")" aria-expanded="@(!sidebarCollapsed)" title="@(english ? "Navigation" : "منوی اصلی")">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6.5h16M4 12h16M4 17.5h16" /></svg>
-                    <span>@(english ? "Navigation" : "منو")</span>
-                    <span class="menu-button-indicator"></span>
-                </button>
                 <div class="topbar-title">
                 </div>
             </div>
