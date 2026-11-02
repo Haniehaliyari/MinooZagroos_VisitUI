@@ -1,8 +1,8 @@
 :host{display:block}
 .mino-login{
     --card-text:#fff;--card-muted:rgba(255,255,255,.82);--label:#f0f7ed;
-    min-height:100vh;min-height:100dvh;width:100%;display:flex;align-items:center;justify-content:flex-end;
-    box-sizing:border-box;padding:34px clamp(6vw,11vw,180px) 34px 24px;position:relative;isolation:isolate;overflow:hidden;
+    min-height:100vh;min-height:100dvh;width:100%;display:flex;align-items:center;justify-content:flex-start;
+    box-sizing:border-box;padding:34px 24px 34px clamp(6vw,11vw,180px);position:relative;isolation:isolate;overflow:hidden;
     color:var(--card-text);background:#153f32;font-family:"Vazirmatn",Tahoma,sans-serif;
 }
 .mino-login:before{content:"";position:fixed;z-index:-2;inset:0;pointer-events:none;background-image:url('/images/OIG1.jpg');background-position:center center;background-repeat:no-repeat;background-size:100% 100%}
