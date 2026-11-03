@@ -143,3 +143,58 @@
     .page-content{margin:9px;padding:12px;min-height:calc(100dvh - 74px)}
     .sidebar-backdrop{z-index:55}
 }
+/* Active application palettes: all four supplied colors are used as design tokens */
+.app-shell.theme-ocean{
+    --palette-1:#1B365D;
+    --palette-2:#005A9C;
+    --palette-3:#60C1E5;
+    --palette-4:#A0E0EF;
+    --surface:#ffffff;
+    --surface-soft:color-mix(in srgb,var(--palette-4) 20%,#ffffff);
+    --text:var(--palette-1);
+    --muted:#64788d;
+    --line:color-mix(in srgb,var(--palette-1) 16%,transparent);
+    --accent:var(--palette-2);
+    --accent-soft:var(--palette-3);
+    --sidebar-a:var(--palette-1);
+    --sidebar-b:var(--palette-2);
+}
+.app-shell.theme-sage{
+    --palette-1:#202734;
+    --palette-2:#36415A;
+    --palette-3:#B7D894;
+    --palette-4:#E0F8C7;
+    --surface:#ffffff;
+    --surface-soft:color-mix(in srgb,var(--palette-4) 42%,#ffffff);
+    --text:var(--palette-1);
+    --muted:#687487;
+    --line:color-mix(in srgb,var(--palette-1) 16%,transparent);
+    --accent:var(--palette-2);
+    --accent-soft:var(--palette-3);
+    --sidebar-a:var(--palette-1);
+    --sidebar-b:var(--palette-2);
+}
+.app-shell.theme-ocean .app-sidebar,
+.app-shell.theme-sage .app-sidebar{background:var(--surface);color:var(--text)}
+.app-shell.theme-ocean .app-main,
+.app-shell.theme-sage .app-main{background:var(--surface-soft);color:var(--text)}
+.app-shell.theme-ocean .app-topbar,
+.app-shell.theme-sage .app-topbar,
+.app-shell.theme-ocean .page-content,
+.app-shell.theme-sage .page-content{background:var(--surface);border-color:var(--line)}
+.app-shell.theme-ocean .side-link.active,
+.app-shell.theme-ocean .side-link:hover,
+.app-shell.theme-sage .side-link.active,
+.app-shell.theme-sage .side-link:hover{background:var(--surface-soft);border-color:var(--line);color:var(--accent)}
+.app-shell.theme-ocean .nav-toggle-button,
+.app-shell.theme-sage .nav-toggle-button{background:var(--surface);color:var(--accent);border-color:var(--line)}
+.app-shell.theme-ocean .nav-logout-button,
+.app-shell.theme-sage .nav-logout-button{background:transparent}
+.app-shell.theme-ocean .settings-button,
+.app-shell.theme-sage .settings-button{background:var(--surface);color:var(--accent);border-color:var(--line)}
+.app-shell.theme-ocean .settings-popover,
+.app-shell.theme-sage .settings-popover,
+.app-shell.theme-ocean .theme-option,
+.app-shell.theme-sage .theme-option{background:var(--surface);color:var(--text);border-color:var(--line)}
+.app-shell.theme-ocean .theme-option.selected,
+.app-shell.theme-sage .theme-option.selected{border-color:var(--accent)}
