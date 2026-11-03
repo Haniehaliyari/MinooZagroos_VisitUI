@@ -223,3 +223,7 @@
     .app-topbar{z-index:29}
     .settings-wrap{z-index:32}
 }
+
+
+/* User profile icon replaces the former three-dot settings symbol */
+.settings-button svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
