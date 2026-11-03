@@ -13,6 +13,10 @@
         <NavMenu English="english" SidebarCollapsed="sidebarCollapsed" OnNavigate="CloseSidebar" OnToggleSidebar="ToggleSidebar" OnLogout="Logout" />
     </aside>
 
+    @if (settingsOpen)
+    {
+        <button class="settings-backdrop" @onclick="CloseSettings" aria-label="@(english ? "Close settings" : "بستن تنظیمات")"></button>
+    }
     <main class="app-main">
         <header class="app-topbar">
             <div class="topbar-leading">
@@ -107,6 +111,7 @@
     }
 
     private void ToggleSettings() => settingsOpen = !settingsOpen;
+    private void CloseSettings() => settingsOpen = false;
     private void ToggleSidebar()
     {
         if (sidebarOpen)
