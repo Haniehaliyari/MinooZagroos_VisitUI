@@ -10,10 +10,6 @@
         <button class="sidebar-backdrop" @onclick="CloseSidebar" aria-label="Close navigation"></button>
     }
     <aside class="app-sidebar @(sidebarOpen ? "sidebar-open" : "") @(sidebarCollapsed ? "sidebar-collapsed" : "")">
-        <div class="sidebar-mobile-head">
-            <span>@(english ? "MAIN MENU" : "منوی اصلی")</span>
-            <button class="sidebar-close" @onclick="CloseSidebar" aria-label="Close menu"><svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18" /></svg></button>
-        </div>
         <NavMenu English="english" OnNavigate="CloseSidebar" OnToggleSidebar="ToggleSidebar" OnLogout="Logout" />
     </aside>
 
