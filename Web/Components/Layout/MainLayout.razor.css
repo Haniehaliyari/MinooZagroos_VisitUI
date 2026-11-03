@@ -110,12 +110,12 @@
     padding:12px 8px 10px;
     transform:none;
 }
-.app-shell.sidebar-collapsed .app-sidebar .nav-brand,
-.app-shell.sidebar-collapsed .app-sidebar .side-link span,
-.app-shell.sidebar-collapsed .app-sidebar .nav-logout-button span{display:none}
-.app-shell.sidebar-collapsed .app-sidebar .side-link,
-.app-shell.sidebar-collapsed .app-sidebar .nav-logout-button{justify-content:center;padding-inline:5px}
-.app-shell.sidebar-collapsed .app-sidebar .nav-toggle-anchor{right:-18px}
+.app-shell.sidebar-collapsed .app-sidebar ::deep .nav-brand,
+.app-shell.sidebar-collapsed .app-sidebar ::deep .side-link span,
+.app-shell.sidebar-collapsed .app-sidebar ::deep .nav-logout-button span{display:none}
+.app-shell.sidebar-collapsed .app-sidebar ::deep .side-link,
+.app-shell.sidebar-collapsed .app-sidebar ::deep .nav-logout-button{justify-content:center;padding-inline:5px}
+.app-shell.sidebar-collapsed .app-sidebar ::deep .nav-toggle-anchor{right:-18px}
 @media(max-width:1000px) and (min-width:761px){
     .app-sidebar{width:176px;flex-basis:176px;padding-inline:10px}
 }
@@ -134,11 +134,11 @@
         z-index:60;
     }
     .app-shell .app-sidebar.sidebar-open{transform:translateX(0)}
-    .app-shell.sidebar-collapsed .app-sidebar .nav-brand,
-    .app-shell.sidebar-collapsed .app-sidebar .side-link span,
-    .app-shell.sidebar-collapsed .app-sidebar .nav-logout-button span{display:flex}
-    .app-shell.sidebar-collapsed .app-sidebar .side-link,
-    .app-shell.sidebar-collapsed .app-sidebar .nav-logout-button{justify-content:flex-start;padding:8px 10px}
+    .app-shell.sidebar-collapsed .app-sidebar ::deep .nav-brand,
+    .app-shell.sidebar-collapsed .app-sidebar ::deep .side-link span,
+    .app-shell.sidebar-collapsed .app-sidebar ::deep .nav-logout-button span{display:flex}
+    .app-shell.sidebar-collapsed .app-sidebar ::deep .side-link,
+    .app-shell.sidebar-collapsed .app-sidebar ::deep .nav-logout-button{justify-content:flex-start;padding:8px 10px}
     .app-topbar{height:56px;min-height:56px;padding:0 12px}
     .page-content{margin:9px;padding:12px;min-height:calc(100dvh - 74px)}
     .sidebar-backdrop{z-index:55}
