@@ -200,8 +200,8 @@
 .app-shell.theme-sage .theme-option.selected{border-color:var(--accent)}
 
 /* Slightly wider navigation and reliable outside-click dismissal for settings */
-.app-sidebar{width:205px;flex:0 0 205px}
-@media(max-width:1000px) and (min-width:761px){.app-sidebar{width:205px;flex-basis:205px}}
+.app-sidebar{width:230px;flex:0 0 230px}
+@media(max-width:1000px) and (min-width:761px){.app-sidebar{width:230px;flex-basis:230px}}
 .settings-backdrop{
     position:fixed;
     inset:0;
@@ -218,7 +218,7 @@
 .settings-wrap{z-index:32}
 .settings-popover{z-index:33}
 @media(max-width:760px){
-    .app-sidebar,.app-shell.sidebar-collapsed .app-sidebar{width:min(270px,88vw)}
+    .app-sidebar,.app-shell.sidebar-collapsed .app-sidebar{width:min(290px,90vw)}
     .app-shell.sidebar-collapsed .app-sidebar{flex-basis:auto}
     .app-topbar{z-index:29}
     .settings-wrap{z-index:32}
