@@ -48,3 +48,26 @@
 .app-sidebar{background:#fff;color:var(--text);border-inline-end:1px solid var(--line);position:sticky}
 .app-sidebar .nav-toggle-anchor{position:absolute}
 @media(max-width:760px){.app-shell.sidebar-collapsed .app-sidebar.sidebar-open{transform:translateX(0)}}
+
+/* Sidebar controls: keep the toggle fully inside the sidebar and show only requested items */
+.app-sidebar{position:sticky;isolation:isolate}
+.app-sidebar ::deep .nav-toggle-anchor{position:absolute;top:50%;right:8px;left:auto;transform:translateY(-50%);z-index:30}
+.app-sidebar ::deep .nav-toggle-button{width:36px;height:40px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--accent);box-shadow:0 2px 9px rgba(20,40,60,.12)}
+.app-sidebar ::deep .nav-toggle-button:hover{background:var(--surface-soft);border-color:var(--accent)}
+.app-sidebar ::deep .side-navigation{display:flex!important;flex:1 1 auto;flex-direction:column;gap:7px;padding:18px 0 12px;margin:0;min-height:0}
+.app-sidebar ::deep .side-link{display:flex;align-items:center;gap:12px;min-height:44px;padding:10px 12px;border:1px solid transparent;border-radius:10px;color:var(--text);text-decoration:none;font-size:13px;transition:background .18s,border-color .18s,color .18s}
+.app-sidebar ::deep .side-link:hover,.app-sidebar ::deep .side-link.active{background:var(--surface-soft);border-color:var(--line);color:var(--accent)}
+.app-sidebar ::deep .side-icon{width:19px;height:19px;flex:0 0 19px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.app-sidebar ::deep .nav-menu-footer{margin-top:auto;padding:12px 0 4px;border-top:1px solid var(--line)}
+.app-sidebar ::deep .nav-logout-button{width:100%;min-height:44px;display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid transparent;border-radius:10px;background:transparent;color:#c15b54;font:inherit;font-size:13px;text-align:start;cursor:pointer;transition:background .18s,border-color .18s}
+.app-sidebar ::deep .nav-logout-button:hover{background:rgba(193,91,84,.08);border-color:rgba(193,91,84,.18)}
+.app-sidebar ::deep .nav-logout-button svg{width:19px;height:19px;flex:0 0 19px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.app-shell.sidebar-collapsed .app-sidebar ::deep .side-link{justify-content:center;padding:10px 6px}
+.app-shell.sidebar-collapsed .app-sidebar ::deep .side-link span,.app-shell.sidebar-collapsed .app-sidebar ::deep .nav-logout-button span{display:none}
+.app-shell.sidebar-collapsed .app-sidebar ::deep .nav-logout-button{justify-content:center;padding:10px 6px}
+@media(max-width:760px){
+ .app-shell.sidebar-collapsed .app-sidebar.sidebar-open ::deep .nav-toggle-anchor{right:8px;transform:translateY(-50%)}
+ .app-shell.sidebar-collapsed .app-sidebar.sidebar-open ::deep .side-link{justify-content:flex-start;padding:10px 12px}
+ .app-shell.sidebar-collapsed .app-sidebar.sidebar-open ::deep .side-link span,.app-shell.sidebar-collapsed .app-sidebar.sidebar-open ::deep .nav-logout-button span{display:inline}
+ .app-shell.sidebar-collapsed .app-sidebar.sidebar-open ::deep .nav-logout-button{justify-content:flex-start;padding:10px 12px}
+}
