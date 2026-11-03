@@ -26,7 +26,7 @@
             <div class="topbar-actions">
                 <div class="settings-wrap">
                     <button class="settings-button" @onclick="ToggleSettings" aria-label="@(english ? "General settings" : "تنظیمات عمومی")" aria-expanded="@settingsOpen">
-                        <svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.6" /><circle cx="12" cy="12" r="1.6" /><circle cx="19" cy="12" r="1.6" /></svg>
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.4" /><path d="M5.5 20c.5-3.5 3-5.5 6.5-5.5s6 2 6.5 5.5" /></svg>
                     </button>
                     @if (settingsOpen)
                     {
