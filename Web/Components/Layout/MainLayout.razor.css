@@ -75,8 +75,8 @@
 /* Layout proportions follow the supplied wireframe */
 .app-shell{min-height:100vh;min-height:100dvh;align-items:stretch}
 .app-sidebar{
-    width:176px;
-    flex:0 0 176px;
+    width:300px;
+    flex:0 0 300px;
     min-height:100vh;
     min-height:100dvh;
     height:auto;
@@ -117,7 +117,7 @@
 .app-shell.sidebar-collapsed .app-sidebar ::deep .nav-logout-button{justify-content:center;padding-inline:5px}
 .app-shell.sidebar-collapsed .app-sidebar ::deep .nav-toggle-anchor{right:-18px}
 @media(max-width:1000px) and (min-width:761px){
-    .app-sidebar{width:176px;flex-basis:176px;padding-inline:10px}
+    .app-sidebar{width:300px;flex-basis:300px;padding-inline:10px}
 }
 @media(max-width:760px){
     .app-shell{display:block}
