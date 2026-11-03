@@ -13,12 +13,12 @@
         <NavMenu English="english" SidebarCollapsed="sidebarCollapsed" OnNavigate="CloseSidebar" OnToggleSidebar="ToggleSidebar" OnLogout="Logout" />
     </aside>
 
-    @if (settingsOpen)
-    {
-        <button class="settings-backdrop" @onclick="CloseSettings" aria-label="@(english ? "Close settings" : "بستن تنظیمات")"></button>
-    }
     <main class="app-main">
         <header class="app-topbar">
+            @if (settingsOpen)
+            {
+                <button class="settings-backdrop" @onclick="CloseSettings" aria-label="@(english ? "Close settings" : "بستن تنظیمات")"></button>
+            }
             <div class="topbar-leading">
                 <div class="topbar-title">
                 </div>
