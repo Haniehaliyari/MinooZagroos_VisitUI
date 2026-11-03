@@ -10,7 +10,7 @@
         <button class="sidebar-backdrop" @onclick="CloseSidebar" aria-label="Close navigation"></button>
     }
     <aside class="app-sidebar @(sidebarOpen ? "sidebar-open" : "") @(sidebarCollapsed ? "sidebar-collapsed" : "")">
-        <NavMenu English="english" OnNavigate="CloseSidebar" OnToggleSidebar="ToggleSidebar" OnLogout="Logout" />
+        <NavMenu English="english" SidebarCollapsed="sidebarCollapsed" OnNavigate="CloseSidebar" OnToggleSidebar="ToggleSidebar" OnLogout="Logout" />
     </aside>
 
     <main class="app-main">
