@@ -3,8 +3,24 @@
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7" /></svg>
     </button>
 </div>
+
+<nav class="side-navigation" aria-label="Main navigation">
+    <NavLink href="/dashboard" Match="NavLinkMatch.All" class="side-link" @onclick="OnNavigate">
+        <svg class="side-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z" /></svg>
+        <span>@(English ? "Dashboard" : "داشبورد")</span>
+    </NavLink>
+</nav>
+
+<div class="nav-menu-footer">
+    <button class="nav-logout-button" @onclick="OnLogout">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5M16 16l5-4-5-4M21 12H9" /></svg>
+        <span>@(English ? "Sign out" : "خروج")</span>
+    </button>
+</div>
+
 @code {
     [Parameter] public bool English { get; set; }
     [Parameter] public EventCallback OnNavigate { get; set; }
     [Parameter] public EventCallback OnToggleSidebar { get; set; }
+    [Parameter] public EventCallback OnLogout { get; set; }
 }
