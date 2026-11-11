@@ -70,6 +70,20 @@
         background: linear-gradient(90deg,#c7d99c,#39805a,#c7d99c)
     }
 
+.login-brand {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 18px;
+}
+
+.login-brand img {
+    display: block;
+    width: min(100%, 156px);
+    max-height: 76px;
+    object-fit: contain;
+}
+
 .card-heading {
     text-align: center;
     padding-top: 5px
