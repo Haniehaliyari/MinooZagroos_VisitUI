@@ -121,8 +121,5 @@
     .nav-toggle-anchor{right:-18px}
 }
 
-/* Compact Minoo Zagros mountain emblem in the navigation brand */
-.nav-brand{gap:9px;min-height:54px;padding:4px 5px 13px;justify-content:center}
-.nav-brand-mark{width:30px;height:30px;flex:0 0 30px;display:grid;place-items:center;border-radius:9px;background:color-mix(in srgb,var(--accent-soft) 18%,var(--surface));color:var(--accent)}
-.nav-brand-mark svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.nav-brand-name{font-size:13px;font-weight:750;letter-spacing:-.2px}
+.nav-brand{min-height:66px;padding:7px 8px 13px;justify-content:center}
+.nav-brand-logo{display:block;width:min(100%,150px);max-height:48px;object-fit:contain;flex:0 1 auto}
