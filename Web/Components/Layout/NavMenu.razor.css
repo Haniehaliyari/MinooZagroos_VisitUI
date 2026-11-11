@@ -121,5 +121,5 @@
     .nav-toggle-anchor{right:-18px}
 }
 
-.nav-brand{min-height:66px;padding:7px 8px 13px;justify-content:center}
-.nav-brand-logo{display:block;width:min(100%,150px);max-height:48px;object-fit:contain;flex:0 1 auto}
+.nav-brand{min-height:46px;padding:4px 8px 12px;justify-content:center}
+.nav-brand-logo{display:block;width:min(100%,112px);height:24px;max-height:24px;object-fit:contain;flex:0 1 auto}
