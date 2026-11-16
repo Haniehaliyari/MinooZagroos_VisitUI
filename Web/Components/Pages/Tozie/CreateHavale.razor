@@ -10,179 +10,145 @@
 @inject BackendApiClient ApiClient
 
 <PageTitle>ایجاد حواله پخش | مینو زاگرس</PageTitle>
-
 <div class="havale-page" dir="rtl">
     <div class="havale-page-heading">
-        <div>
-            <div class="havale-eyebrow">توزیع و پخش</div>
-            <h1>ایجاد حواله پخش</h1>
-            <p>فاکتورهای موردنظر را انتخاب و اطلاعات ارسال را تکمیل کنید.</p>
-        </div>
+        <div><div class="havale-eyebrow">توزیع و پخش</div><h1>ایجاد حواله پخش</h1><p>فاکتورهای تخصیص‌نیافته را انتخاب و اطلاعات ارسال را تکمیل کنید.</p></div>
         <div class="havale-heading-icon" aria-hidden="true">↗</div>
     </div>
-
-    @if (!string.IsNullOrWhiteSpace(errorMessage))
-    {
-        <div class="havale-alert havale-alert-error">@errorMessage</div>
-    }
-    @if (!string.IsNullOrWhiteSpace(successMessage))
-    {
-        <div class="havale-alert havale-alert-success">@successMessage</div>
-    }
+    @if (!string.IsNullOrWhiteSpace(successMessage)) { <div class="havale-alert havale-alert-success">@successMessage</div> }
 
     <section class="havale-panel">
         <div class="havale-section-heading">
-            <div><span class="havale-step">۱</span><div><h2>انتخاب فاکتورها</h2><p>فقط فاکتورهای تخصیص‌نیافته نمایش داده می‌شوند.</p></div></div>
-            <button class="havale-button havale-button-light" @onclick="LoadFactorsAsync" disabled="@loadingFactors">به‌روزرسانی فهرست</button>
+            <div><span class="havale-step">۱</span><div><h2>انتخاب فاکتورها</h2><p>امکان انتخاب هم‌زمان چند فاکتور وجود دارد.</p></div></div>
+            <button type="button" class="havale-button havale-button-light" @onclick="LoadFactorsAsync" disabled="@loadingFactors">@(loadingFactors ? "در حال دریافت..." : "به‌روزرسانی فهرست")</button>
         </div>
+        @if (!string.IsNullOrWhiteSpace(factorError)) { <div class="havale-alert havale-alert-error"><strong>خطای دریافت فاکتورها:</strong> @factorError</div> }
         <div class="havale-toolbar">
             <input class="havale-search" placeholder="جستجو بر اساس شماره یا شرح فاکتور..." @bind="searchText" @bind:event="oninput" />
             <div class="havale-selection-count">@SelectedCount فاکتور انتخاب شده</div>
         </div>
-        @if (loadingFactors)
+        @if (loadingFactors) { <div class="havale-empty">در حال دریافت فهرست فاکتورهای قابل حواله...</div> }
+        else if (factors.Count == 0 && string.IsNullOrWhiteSpace(factorError)) { <div class="havale-empty">در حال حاضر فاکتور تخصیص‌نیافته‌ای از سرویس دریافت نشد.</div> }
+        else if (FilteredFactors.Count == 0 && factors.Count > 0) { <div class="havale-empty">فاکتوری با عبارت جستجو شده پیدا نشد.</div> }
+        else if (factors.Count > 0)
         {
-            <div class="havale-empty">در حال دریافت فاکتورها...</div>
-        }
-        else if (FilteredFactors.Count == 0)
-        {
-            <div class="havale-empty">فاکتور قابل حواله‌ای برای نمایش وجود ندارد.</div>
-        }
-        else
-        {
-            <div class="havale-table-wrap">
-                <table class="havale-table">
-                    <thead><tr>
-                        <th><input type="checkbox" checked="@AllVisibleSelected" @onchange="ToggleVisibleFactors" aria-label="انتخاب همه فاکتورهای نمایش داده شده" /></th>
-                        <th>شماره فاکتور</th><th>شرح فاکتور</th><th>تاریخ صدور</th><th>مبلغ کل</th>
-                    </tr></thead>
-                    <tbody>
-                        @foreach (var factor in FilteredFactors)
-                        {
-                            <tr>
-                                <td><input type="checkbox" checked="@selectedFactorSNs.Contains(factor.FactorSN)" @onchange="args => ToggleFactor(factor.FactorSN, args)" /></td>
-                                <td class="havale-number">@factor.FactorNo</td>
-                                <td>@(string.IsNullOrWhiteSpace(factor.FactorDs) ? "—" : factor.FactorDs)</td>
-                                <td>@(string.IsNullOrWhiteSpace(factor.SodoorDate) ? "—" : factor.SodoorDate)</td>
-                                <td class="havale-number">@factor.MablaghKol.ToString("N0")</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
+            <div class="havale-table-wrap"><table class="havale-table">
+                <thead><tr><th><input type="checkbox" checked="@AllVisibleSelected" @onchange="ToggleVisibleFactors" aria-label="انتخاب همه فاکتورهای نمایش داده شده" /></th><th>شماره فاکتور</th><th>شرح فاکتور</th><th>تاریخ صدور</th><th>مبلغ کل</th></tr></thead>
+                <tbody>@foreach (var factor in FilteredFactors) { <tr>
+                    <td><input type="checkbox" checked="@selectedFactorSNs.Contains(factor.FactorSN)" @onchange="args => ToggleFactor(factor.FactorSN, args)" /></td>
+                    <td class="havale-number">@factor.FactorNo</td><td>@(string.IsNullOrWhiteSpace(factor.FactorDs) ? "—" : factor.FactorDs)</td>
+                    <td>@(string.IsNullOrWhiteSpace(factor.SodoorDate) ? "—" : factor.SodoorDate)</td><td class="havale-number">@factor.MablaghKol.ToString("N0")</td>
+                </tr> }</tbody>
+            </table></div>
         }
     </section>
 
     <section class="havale-panel">
         <div class="havale-section-heading">
-            <div><span class="havale-step">۲</span><div><h2>اطلاعات حواله</h2><p>راننده، مأمور پخش و تاریخ‌های ارسال را تعیین کنید.</p></div></div>
+            <div><span class="havale-step">۲</span><div><h2>اطلاعات حواله</h2><p>راننده، مأمور پخش و تاریخ‌های حواله را مشخص کنید.</p></div></div>
+            <button type="button" class="havale-button havale-button-light" @onclick="LoadLookupsAsync" disabled="@loadingLookups">@(loadingLookups ? "در حال دریافت..." : "بارگذاری مجدد افراد")</button>
         </div>
+        @if (!string.IsNullOrWhiteSpace(driverError)) { <div class="havale-alert havale-alert-error"><strong>خطای دریافت راننده‌ها:</strong> @driverError</div> }
+        @if (!string.IsNullOrWhiteSpace(agentError)) { <div class="havale-alert havale-alert-error"><strong>خطای دریافت مأموران پخش:</strong> @agentError</div> }
         <div class="havale-form-grid">
             <label>راننده
-                <select @bind="selectedDriverSN" disabled="@loadingLookups">
-                    <option value="">انتخاب راننده</option>
-                    @foreach (var item in drivers) { <option value="@item.Id">@item.Title</option> }
-                </select>
+                <select @bind="selectedDriverSN" disabled="@loadingLookups"><option value="">@(loadingLookups ? "در حال دریافت راننده‌ها..." : "انتخاب راننده")</option>
+                    @foreach (var item in drivers) { <option value="@item.Id.ToString(CultureInfo.InvariantCulture)">@item.Title</option> }
+                </select><small>@(drivers.Count == 0 && !loadingLookups ? "فهرست راننده‌ای دریافت نشده است." : $"{drivers.Count} راننده")</small>
             </label>
             <label>مأمور پخش
-                <select @bind="selectedAgentSN" disabled="@loadingLookups">
-                    <option value="">انتخاب مأمور پخش</option>
-                    @foreach (var item in agents) { <option value="@item.Id">@item.Title</option> }
-                </select>
+                <select @bind="selectedAgentSN" disabled="@loadingLookups"><option value="">@(loadingLookups ? "در حال دریافت مأموران..." : "انتخاب مأمور پخش")</option>
+                    @foreach (var item in agents) { <option value="@item.Id.ToString(CultureInfo.InvariantCulture)">@item.Title</option> }
+                </select><small>@(agents.Count == 0 && !loadingLookups ? "فهرست مأمور پخشی دریافت نشده است." : $"{agents.Count} مأمور پخش")</small>
             </label>
-            <label>تاریخ حواله
-                <input type="date" @bind="havaleDate" />
-            </label>
-            <label>تاریخ ارسال
-                <input type="date" @bind="sendDate" />
-            </label>
+            <label>تاریخ حواله<input type="date" @bind="havaleDate" /></label>
+            <label>تاریخ ارسال<input type="date" @bind="sendDate" /></label>
         </div>
-        <div class="havale-date-note">هر دو تاریخ به‌صورت پیش‌فرض امروز هستند و می‌توانید آن‌ها را جداگانه تغییر دهید.</div>
+        <div class="havale-date-note">تاریخ‌ها در زمان ارسال به فرمت شمسی مورد انتظار سرویس تبدیل می‌شوند.</div>
     </section>
 
+    @if (!string.IsNullOrWhiteSpace(submitError)) { <div class="havale-alert havale-alert-error">@submitError</div> }
     <div class="havale-submit-row">
         <div class="havale-submit-summary"><strong>@SelectedCount</strong><span>فاکتور برای ثبت حواله انتخاب شده است</span></div>
-        <button class="havale-button havale-button-primary" @onclick="CreateHavaleAsync" disabled="@(submitting || SelectedCount == 0)">
-            @(submitting ? "در حال ثبت..." : "ثبت حواله")
-        </button>
+        <button type="button" class="havale-button havale-button-primary" @onclick="CreateHavaleAsync" disabled="@(submitting || SelectedCount == 0 || string.IsNullOrWhiteSpace(selectedDriverSN) || string.IsNullOrWhiteSpace(selectedAgentSN))">@(submitting ? "در حال ثبت..." : "ثبت حواله")</button>
     </div>
 </div>
 
 @code {
-    // مقادیر موقت پیش‌فرض؛ پس از تأیید قواعد کسب‌وکار بک‌اند اصلاح شوند.
     private const byte DefaultServiceNo = 1;
     private const byte DefaultHavaleStatus = 1;
+    private const string FactorsEndpoint = "api/v1/HavaleMamoorPakhsh/GetAvailableFactors";
+    private const string DriversEndpoint = "api/v1/HavaleMamoorPakhsh/GetAllRanandeh";
+    private const string AgentsEndpoint = "api/v1/HavaleMamoorPakhsh/GetAllMamoorPakhsh";
+    private const string CreateEndpoint = "api/v1/HavaleMamoorPakhsh/CreateHavaleMamoorPakhsh";
 
     private readonly List<AvailableFactorItem> factors = [];
     private readonly List<LookupItem> drivers = [];
     private readonly List<LookupItem> agents = [];
     private readonly HashSet<decimal> selectedFactorSNs = [];
     private string searchText = "";
-    private string? selectedDriverSN;
-    private string? selectedAgentSN;
-    private DateTime havaleDate = DateTime.Today;
-    private DateTime sendDate = DateTime.Today;
-    private bool loadingFactors;
-    private bool loadingLookups;
-    private bool submitting;
-    private string? errorMessage;
-    private string? successMessage;
+    private string? selectedDriverSN, selectedAgentSN, factorError, driverError, agentError, submitError, successMessage;
+    private DateTime havaleDate = DateTime.Today, sendDate = DateTime.Today;
+    private bool loadingFactors, loadingLookups, submitting;
 
     private int SelectedCount => selectedFactorSNs.Count;
-    private List<AvailableFactorItem> FilteredFactors => factors
-        .Where(x => string.IsNullOrWhiteSpace(searchText)
-            || (x.FactorNo?.Contains(searchText, StringComparison.OrdinalIgnoreCase) ?? false)
-            || (x.FactorDs?.Contains(searchText, StringComparison.OrdinalIgnoreCase) ?? false))
-        .ToList();
+    private List<AvailableFactorItem> FilteredFactors => factors.Where(x =>
+        string.IsNullOrWhiteSpace(searchText) || x.FactorNo.Contains(searchText, StringComparison.OrdinalIgnoreCase)
+        || x.FactorDs.Contains(searchText, StringComparison.OrdinalIgnoreCase)).ToList();
     private bool AllVisibleSelected => FilteredFactors.Count > 0 && FilteredFactors.All(x => selectedFactorSNs.Contains(x.FactorSN));
 
-    protected override async Task OnInitializedAsync()
-    {
-        await Task.WhenAll(LoadFactorsAsync(), LoadLookupsAsync());
-    }
+    protected override async Task OnInitializedAsync() => await Task.WhenAll(LoadFactorsAsync(), LoadLookupsAsync());
 
     private async Task LoadFactorsAsync()
     {
-        loadingFactors = true;
-        errorMessage = null;
+        loadingFactors = true; factorError = null;
         try
         {
             using var client = await ApiClient.CreateAuthorizedClientAsync();
-            using var response = await client.GetAsync("api/v1/HavaleMamoorPakhsh/GetAvailableFactors");
+            using var response = await client.GetAsync(FactorsEndpoint);
             var json = await response.Content.ReadAsStringAsync();
-            if (!response.IsSuccessStatusCode) throw new InvalidOperationException(ReadError(json, "دریافت فاکتورها ناموفق بود."));
-            var data = ExtractData(json);
-            var items = JsonSerializer.Deserialize<List<AvailableFactorItem>>(data, JsonOptions) ?? [];
-            factors.Clear();
-            factors.AddRange(items);
+            EnsureApiSuccess(response, json, "دریافت فاکتورها");
+            var items = ReadArray(ExtractPayload(json)).Select(ReadFactor).Where(x => x.FactorSN != 0).ToList();
+            factors.Clear(); factors.AddRange(items);
             selectedFactorSNs.RemoveWhere(id => factors.All(x => x.FactorSN != id));
+            if (items.Count == 0) factorError = "پاسخ سرویس موفق بود، اما فاکتوری در داده برگشتی پیدا نشد.";
         }
-        catch (Exception ex) { errorMessage = ex.Message; }
+        catch (Exception ex) { factors.Clear(); factorError = DescribeRequestError(FactorsEndpoint, ex); }
         finally { loadingFactors = false; }
     }
 
     private async Task LoadLookupsAsync()
     {
-        loadingLookups = true;
+        loadingLookups = true; driverError = null; agentError = null;
         try
         {
             using var client = await ApiClient.CreateAuthorizedClientAsync();
-            var driverTask = client.GetAsync("api/v1/HavaleMamoorPakhsh/GetAllRanandeh");
-            var agentTask = client.GetAsync("api/v1/HavaleMamoorPakhsh/GetAllMamoorPakhsh");
+            var driverTask = ReadLookupRequestAsync(client, DriversEndpoint, true);
+            var agentTask = ReadLookupRequestAsync(client, AgentsEndpoint, false);
             await Task.WhenAll(driverTask, agentTask);
-            drivers.Clear();
-            drivers.AddRange(await ReadListAsync<LookupItem>(await driverTask));
-            agents.Clear();
-            agents.AddRange(await ReadListAsync<LookupItem>(await agentTask));
+            drivers.Clear(); drivers.AddRange(await driverTask);
+            agents.Clear(); agents.AddRange(await agentTask);
+            if (drivers.Count == 0 && driverError is null) driverError = "پاسخ موفق بود اما راننده‌ای در داده برگشتی پیدا نشد.";
+            if (agents.Count == 0 && agentError is null) agentError = "پاسخ موفق بود اما مأمور پخشی در داده برگشتی پیدا نشد.";
         }
-        catch (Exception ex) { errorMessage = ex.Message; }
         finally { loadingLookups = false; }
     }
 
-    private static async Task<List<T>> ReadListAsync<T>(HttpResponseMessage response)
+    private async Task<List<LookupItem>> ReadLookupRequestAsync(HttpClient client, string endpoint, bool isDriver)
     {
-        var json = await response.Content.ReadAsStringAsync();
-        if (!response.IsSuccessStatusCode) throw new InvalidOperationException(ReadError(json, "دریافت اطلاعات پایه ناموفق بود."));
-        return JsonSerializer.Deserialize<List<T>>(ExtractData(json), JsonOptions) ?? [];
+        try
+        {
+            using var response = await client.GetAsync(endpoint);
+            var json = await response.Content.ReadAsStringAsync();
+            EnsureApiSuccess(response, json, isDriver ? "دریافت راننده‌ها" : "دریافت مأموران پخش");
+            return ReadArray(ExtractPayload(json)).Select(ReadLookup).Where(x => x.Id != 0 && !string.IsNullOrWhiteSpace(x.Title)).ToList();
+        }
+        catch (Exception ex)
+        {
+            if (isDriver) driverError = DescribeRequestError(endpoint, ex);
+            else agentError = DescribeRequestError(endpoint, ex);
+            return [];
+        }
     }
 
     private void ToggleFactor(decimal id, ChangeEventArgs args)
@@ -190,106 +156,145 @@
         if (args.Value is bool isChecked && isChecked) selectedFactorSNs.Add(id);
         else selectedFactorSNs.Remove(id);
     }
-
     private void ToggleVisibleFactors(ChangeEventArgs args)
     {
         var check = args.Value is bool value && value;
-        foreach (var factor in FilteredFactors)
-        {
-            if (check) selectedFactorSNs.Add(factor.FactorSN);
-            else selectedFactorSNs.Remove(factor.FactorSN);
-        }
+        foreach (var factor in FilteredFactors) { if (check) selectedFactorSNs.Add(factor.FactorSN); else selectedFactorSNs.Remove(factor.FactorSN); }
     }
 
     private async Task CreateHavaleAsync()
     {
-        errorMessage = null;
-        successMessage = null;
-        if (SelectedCount == 0) { errorMessage = "حداقل یک فاکتور انتخاب کنید."; return; }
-        if (!decimal.TryParse(selectedDriverSN, out var driverSN)) { errorMessage = "راننده را انتخاب کنید."; return; }
-        if (!decimal.TryParse(selectedAgentSN, out var agentSN)) { errorMessage = "مأمور پخش را انتخاب کنید."; return; }
-
+        submitError = null; successMessage = null;
+        if (SelectedCount == 0) { submitError = "حداقل یک فاکتور انتخاب کنید."; return; }
+        if (!decimal.TryParse(selectedDriverSN, NumberStyles.Number, CultureInfo.InvariantCulture, out var driverSN)) { submitError = "راننده را انتخاب کنید."; return; }
+        if (!decimal.TryParse(selectedAgentSN, NumberStyles.Number, CultureInfo.InvariantCulture, out var agentSN)) { submitError = "مأمور پخش را انتخاب کنید."; return; }
         submitting = true;
         try
         {
-            var payload = new CreateHavaleRequest
-            {
-                FactorSNs = selectedFactorSNs.ToList(),
-                RanandehSN = driverSN,
-                MamoorPakhshSN = agentSN,
-                HavaleMamoorPakhshDate = ToPersianDate(havaleDate),
-                HavaleMamoorPakhshDateErsal = ToPersianDate(sendDate),
-                ServiceNo = DefaultServiceNo,
-                HavaleMamoorPakhshStatus = DefaultHavaleStatus
+            var payload = new CreateHavaleRequest {
+                FactorSNs = selectedFactorSNs.ToList(), RanandehSN = driverSN, MamoorPakhshSN = agentSN,
+                HavaleMamoorPakhshDate = ToPersianDate(havaleDate), HavaleMamoorPakhshDateErsal = ToPersianDate(sendDate),
+                ServiceNo = DefaultServiceNo, HavaleMamoorPakhshStatus = DefaultHavaleStatus
             };
-
             using var client = await ApiClient.CreateAuthorizedClientAsync();
-            using var response = await client.PostAsJsonAsync("api/v1/HavaleMamoorPakhsh/CreateHavaleMamoorPakhsh", payload);
+            using var response = await client.PostAsJsonAsync(CreateEndpoint, payload);
             var json = await response.Content.ReadAsStringAsync();
-            if (!response.IsSuccessStatusCode) throw new InvalidOperationException(ReadError(json, "ثبت حواله ناموفق بود."));
-            using var document = JsonDocument.Parse(json);
-            var root = document.RootElement;
-            if (root.TryGetProperty("statusCode", out var status) && status.ValueKind == JsonValueKind.Number && status.GetInt32() >= 400)
-                throw new InvalidOperationException(ReadError(json, "ثبت حواله ناموفق بود."));
-            if (root.TryGetProperty("errMsg", out var err) && err.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(err.GetString()))
-                throw new InvalidOperationException(err.GetString());
+            EnsureApiSuccess(response, json, "ثبت حواله");
             selectedFactorSNs.Clear();
             await LoadFactorsAsync();
             successMessage = "حواله با موفقیت ثبت شد.";
         }
-        catch (Exception ex) { errorMessage = ex.Message; }
+        catch (Exception ex) { submitError = DescribeRequestError(CreateEndpoint, ex); }
         finally { submitting = false; }
     }
 
+    private static void EnsureApiSuccess(HttpResponseMessage response, string json, string operation)
+    {
+        if (!response.IsSuccessStatusCode) throw new InvalidOperationException($"{operation}: HTTP {(int)response.StatusCode} ({response.ReasonPhrase}). {ReadError(json)}");
+        using var doc = JsonDocument.Parse(json);
+        var root = doc.RootElement;
+        if (TryGetProperty(root, "statusCode", out var status) && status.ValueKind == JsonValueKind.Number && status.GetInt32() >= 400)
+            throw new InvalidOperationException($"{operation}: {ReadError(json)}");
+        if (TryGetProperty(root, "errMsg", out var err) && err.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(err.GetString()))
+            throw new InvalidOperationException($"{operation}: {err.GetString()}");
+        if (TryGetProperty(root, "success", out var success) && success.ValueKind == JsonValueKind.False)
+            throw new InvalidOperationException($"{operation}: {ReadError(json)}");
+    }
+
+    private static JsonElement ExtractPayload(string json)
+    {
+        using var doc = JsonDocument.Parse(json);
+        var root = doc.RootElement.Clone();
+        if (root.ValueKind == JsonValueKind.Array) return root;
+        if (TryGetProperty(root, "data", out var data)) return UnwrapCollection(data);
+        if (TryGetProperty(root, "result", out var result)) return UnwrapCollection(result);
+        return UnwrapCollection(root);
+    }
+    private static JsonElement UnwrapCollection(JsonElement value)
+    {
+        if (value.ValueKind == JsonValueKind.Array) return value;
+        if (value.ValueKind == JsonValueKind.Object)
+            foreach (var key in new[] { "items", "list", "records", "results", "data", "result" })
+                if (TryGetProperty(value, key, out var nested) && (nested.ValueKind == JsonValueKind.Array || nested.ValueKind == JsonValueKind.Object))
+                    return UnwrapCollection(nested);
+        return value;
+    }
+    private static IEnumerable<JsonElement> ReadArray(JsonElement value)
+    {
+        if (value.ValueKind == JsonValueKind.Array) return value.EnumerateArray().Select(x => x.Clone()).ToList();
+        if (value.ValueKind == JsonValueKind.Object) return new[] { value.Clone() };
+        return [];
+    }
+    private static AvailableFactorItem ReadFactor(JsonElement item) => new()
+    {
+        FactorSN = ReadDecimal(item, "FactorSN", "Id", "SN"),
+        FactorNo = ReadString(item, "FactorNo", "No", "FactorNumber"),
+        FactorDs = ReadString(item, "FactorDs", "FactorDesc", "Description", "Title", "Name"),
+        SodoorDate = ReadString(item, "SodoorDate", "FactorDate", "Date", "Tarikh"),
+        MablaghKol = ReadDecimal(item, "MablaghKol", "Mablagh", "TotalAmount", "Amount")
+    };
+    private static LookupItem ReadLookup(JsonElement item) => new()
+    {
+        Id = ReadDecimal(item, "Id", "SN", "RanandehSN", "MamoorPakhshSN", "PersonSN", "Code"),
+        Title = ReadString(item, "Title", "Name", "FullName", "PersonName", "RanandehName", "MamoorPakhshName", "Description", "Ds")
+    };
+    private static decimal ReadDecimal(JsonElement item, params string[] names)
+    {
+        foreach (var name in names) if (TryGetProperty(item, name, out var value))
+        {
+            if (value.ValueKind == JsonValueKind.Number && value.TryGetDecimal(out var number)) return number;
+            if (value.ValueKind == JsonValueKind.String && decimal.TryParse(value.GetString(), NumberStyles.Any, CultureInfo.InvariantCulture, out number)) return number;
+        }
+        return 0;
+    }
+    private static string ReadString(JsonElement item, params string[] names)
+    {
+        foreach (var name in names) if (TryGetProperty(item, name, out var value))
+        {
+            if (value.ValueKind == JsonValueKind.String) return value.GetString() ?? "";
+            if (value.ValueKind == JsonValueKind.Number) return value.ToString();
+        }
+        return "";
+    }
+    private static bool TryGetProperty(JsonElement element, string name, out JsonElement value)
+    {
+        if (element.ValueKind == JsonValueKind.Object)
+            foreach (var property in element.EnumerateObject())
+                if (string.Equals(property.Name, name, StringComparison.OrdinalIgnoreCase)) { value = property.Value; return true; }
+        value = default; return false;
+    }
+    private static string ReadError(string json)
+    {
+        try
+        {
+            using var doc = JsonDocument.Parse(json);
+            foreach (var key in new[] { "errMsg", "message", "Message", "title", "detail" })
+                if (TryGetProperty(doc.RootElement, key, out var value) && value.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(value.GetString())) return value.GetString()!;
+            if (TryGetProperty(doc.RootElement, "data", out var data) && data.ValueKind == JsonValueKind.String) return data.GetString()!;
+        }
+        catch { }
+        return "پاسخ سرویس جزئیات خطا را ارسال نکرد.";
+    }
+    private static string DescribeRequestError(string endpoint, Exception ex)
+    {
+        var detail = ex is HttpRequestException ? "ارتباط با سرور برقرار نشد یا آدرس سرویس در دسترس نیست." : ex.Message;
+        return $"{detail} (مسیر: {endpoint})";
+    }
     private static string ToPersianDate(DateTime date)
     {
         var calendar = new PersianCalendar();
         return $"{calendar.GetYear(date):0000}{calendar.GetMonth(date):00}{calendar.GetDayOfMonth(date):00}";
     }
 
-    private static string ExtractData(string json)
-    {
-        using var document = JsonDocument.Parse(json);
-        var root = document.RootElement;
-        if (root.ValueKind == JsonValueKind.Array) return root.GetRawText();
-        if (root.TryGetProperty("data", out var data)) return data.GetRawText();
-        if (root.TryGetProperty("Data", out data)) return data.GetRawText();
-        throw new InvalidOperationException(ReadError(json, "ساختار پاسخ سرویس معتبر نیست."));
-    }
-
-    private static string ReadError(string json, string fallback)
-    {
-        try
-        {
-            using var doc = JsonDocument.Parse(json);
-            var root = doc.RootElement;
-            foreach (var key in new[] { "errMsg", "message", "Message", "title" })
-                if (root.TryGetProperty(key, out var value) && value.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(value.GetString()))
-                    return value.GetString()!;
-            if (root.TryGetProperty("data", out var data) && data.ValueKind == JsonValueKind.String) return data.GetString()!;
-        }
-        catch { }
-        return fallback;
-    }
-
-    private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
-
     private sealed class AvailableFactorItem
     {
         public decimal FactorSN { get; set; }
-        public string? FactorNo { get; set; }
-        public string? FactorDs { get; set; }
-        public string? SodoorDate { get; set; }
+        public string FactorNo { get; set; } = "";
+        public string FactorDs { get; set; } = "";
+        public string SodoorDate { get; set; } = "";
         public decimal MablaghKol { get; set; }
     }
-
-    private sealed class LookupItem
-    {
-        public decimal Id { get; set; }
-        public string Title { get; set; } = "";
-        public string? Code { get; set; }
-    }
-
+    private sealed class LookupItem { public decimal Id { get; set; } public string Title { get; set; } = ""; }
     private sealed class CreateHavaleRequest
     {
         public List<decimal> FactorSNs { get; set; } = [];
