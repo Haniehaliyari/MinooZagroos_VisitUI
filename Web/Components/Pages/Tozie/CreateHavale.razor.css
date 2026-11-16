@@ -37,3 +37,11 @@
 .havale-alert-error{background:#fff1f0;color:#b42318;border:1px solid #ffd5d2}
 .havale-alert-success{background:#edf9f1;color:#187443;border:1px solid #c9efd6}
 @media(max-width:700px){.havale-page{padding:22px 15px 36px}.havale-panel{padding:16px}.havale-form-grid{grid-template-columns:1fr}.havale-toolbar{align-items:stretch;flex-direction:column}.havale-selection-count{align-self:flex-start}.havale-submit-row{align-items:stretch;flex-direction:column}.havale-button-primary{width:100%}.havale-page-heading h1{font-size:21px}}
+
+.havale-pagination-summary{display:flex;justify-content:space-between;align-items:center;color:#8490a2;font-size:12px;margin:4px 0 10px}
+.havale-pagination{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:18px;flex-wrap:wrap}
+.havale-page-button{min-width:36px;height:36px;padding:0 11px;border:1px solid #dfe5ed;border-radius:9px;background:#fff;color:#526174;font:inherit;font-size:12px;cursor:pointer;transition:.15s}
+.havale-page-button:hover:not(:disabled){border-color:#8baaca;color:#245a92;background:#f5f9fd}
+.havale-page-button.active{background:#245a92;border-color:#245a92;color:#fff;font-weight:750}
+.havale-page-button:disabled{opacity:.45;cursor:not-allowed}
+@media(max-width:700px){.havale-pagination-summary{gap:8px;flex-wrap:wrap}.havale-page-button{min-width:33px;height:34px}}
