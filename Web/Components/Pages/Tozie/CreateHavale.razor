@@ -61,8 +61,14 @@
                     @foreach (var item in agents) { <option value="@item.Id.ToString(CultureInfo.InvariantCulture)">@item.Title</option> }
                 </select><small>@(agents.Count == 0 && !loadingLookups ? "فهرست مأمور پخشی دریافت نشده است." : $"{agents.Count} مأمور پخش")</small>
             </label>
-            <label>تاریخ حواله<input type="date" @bind="havaleDate" /></label>
-            <label>تاریخ ارسال<input type="date" @bind="sendDate" /></label>
+            <label>تاریخ حواله
+                <input type="text" inputmode="numeric" autocomplete="off" placeholder="۱۴۰۵/۰۸/۲۵" maxlength="10" @bind="havaleDateText" />
+                <small>فرمت شمسی: سال/ماه/روز</small>
+            </label>
+            <label>تاریخ ارسال
+                <input type="text" inputmode="numeric" autocomplete="off" placeholder="۱۴۰۵/۰۸/۲۵" maxlength="10" @bind="sendDateText" />
+                <small>فرمت شمسی: سال/ماه/روز</small>
+            </label>
         </div>
         <div class="havale-date-note">تاریخ‌ها در زمان ارسال به فرمت شمسی مورد انتظار سرویس تبدیل می‌شوند.</div>
     </section>
@@ -88,7 +94,8 @@
     private readonly HashSet<decimal> selectedFactorSNs = [];
     private string searchText = "";
     private string? selectedDriverSN, selectedAgentSN, factorError, driverError, agentError, submitError, successMessage;
-    private DateTime havaleDate = DateTime.Today, sendDate = DateTime.Today;
+    private string havaleDateText = TodayPersianDate();
+    private string sendDateText = TodayPersianDate();
     private bool loadingFactors, loadingLookups, submitting;
 
     private int SelectedCount => selectedFactorSNs.Count;
@@ -108,10 +115,14 @@
             using var response = await client.GetAsync(FactorsEndpoint);
             var json = await response.Content.ReadAsStringAsync();
             EnsureApiSuccess(response, json, "دریافت فاکتورها");
-            var items = ReadArray(ExtractPayload(json)).Select(ReadFactor).Where(x => x.FactorSN != 0).ToList();
+            var rawItems = ReadArray(ExtractPayload(json)).ToList();
+            var items = rawItems.Select(ReadFactor).Where(x => x.FactorSN != 0).ToList();
             factors.Clear(); factors.AddRange(items);
             selectedFactorSNs.RemoveWhere(id => factors.All(x => x.FactorSN != id));
-            if (items.Count == 0) factorError = "پاسخ سرویس موفق بود، اما فاکتوری در داده برگشتی پیدا نشد.";
+            if (rawItems.Count == 0)
+                factorError = "پاسخ API موفق بود، اما آرایه فاکتورها در بدنه پاسخ پیدا نشد. ساختار پاسخ باید با DTO سرویس تطبیق داده شود.";
+            else if (items.Count == 0)
+                factorError = $"API تعداد {rawItems.Count} رکورد برگرداند، اما هیچ‌کدام فیلد شماره شناسایی فاکتور قابل تشخیص نداشتند. نام فیلدهای DTO باید بررسی شود.";
         }
         catch (Exception ex) { factors.Clear(); factorError = DescribeRequestError(FactorsEndpoint, ex); }
         finally { loadingFactors = false; }
@@ -166,6 +177,8 @@
     {
         submitError = null; successMessage = null;
         if (SelectedCount == 0) { submitError = "حداقل یک فاکتور انتخاب کنید."; return; }
+        try { _ = ParsePersianDate(havaleDateText); _ = ParsePersianDate(sendDateText); }
+        catch (FormatException ex) { submitError = ex.Message; return; }
         if (!decimal.TryParse(selectedDriverSN, NumberStyles.Number, CultureInfo.InvariantCulture, out var driverSN)) { submitError = "راننده را انتخاب کنید."; return; }
         if (!decimal.TryParse(selectedAgentSN, NumberStyles.Number, CultureInfo.InvariantCulture, out var agentSN)) { submitError = "مأمور پخش را انتخاب کنید."; return; }
         submitting = true;
@@ -173,7 +186,7 @@
         {
             var payload = new CreateHavaleRequest {
                 FactorSNs = selectedFactorSNs.ToList(), RanandehSN = driverSN, MamoorPakhshSN = agentSN,
-                HavaleMamoorPakhshDate = ToPersianDate(havaleDate), HavaleMamoorPakhshDateErsal = ToPersianDate(sendDate),
+                HavaleMamoorPakhshDate = ParsePersianDate(havaleDateText), HavaleMamoorPakhshDateErsal = ParsePersianDate(sendDateText),
                 ServiceNo = DefaultServiceNo, HavaleMamoorPakhshStatus = DefaultHavaleStatus
             };
             using var client = await ApiClient.CreateAuthorizedClientAsync();
@@ -205,18 +218,25 @@
     {
         using var doc = JsonDocument.Parse(json);
         var root = doc.RootElement.Clone();
-        if (root.ValueKind == JsonValueKind.Array) return root;
-        if (TryGetProperty(root, "data", out var data)) return UnwrapCollection(data);
-        if (TryGetProperty(root, "result", out var result)) return UnwrapCollection(result);
-        return UnwrapCollection(root);
+        return FindCollection(root, 0);
     }
-    private static JsonElement UnwrapCollection(JsonElement value)
+
+    // پاسخ‌های API ممکن است آرایه را داخل Data، Result یا یک شیء واسط برگردانند.
+    private static JsonElement FindCollection(JsonElement value, int depth)
     {
         if (value.ValueKind == JsonValueKind.Array) return value;
-        if (value.ValueKind == JsonValueKind.Object)
-            foreach (var key in new[] { "items", "list", "records", "results", "data", "result" })
-                if (TryGetProperty(value, key, out var nested) && (nested.ValueKind == JsonValueKind.Array || nested.ValueKind == JsonValueKind.Object))
-                    return UnwrapCollection(nested);
+        if (depth > 6 || value.ValueKind != JsonValueKind.Object) return value;
+        foreach (var key in new[] { "data", "result", "items", "list", "records", "results", "factors", "factorList", "factorItems" })
+            if (TryGetProperty(value, key, out var nested))
+            {
+                var found = FindCollection(nested, depth + 1);
+                if (found.ValueKind == JsonValueKind.Array) return found;
+            }
+        foreach (var property in value.EnumerateObject())
+        {
+            var found = FindCollection(property.Value, depth + 1);
+            if (found.ValueKind == JsonValueKind.Array) return found;
+        }
         return value;
     }
     private static IEnumerable<JsonElement> ReadArray(JsonElement value)
@@ -227,7 +247,7 @@
     }
     private static AvailableFactorItem ReadFactor(JsonElement item) => new()
     {
-        FactorSN = ReadDecimal(item, "FactorSN", "Id", "SN"),
+        FactorSN = ReadDecimal(item, "FactorSN", "FactorSn", "factor_sn", "Factor_S_N", "Id", "SN"),
         FactorNo = ReadString(item, "FactorNo", "No", "FactorNumber"),
         FactorDs = ReadString(item, "FactorDs", "FactorDesc", "Description", "Title", "Name"),
         SodoorDate = ReadString(item, "SodoorDate", "FactorDate", "Date", "Tarikh"),
@@ -280,10 +300,33 @@
         var detail = ex is HttpRequestException ? "ارتباط با سرور برقرار نشد یا آدرس سرویس در دسترس نیست." : ex.Message;
         return $"{detail} (مسیر: {endpoint})";
     }
-    private static string ToPersianDate(DateTime date)
+    private static string TodayPersianDate()
     {
         var calendar = new PersianCalendar();
-        return $"{calendar.GetYear(date):0000}{calendar.GetMonth(date):00}{calendar.GetDayOfMonth(date):00}";
+        var today = DateTime.Today;
+        return $"{calendar.GetYear(today):0000}/{calendar.GetMonth(today):00}/{calendar.GetDayOfMonth(today):00}";
+    }
+
+    private static string ParsePersianDate(string? input)
+    {
+        var value = (input ?? "").Trim()
+            .Replace('۰','0').Replace('۱','1').Replace('۲','2').Replace('۳','3').Replace('۴','4')
+            .Replace('۵','5').Replace('۶','6').Replace('۷','7').Replace('۸','8').Replace('۹','9')
+            .Replace('٠','0').Replace('١','1').Replace('٢','2').Replace('٣','3').Replace('٤','4')
+            .Replace('٥','5').Replace('٦','6').Replace('٧','7').Replace('٨','8').Replace('٩','9');
+        var parts = value.Split(new[] { '/', '-', '.', '\\' }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        if (parts.Length != 3 || !int.TryParse(parts[0], out var year) || !int.TryParse(parts[1], out var month) || !int.TryParse(parts[2], out var day))
+            throw new FormatException("تاریخ را به شکل شمسی سال/ماه/روز وارد کنید؛ مثال: ۱۴۰۵/۰۸/۲۵.");
+        try
+        {
+            var calendar = new PersianCalendar();
+            _ = calendar.ToDateTime(year, month, day, 0, 0, 0, 0);
+            return $"{year:0000}{month:00}{day:00}";
+        }
+        catch (ArgumentOutOfRangeException)
+        {
+            throw new FormatException("تاریخ شمسی واردشده معتبر نیست.");
+        }
     }
 
     private sealed class AvailableFactorItem
