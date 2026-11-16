@@ -45,3 +45,13 @@
 .havale-page-button.active{background:#245a92;border-color:#245a92;color:#fff;font-weight:750}
 .havale-page-button:disabled{opacity:.45;cursor:not-allowed}
 @media(max-width:700px){.havale-pagination-summary{gap:8px;flex-wrap:wrap}.havale-page-button{min-width:33px;height:34px}}
+
+/* Compact, responsive invoice pager */
+.havale-pagination{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:18px;direction:rtl}
+.havale-page-button{display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:36px;padding:0 10px;border:1px solid #e1e7ef;border-radius:9px;background:var(--surface,#fff);color:#526174;font:inherit;font-size:12px;font-weight:650;cursor:pointer;transition:background .16s,border-color .16s,color .16s,transform .16s}
+.havale-page-button:hover:not(:disabled){border-color:#8baaca;background:#f3f7fc;color:#245a92;transform:translateY(-1px)}
+.havale-page-button.active{background:#245a92;border-color:#245a92;color:#fff;box-shadow:0 3px 8px rgba(36,90,146,.18)}
+.havale-page-button:disabled{opacity:.35;cursor:not-allowed}
+.havale-page-arrow{font-size:19px;line-height:1}
+.havale-page-ellipsis{min-width:20px;text-align:center;color:#8b96a6;font-size:15px;letter-spacing:2px}
+@media(max-width:480px){.havale-pagination{gap:4px}.havale-page-button{min-width:32px;height:33px;padding:0 8px}.havale-page-arrow{min-width:30px}}
