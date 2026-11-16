@@ -24,7 +24,7 @@
         </div>
         @if (!string.IsNullOrWhiteSpace(factorError)) { <div class="havale-alert havale-alert-error"><strong>خطای دریافت فاکتورها:</strong> @factorError</div> }
         <div class="havale-toolbar">
-            <input class="havale-search" placeholder="جستجو بر اساس شماره یا شرح فاکتور..." @bind="searchText" @bind:event="oninput" />
+            <input class="havale-search" placeholder="جستجو بر اساس شماره یا شرح فاکتور..." @bind="searchText" @bind:event="oninput" @bind:after="ResetFactorPage" />
             <div class="havale-selection-count">@SelectedCount فاکتور انتخاب شده</div>
         </div>
         @if (loadingFactors) { <div class="havale-empty">در حال دریافت فهرست فاکتورهای قابل حواله...</div> }
@@ -32,14 +32,27 @@
         else if (FilteredFactors.Count == 0 && factors.Count > 0) { <div class="havale-empty">فاکتوری با عبارت جستجو شده پیدا نشد.</div> }
         else if (factors.Count > 0)
         {
+            <div class="havale-pagination-summary">
+                <span>نمایش @PageStart تا @PageEnd از @FilteredFactors.Count فاکتور</span>
+                <span>صفحه @currentFactorPage از @TotalFactorPages</span>
+            </div>
             <div class="havale-table-wrap"><table class="havale-table">
-                <thead><tr><th><input type="checkbox" checked="@AllVisibleSelected" @onchange="ToggleVisibleFactors" aria-label="انتخاب همه فاکتورهای نمایش داده شده" /></th><th>شماره فاکتور</th><th>شرح فاکتور</th><th>تاریخ صدور</th><th>مبلغ کل</th></tr></thead>
-                <tbody>@foreach (var factor in FilteredFactors) { <tr>
+                <thead><tr><th><input type="checkbox" checked="@AllCurrentPageSelected" @onchange="ToggleCurrentPageFactors" aria-label="انتخاب همه فاکتورهای این صفحه" /></th><th>شماره فاکتور</th><th>شرح فاکتور</th><th>تاریخ صدور</th><th>مبلغ کل</th></tr></thead>
+                <tbody>@foreach (var factor in CurrentPageFactors) { <tr>
                     <td><input type="checkbox" checked="@selectedFactorSNs.Contains(factor.FactorSN)" @onchange="args => ToggleFactor(factor.FactorSN, args)" /></td>
                     <td class="havale-number">@factor.FactorNo</td><td>@(string.IsNullOrWhiteSpace(factor.FactorDs) ? "—" : factor.FactorDs)</td>
                     <td>@(string.IsNullOrWhiteSpace(factor.SodoorDate) ? "—" : factor.SodoorDate)</td><td class="havale-number">@factor.MablaghKol.ToString("N0")</td>
                 </tr> }</tbody>
             </table></div>
+            <div class="havale-pagination" aria-label="صفحه‌بندی فاکتورها">
+                <button type="button" class="havale-page-button" @onclick="PreviousFactorPage" disabled="@(currentFactorPage <= 1)">قبلی</button>
+                @for (var page = 1; page <= TotalFactorPages; page++)
+                {
+                    var pageNumber = page;
+                    <button type="button" class="havale-page-button @(currentFactorPage == pageNumber ? "active" : "")" @onclick="() => GoToFactorPage(pageNumber)" aria-current="@(currentFactorPage == pageNumber ? "page" : null)">@pageNumber</button>
+                }
+                <button type="button" class="havale-page-button" @onclick="NextFactorPage" disabled="@(currentFactorPage >= TotalFactorPages)">بعدی</button>
+            </div>
         }
     </section>
 
@@ -81,6 +94,8 @@
 </div>
 
 @code {
+    private const int FactorPageSize = 10;
+    private int currentFactorPage = 1;
     private const byte DefaultServiceNo = 1;
     private const byte DefaultHavaleStatus = 1;
     private const string FactorsEndpoint = "api/v1/Havale/GetAvailableFactors";
@@ -102,7 +117,11 @@
     private List<AvailableFactorItem> FilteredFactors => factors.Where(x =>
         string.IsNullOrWhiteSpace(searchText) || x.FactorNo.Contains(searchText, StringComparison.OrdinalIgnoreCase)
         || x.FactorDs.Contains(searchText, StringComparison.OrdinalIgnoreCase)).ToList();
-    private bool AllVisibleSelected => FilteredFactors.Count > 0 && FilteredFactors.All(x => selectedFactorSNs.Contains(x.FactorSN));
+    private int TotalFactorPages => Math.Max(1, (int)Math.Ceiling(FilteredFactors.Count / (double)FactorPageSize));
+    private int PageStart => FilteredFactors.Count == 0 ? 0 : (currentFactorPage - 1) * FactorPageSize + 1;
+    private int PageEnd => Math.Min(currentFactorPage * FactorPageSize, FilteredFactors.Count);
+    private List<AvailableFactorItem> CurrentPageFactors => FilteredFactors.Skip((currentFactorPage - 1) * FactorPageSize).Take(FactorPageSize).ToList();
+    private bool AllCurrentPageSelected => CurrentPageFactors.Count > 0 && CurrentPageFactors.All(x => selectedFactorSNs.Contains(x.FactorSN));
 
     protected override async Task OnInitializedAsync() => await Task.WhenAll(LoadFactorsAsync(), LoadLookupsAsync());
 
@@ -118,6 +137,7 @@
             var rawItems = ReadArray(ExtractPayload(json)).ToList();
             var items = rawItems.Select(ReadFactor).Where(x => x.FactorSN != 0).ToList();
             factors.Clear(); factors.AddRange(items);
+            currentFactorPage = 1;
             selectedFactorSNs.RemoveWhere(id => factors.All(x => x.FactorSN != id));
             if (rawItems.Count == 0)
                 factorError = "پاسخ API موفق بود، اما آرایه فاکتورها در بدنه پاسخ پیدا نشد. ساختار پاسخ باید با DTO سرویس تطبیق داده شود.";
@@ -167,11 +187,20 @@
         if (args.Value is bool isChecked && isChecked) selectedFactorSNs.Add(id);
         else selectedFactorSNs.Remove(id);
     }
-    private void ToggleVisibleFactors(ChangeEventArgs args)
+    private void ToggleCurrentPageFactors(ChangeEventArgs args)
     {
         var check = args.Value is bool value && value;
-        foreach (var factor in FilteredFactors) { if (check) selectedFactorSNs.Add(factor.FactorSN); else selectedFactorSNs.Remove(factor.FactorSN); }
+        foreach (var factor in CurrentPageFactors)
+        {
+            if (check) selectedFactorSNs.Add(factor.FactorSN);
+            else selectedFactorSNs.Remove(factor.FactorSN);
+        }
     }
+
+    private void ResetFactorPage() => currentFactorPage = 1;
+    private void GoToFactorPage(int page) => currentFactorPage = Math.Clamp(page, 1, TotalFactorPages);
+    private void PreviousFactorPage() => GoToFactorPage(currentFactorPage - 1);
+    private void NextFactorPage() => GoToFactorPage(currentFactorPage + 1);
 
     private async Task CreateHavaleAsync()
     {
