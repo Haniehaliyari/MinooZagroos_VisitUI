@@ -1,0 +1,303 @@
+@page "/tozie/havale/create"
+@attribute [Authorize]
+@layout MainLayout
+@using System.Globalization
+@using System.Net.Http.Json
+@using System.Text.Json
+@using Microsoft.AspNetCore.Authorization
+@using Web.Components.Layout
+@using MyProject.Services.Api
+@inject BackendApiClient ApiClient
+
+<PageTitle>ایجاد حواله پخش | مینو زاگرس</PageTitle>
+
+<div class="havale-page" dir="rtl">
+    <div class="havale-page-heading">
+        <div>
+            <div class="havale-eyebrow">توزیع و پخش</div>
+            <h1>ایجاد حواله پخش</h1>
+            <p>فاکتورهای موردنظر را انتخاب و اطلاعات ارسال را تکمیل کنید.</p>
+        </div>
+        <div class="havale-heading-icon" aria-hidden="true">↗</div>
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(errorMessage))
+    {
+        <div class="havale-alert havale-alert-error">@errorMessage</div>
+    }
+    @if (!string.IsNullOrWhiteSpace(successMessage))
+    {
+        <div class="havale-alert havale-alert-success">@successMessage</div>
+    }
+
+    <section class="havale-panel">
+        <div class="havale-section-heading">
+            <div><span class="havale-step">۱</span><div><h2>انتخاب فاکتورها</h2><p>فقط فاکتورهای تخصیص‌نیافته نمایش داده می‌شوند.</p></div></div>
+            <button class="havale-button havale-button-light" @onclick="LoadFactorsAsync" disabled="@loadingFactors">به‌روزرسانی فهرست</button>
+        </div>
+        <div class="havale-toolbar">
+            <input class="havale-search" placeholder="جستجو بر اساس شماره یا شرح فاکتور..." @bind="searchText" @bind:event="oninput" />
+            <div class="havale-selection-count">@SelectedCount فاکتور انتخاب شده</div>
+        </div>
+        @if (loadingFactors)
+        {
+            <div class="havale-empty">در حال دریافت فاکتورها...</div>
+        }
+        else if (FilteredFactors.Count == 0)
+        {
+            <div class="havale-empty">فاکتور قابل حواله‌ای برای نمایش وجود ندارد.</div>
+        }
+        else
+        {
+            <div class="havale-table-wrap">
+                <table class="havale-table">
+                    <thead><tr>
+                        <th><input type="checkbox" checked="@AllVisibleSelected" @onchange="ToggleVisibleFactors" aria-label="انتخاب همه فاکتورهای نمایش داده شده" /></th>
+                        <th>شماره فاکتور</th><th>شرح فاکتور</th><th>تاریخ صدور</th><th>مبلغ کل</th>
+                    </tr></thead>
+                    <tbody>
+                        @foreach (var factor in FilteredFactors)
+                        {
+                            <tr>
+                                <td><input type="checkbox" checked="@selectedFactorSNs.Contains(factor.FactorSN)" @onchange="args => ToggleFactor(factor.FactorSN, args)" /></td>
+                                <td class="havale-number">@factor.FactorNo</td>
+                                <td>@(string.IsNullOrWhiteSpace(factor.FactorDs) ? "—" : factor.FactorDs)</td>
+                                <td>@(string.IsNullOrWhiteSpace(factor.SodoorDate) ? "—" : factor.SodoorDate)</td>
+                                <td class="havale-number">@factor.MablaghKol.ToString("N0")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </section>
+
+    <section class="havale-panel">
+        <div class="havale-section-heading">
+            <div><span class="havale-step">۲</span><div><h2>اطلاعات حواله</h2><p>راننده، مأمور پخش و تاریخ‌های ارسال را تعیین کنید.</p></div></div>
+        </div>
+        <div class="havale-form-grid">
+            <label>راننده
+                <select @bind="selectedDriverSN" disabled="@loadingLookups">
+                    <option value="">انتخاب راننده</option>
+                    @foreach (var item in drivers) { <option value="@item.Id">@item.Title</option> }
+                </select>
+            </label>
+            <label>مأمور پخش
+                <select @bind="selectedAgentSN" disabled="@loadingLookups">
+                    <option value="">انتخاب مأمور پخش</option>
+                    @foreach (var item in agents) { <option value="@item.Id">@item.Title</option> }
+                </select>
+            </label>
+            <label>تاریخ حواله
+                <input type="date" @bind="havaleDate" />
+            </label>
+            <label>تاریخ ارسال
+                <input type="date" @bind="sendDate" />
+            </label>
+        </div>
+        <div class="havale-date-note">هر دو تاریخ به‌صورت پیش‌فرض امروز هستند و می‌توانید آن‌ها را جداگانه تغییر دهید.</div>
+    </section>
+
+    <div class="havale-submit-row">
+        <div class="havale-submit-summary"><strong>@SelectedCount</strong><span>فاکتور برای ثبت حواله انتخاب شده است</span></div>
+        <button class="havale-button havale-button-primary" @onclick="CreateHavaleAsync" disabled="@(submitting || SelectedCount == 0)">
+            @(submitting ? "در حال ثبت..." : "ثبت حواله")
+        </button>
+    </div>
+</div>
+
+@code {
+    // مقادیر موقت پیش‌فرض؛ پس از تأیید قواعد کسب‌وکار بک‌اند اصلاح شوند.
+    private const byte DefaultServiceNo = 1;
+    private const byte DefaultHavaleStatus = 1;
+
+    private readonly List<AvailableFactorItem> factors = [];
+    private readonly List<LookupItem> drivers = [];
+    private readonly List<LookupItem> agents = [];
+    private readonly HashSet<decimal> selectedFactorSNs = [];
+    private string searchText = "";
+    private string? selectedDriverSN;
+    private string? selectedAgentSN;
+    private DateTime havaleDate = DateTime.Today;
+    private DateTime sendDate = DateTime.Today;
+    private bool loadingFactors;
+    private bool loadingLookups;
+    private bool submitting;
+    private string? errorMessage;
+    private string? successMessage;
+
+    private int SelectedCount => selectedFactorSNs.Count;
+    private List<AvailableFactorItem> FilteredFactors => factors
+        .Where(x => string.IsNullOrWhiteSpace(searchText)
+            || (x.FactorNo?.Contains(searchText, StringComparison.OrdinalIgnoreCase) ?? false)
+            || (x.FactorDs?.Contains(searchText, StringComparison.OrdinalIgnoreCase) ?? false))
+        .ToList();
+    private bool AllVisibleSelected => FilteredFactors.Count > 0 && FilteredFactors.All(x => selectedFactorSNs.Contains(x.FactorSN));
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.WhenAll(LoadFactorsAsync(), LoadLookupsAsync());
+    }
+
+    private async Task LoadFactorsAsync()
+    {
+        loadingFactors = true;
+        errorMessage = null;
+        try
+        {
+            using var client = await ApiClient.CreateAuthorizedClientAsync();
+            using var response = await client.GetAsync("api/v1/HavaleMamoorPakhsh/GetAvailableFactors");
+            var json = await response.Content.ReadAsStringAsync();
+            if (!response.IsSuccessStatusCode) throw new InvalidOperationException(ReadError(json, "دریافت فاکتورها ناموفق بود."));
+            var data = ExtractData(json);
+            var items = JsonSerializer.Deserialize<List<AvailableFactorItem>>(data, JsonOptions) ?? [];
+            factors.Clear();
+            factors.AddRange(items);
+            selectedFactorSNs.RemoveWhere(id => factors.All(x => x.FactorSN != id));
+        }
+        catch (Exception ex) { errorMessage = ex.Message; }
+        finally { loadingFactors = false; }
+    }
+
+    private async Task LoadLookupsAsync()
+    {
+        loadingLookups = true;
+        try
+        {
+            using var client = await ApiClient.CreateAuthorizedClientAsync();
+            var driverTask = client.GetAsync("api/v1/HavaleMamoorPakhsh/GetAllRanandeh");
+            var agentTask = client.GetAsync("api/v1/HavaleMamoorPakhsh/GetAllMamoorPakhsh");
+            await Task.WhenAll(driverTask, agentTask);
+            drivers.Clear();
+            drivers.AddRange(await ReadListAsync<LookupItem>(await driverTask));
+            agents.Clear();
+            agents.AddRange(await ReadListAsync<LookupItem>(await agentTask));
+        }
+        catch (Exception ex) { errorMessage = ex.Message; }
+        finally { loadingLookups = false; }
+    }
+
+    private static async Task<List<T>> ReadListAsync<T>(HttpResponseMessage response)
+    {
+        var json = await response.Content.ReadAsStringAsync();
+        if (!response.IsSuccessStatusCode) throw new InvalidOperationException(ReadError(json, "دریافت اطلاعات پایه ناموفق بود."));
+        return JsonSerializer.Deserialize<List<T>>(ExtractData(json), JsonOptions) ?? [];
+    }
+
+    private void ToggleFactor(decimal id, ChangeEventArgs args)
+    {
+        if (args.Value is bool isChecked && isChecked) selectedFactorSNs.Add(id);
+        else selectedFactorSNs.Remove(id);
+    }
+
+    private void ToggleVisibleFactors(ChangeEventArgs args)
+    {
+        var check = args.Value is bool value && value;
+        foreach (var factor in FilteredFactors)
+        {
+            if (check) selectedFactorSNs.Add(factor.FactorSN);
+            else selectedFactorSNs.Remove(factor.FactorSN);
+        }
+    }
+
+    private async Task CreateHavaleAsync()
+    {
+        errorMessage = null;
+        successMessage = null;
+        if (SelectedCount == 0) { errorMessage = "حداقل یک فاکتور انتخاب کنید."; return; }
+        if (!decimal.TryParse(selectedDriverSN, out var driverSN)) { errorMessage = "راننده را انتخاب کنید."; return; }
+        if (!decimal.TryParse(selectedAgentSN, out var agentSN)) { errorMessage = "مأمور پخش را انتخاب کنید."; return; }
+
+        submitting = true;
+        try
+        {
+            var payload = new CreateHavaleRequest
+            {
+                FactorSNs = selectedFactorSNs.ToList(),
+                RanandehSN = driverSN,
+                MamoorPakhshSN = agentSN,
+                HavaleMamoorPakhshDate = ToPersianDate(havaleDate),
+                HavaleMamoorPakhshDateErsal = ToPersianDate(sendDate),
+                ServiceNo = DefaultServiceNo,
+                HavaleMamoorPakhshStatus = DefaultHavaleStatus
+            };
+
+            using var client = await ApiClient.CreateAuthorizedClientAsync();
+            using var response = await client.PostAsJsonAsync("api/v1/HavaleMamoorPakhsh/CreateHavaleMamoorPakhsh", payload);
+            var json = await response.Content.ReadAsStringAsync();
+            if (!response.IsSuccessStatusCode) throw new InvalidOperationException(ReadError(json, "ثبت حواله ناموفق بود."));
+            using var document = JsonDocument.Parse(json);
+            var root = document.RootElement;
+            if (root.TryGetProperty("statusCode", out var status) && status.ValueKind == JsonValueKind.Number && status.GetInt32() >= 400)
+                throw new InvalidOperationException(ReadError(json, "ثبت حواله ناموفق بود."));
+            if (root.TryGetProperty("errMsg", out var err) && err.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(err.GetString()))
+                throw new InvalidOperationException(err.GetString());
+            selectedFactorSNs.Clear();
+            await LoadFactorsAsync();
+            successMessage = "حواله با موفقیت ثبت شد.";
+        }
+        catch (Exception ex) { errorMessage = ex.Message; }
+        finally { submitting = false; }
+    }
+
+    private static string ToPersianDate(DateTime date)
+    {
+        var calendar = new PersianCalendar();
+        return $"{calendar.GetYear(date):0000}{calendar.GetMonth(date):00}{calendar.GetDayOfMonth(date):00}";
+    }
+
+    private static string ExtractData(string json)
+    {
+        using var document = JsonDocument.Parse(json);
+        var root = document.RootElement;
+        if (root.ValueKind == JsonValueKind.Array) return root.GetRawText();
+        if (root.TryGetProperty("data", out var data)) return data.GetRawText();
+        if (root.TryGetProperty("Data", out data)) return data.GetRawText();
+        throw new InvalidOperationException(ReadError(json, "ساختار پاسخ سرویس معتبر نیست."));
+    }
+
+    private static string ReadError(string json, string fallback)
+    {
+        try
+        {
+            using var doc = JsonDocument.Parse(json);
+            var root = doc.RootElement;
+            foreach (var key in new[] { "errMsg", "message", "Message", "title" })
+                if (root.TryGetProperty(key, out var value) && value.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(value.GetString()))
+                    return value.GetString()!;
+            if (root.TryGetProperty("data", out var data) && data.ValueKind == JsonValueKind.String) return data.GetString()!;
+        }
+        catch { }
+        return fallback;
+    }
+
+    private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
+
+    private sealed class AvailableFactorItem
+    {
+        public decimal FactorSN { get; set; }
+        public string? FactorNo { get; set; }
+        public string? FactorDs { get; set; }
+        public string? SodoorDate { get; set; }
+        public decimal MablaghKol { get; set; }
+    }
+
+    private sealed class LookupItem
+    {
+        public decimal Id { get; set; }
+        public string Title { get; set; } = "";
+        public string? Code { get; set; }
+    }
+
+    private sealed class CreateHavaleRequest
+    {
+        public List<decimal> FactorSNs { get; set; } = [];
+        public decimal RanandehSN { get; set; }
+        public decimal MamoorPakhshSN { get; set; }
+        public string HavaleMamoorPakhshDate { get; set; } = "";
+        public string HavaleMamoorPakhshDateErsal { get; set; } = "";
+        public byte ServiceNo { get; set; }
+        public byte HavaleMamoorPakhshStatus { get; set; }
+    }
+}
