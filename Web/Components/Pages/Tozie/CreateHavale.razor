@@ -24,7 +24,7 @@
         </div>
         @if (!string.IsNullOrWhiteSpace(factorError)) { <div class="havale-alert havale-alert-error"><strong>خطای دریافت فاکتورها:</strong> @factorError</div> }
         <div class="havale-toolbar">
-            <input class="havale-search" placeholder="جستجو بر اساس شماره یا شرح فاکتور..." @bind="searchText" @bind:event="oninput" @bind:after="ResetFactorPage" />
+            <input class="havale-search" placeholder="جستجو بر اساس شماره یا شرح فاکتور..." @bind="searchText" @bind:event="oninput" @bind:after="ApplyFactorSearch" />
             <div class="havale-selection-count">@SelectedCount فاکتور انتخاب شده</div>
         </div>
         @if (loadingFactors) { <div class="havale-empty">در حال دریافت فهرست فاکتورهای قابل حواله...</div> }
@@ -108,6 +108,7 @@
     private const string CreateEndpoint = "api/v1/Havale/CreateHavaleMamoorPakhsh";
 
     private readonly List<AvailableFactorItem> factors = [];
+    private List<AvailableFactorItem> filteredFactors = [];
     private readonly List<LookupItem> drivers = [];
     private readonly List<LookupItem> agents = [];
     private readonly HashSet<decimal> selectedFactorSNs = [];
@@ -118,9 +119,7 @@
     private bool loadingFactors, loadingLookups, submitting;
 
     private int SelectedCount => selectedFactorSNs.Count;
-    private List<AvailableFactorItem> FilteredFactors => factors.Where(x =>
-        string.IsNullOrWhiteSpace(searchText) || x.FactorNo.Contains(searchText, StringComparison.OrdinalIgnoreCase)
-        || x.FactorDs.Contains(searchText, StringComparison.OrdinalIgnoreCase)).ToList();
+    private List<AvailableFactorItem> FilteredFactors => filteredFactors;
     private int TotalFactorPages => Math.Max(1, (int)Math.Ceiling(FilteredFactors.Count / (double)FactorPageSize));
     private IEnumerable<int> VisibleFactorPages => TotalFactorPages <= 4
         ? Enumerable.Range(1, TotalFactorPages)
@@ -149,6 +148,7 @@
             var rawItems = ReadArray(ExtractPayload(json)).ToList();
             var items = rawItems.Select(ReadFactor).Where(x => x.FactorSN != 0).ToList();
             factors.Clear(); factors.AddRange(items);
+            ApplyFactorSearch();
             currentFactorPage = 1;
             selectedFactorSNs.RemoveWhere(id => factors.All(x => x.FactorSN != id));
             if (rawItems.Count == 0)
@@ -156,7 +156,7 @@
             else if (items.Count == 0)
                 factorError = $"API تعداد {rawItems.Count} رکورد برگرداند، اما هیچ‌کدام فیلد شماره شناسایی فاکتور قابل تشخیص نداشتند. نام فیلدهای DTO باید بررسی شود.";
         }
-        catch (Exception ex) { factors.Clear(); factorError = DescribeRequestError(FactorsEndpoint, ex); }
+        catch (Exception ex) { factors.Clear(); filteredFactors.Clear(); currentFactorPage = 1; factorError = DescribeRequestError(FactorsEndpoint, ex); }
         finally { loadingFactors = false; }
     }
 
@@ -209,7 +209,18 @@
         }
     }
 
-    private void ResetFactorPage() => currentFactorPage = 1;
+    // فیلتر فقط هنگام تغییر عبارت جستجو یا دریافت مجدد داده‌ها محاسبه می‌شود،
+    // نه در هر بار رندر کامپوننت.
+    private void ApplyFactorSearch()
+    {
+        var term = searchText.Trim();
+        filteredFactors = string.IsNullOrEmpty(term)
+            ? factors.ToList()
+            : factors.Where(x =>
+                x.FactorNo.Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                x.FactorDs.Contains(term, StringComparison.OrdinalIgnoreCase)).ToList();
+        currentFactorPage = 1;
+    }
     private void GoToFactorPage(int page) => currentFactorPage = Math.Clamp(page, 1, TotalFactorPages);
     private void PreviousFactorPage() => GoToFactorPage(currentFactorPage - 1);
     private void NextFactorPage() => GoToFactorPage(currentFactorPage + 1);
