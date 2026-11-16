@@ -44,15 +44,19 @@
                     <td>@(string.IsNullOrWhiteSpace(factor.SodoorDate) ? "—" : factor.SodoorDate)</td><td class="havale-number">@factor.MablaghKol.ToString("N0")</td>
                 </tr> }</tbody>
             </table></div>
-            <div class="havale-pagination" aria-label="صفحه‌بندی فاکتورها">
-                <button type="button" class="havale-page-button" @onclick="PreviousFactorPage" disabled="@(currentFactorPage <= 1)">قبلی</button>
-                @for (var page = 1; page <= TotalFactorPages; page++)
+            <nav class="havale-pagination" aria-label="صفحه‌بندی فاکتورها" dir="rtl">
+                <button type="button" class="havale-page-button havale-page-arrow" @onclick="NextFactorPage" disabled="@(currentFactorPage >= TotalFactorPages)" aria-label="صفحه بعد">‹</button>
+                @foreach (var pageNumber in VisibleFactorPages)
                 {
-                    var pageNumber = page;
-                    <button type="button" class="havale-page-button @(currentFactorPage == pageNumber ? "active" : "")" @onclick="() => GoToFactorPage(pageNumber)" aria-current="@(currentFactorPage == pageNumber ? "page" : null)">@pageNumber</button>
+                    <button @key="pageNumber" type="button" class="havale-page-button @(currentFactorPage == pageNumber ? "active" : "")" @onclick="() => GoToFactorPage(pageNumber)" aria-current="@(currentFactorPage == pageNumber ? "page" : null)">@pageNumber</button>
                 }
-                <button type="button" class="havale-page-button" @onclick="NextFactorPage" disabled="@(currentFactorPage >= TotalFactorPages)">بعدی</button>
-            </div>
+                @if (ShowLastPageShortcut)
+                {
+                    <span class="havale-page-ellipsis" aria-hidden="true">…</span>
+                    <button type="button" class="havale-page-button" @onclick="() => GoToFactorPage(TotalFactorPages)">@TotalFactorPages</button>
+                }
+                <button type="button" class="havale-page-button havale-page-arrow" @onclick="PreviousFactorPage" disabled="@(currentFactorPage <= 1)" aria-label="صفحه قبل">›</button>
+            </nav>
         }
     </section>
 
@@ -94,7 +98,7 @@
 </div>
 
 @code {
-    private const int FactorPageSize = 10;
+    private const int FactorPageSize = 5;
     private int currentFactorPage = 1;
     private const byte DefaultServiceNo = 1;
     private const byte DefaultHavaleStatus = 1;
@@ -118,6 +122,14 @@
         string.IsNullOrWhiteSpace(searchText) || x.FactorNo.Contains(searchText, StringComparison.OrdinalIgnoreCase)
         || x.FactorDs.Contains(searchText, StringComparison.OrdinalIgnoreCase)).ToList();
     private int TotalFactorPages => Math.Max(1, (int)Math.Ceiling(FilteredFactors.Count / (double)FactorPageSize));
+    private IEnumerable<int> VisibleFactorPages => TotalFactorPages <= 4
+        ? Enumerable.Range(1, TotalFactorPages)
+        : currentFactorPage <= 2
+            ? Enumerable.Range(1, 3)
+            : currentFactorPage >= TotalFactorPages - 1
+                ? Enumerable.Range(Math.Max(1, TotalFactorPages - 2), 3)
+                : Enumerable.Range(currentFactorPage - 1, 3);
+    private bool ShowLastPageShortcut => TotalFactorPages > 4 && currentFactorPage < TotalFactorPages - 1;
     private int PageStart => FilteredFactors.Count == 0 ? 0 : (currentFactorPage - 1) * FactorPageSize + 1;
     private int PageEnd => Math.Min(currentFactorPage * FactorPageSize, FilteredFactors.Count);
     private List<AvailableFactorItem> CurrentPageFactors => FilteredFactors.Skip((currentFactorPage - 1) * FactorPageSize).Take(FactorPageSize).ToList();
