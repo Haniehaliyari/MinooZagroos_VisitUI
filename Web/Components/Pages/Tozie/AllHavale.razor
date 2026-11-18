@@ -209,23 +209,11 @@
         KhodrooName = ReadString(item, "KhodrooName", "KhodrooDS", "KhodrooDescription", "VehicleName")
     };
 
-    private static string StatusText(byte status) => status switch
-    {
-        4 => "موقت",
-        1 => "ثبت‌شده",
-        2 => "تأییدشده",
-        3 => "ارسال‌شده",
-        _ => $"وضعیت {status}"
-    };
+    private static string StatusText(byte status) =>
+        status == 4 ? "موقت" : $"وضعیت {status}";
 
-    private static string StatusCss(byte status) => status switch
-    {
-        4 => "temporary",
-        1 => "registered",
-        2 => "confirmed",
-        3 => "sent",
-        _ => "unknown"
-    };
+    private static string StatusCss(byte status) =>
+        status == 4 ? "temporary" : "unknown";
 
     private static string Display(string? value) => string.IsNullOrWhiteSpace(value) ? "—" : value.Trim();
     private static string NormalizeDate(string? value) => new string((value ?? "").Where(char.IsDigit).ToArray());
