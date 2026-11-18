@@ -1,0 +1,333 @@
+@page "/tozie/havale"
+@attribute [Authorize]
+@layout MainLayout
+@using System.Globalization
+@using System.Text.Json
+@using Microsoft.AspNetCore.Authorization
+@using Web.Components.Layout
+@using MyProject.Services.Api
+@inject BackendApiClient ApiClient
+
+<PageTitle>همه حواله‌ها | مینو زاگرس</PageTitle>
+
+<div class="all-havale-page" dir="rtl">
+    <div class="all-havale-heading">
+        <div>
+            <div class="all-havale-eyebrow">توزیع و پخش</div>
+            <h1>همه حواله‌ها</h1>
+            <p>فهرست حواله‌های ثبت‌شده به همراه اطلاعات مأمور پخش، راننده و خودرو</p>
+        </div>
+        <div class="all-havale-heading-icon" aria-hidden="true">▤</div>
+    </div>
+
+    <section class="all-havale-panel">
+        <div class="all-havale-toolbar">
+            <div class="all-havale-search-wrap">
+                <span class="all-havale-search-icon" aria-hidden="true">⌕</span>
+                <input class="all-havale-search" type="search"
+                       placeholder="جستجو بر اساس شماره، شرح، مأمور پخش، راننده یا خودرو..."
+                       @bind="searchText" @bind:event="oninput" @bind:after="ApplySearch" />
+            </div>
+            <div class="all-havale-toolbar-actions">
+                <span class="all-havale-count">@FilteredHavales.Count حواله</span>
+                <button type="button" class="all-havale-refresh" @onclick="LoadHavalesAsync" disabled="@loading">
+                    <span aria-hidden="true">↻</span> @(loading ? "در حال دریافت..." : "به‌روزرسانی")
+                </button>
+            </div>
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(errorMessage))
+        {
+            <div class="all-havale-alert"><strong>خطای دریافت حواله‌ها:</strong> @errorMessage</div>
+        }
+        else if (loading)
+        {
+            <div class="all-havale-empty"><span class="all-havale-spinner"></span><div>در حال دریافت فهرست حواله‌ها...</div></div>
+        }
+        else if (havales.Count == 0)
+        {
+            <div class="all-havale-empty"><div class="all-havale-empty-icon">▤</div><strong>حواله‌ای برای نمایش وجود ندارد</strong><span>پس از ثبت حواله، اطلاعات آن در این قسمت نمایش داده می‌شود.</span></div>
+        }
+        else if (FilteredHavales.Count == 0)
+        {
+            <div class="all-havale-empty"><div class="all-havale-empty-icon">⌕</div><strong>نتیجه‌ای پیدا نشد</strong><span>عبارت جستجو را تغییر دهید و دوباره تلاش کنید.</span></div>
+        }
+        else
+        {
+            <div class="all-havale-pagination-summary">
+                <span>نمایش @PageStart تا @PageEnd از @FilteredHavales.Count حواله</span>
+                <span>صفحه @currentPage از @TotalPages</span>
+            </div>
+            <div class="all-havale-table-wrap">
+                <table class="all-havale-table">
+                    <thead>
+                        <tr>
+                            <th>ردیف</th>
+                            <th>شماره حواله</th>
+                            <th>شرح حواله</th>
+                            <th>تاریخ حواله</th>
+                            <th>تاریخ ارسال</th>
+                            <th>مأمور پخش</th>
+                            <th>راننده</th>
+                            <th>خودرو</th>
+                            <th>وضعیت</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in CurrentPageHavales.Select((value, index) => new { value, index }))
+                        {
+                            <tr @key="item.value.HavaleMamoorPakhshSN">
+                                <td class="all-havale-row-number">@((currentPage - 1) * PageSize + item.index + 1)</td>
+                                <td class="all-havale-number">@Display(item.value.HavaleMamoorPakhshNO)</td>
+                                <td class="all-havale-description">@Display(item.value.HavaleMamoorPakhshDs)</td>
+                                <td class="all-havale-date">@Display(item.value.HavaleMamoorPakhshDate)</td>
+                                <td class="all-havale-date">@Display(item.value.HavaleMamoorPakhshDateErsal)</td>
+                                <td>@Display(item.value.MamoorPakhshName)</td>
+                                <td>@Display(item.value.RanandehName)</td>
+                                <td>@Display(item.value.KhodrooName)</td>
+                                <td><span class="all-havale-status @StatusCss(item.value.HavaleMamoorPakhshStatus)">@StatusText(item.value.HavaleMamoorPakhshStatus)</span></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <nav class="all-havale-pagination" aria-label="صفحه‌بندی حواله‌ها" dir="rtl">
+                <button type="button" class="all-havale-page-arrow" @onclick="NextPage" disabled="@(currentPage >= TotalPages)" aria-label="صفحه بعد">‹</button>
+                @foreach (var pageNumber in VisiblePages)
+                {
+                    <button @key="pageNumber" type="button"
+                            class="all-havale-page-button @(currentPage == pageNumber ? "active" : "")"
+                            @onclick="() => GoToPage(pageNumber)"
+                            aria-current="@(currentPage == pageNumber ? "page" : null)">@pageNumber</button>
+                }
+                @if (ShowLastPageShortcut)
+                {
+                    <span class="all-havale-ellipsis">…</span>
+                    <button type="button" class="all-havale-page-button" @onclick="() => GoToPage(TotalPages)">@TotalPages</button>
+                }
+                <button type="button" class="all-havale-page-arrow" @onclick="PreviousPage" disabled="@(currentPage <= 1)" aria-label="صفحه قبل">›</button>
+            </nav>
+        }
+    </section>
+</div>
+
+@code {
+    private const int PageSize = 5;
+    private const string HavalesEndpoint = "api/v1/Havale/GetAllHavaleMamoorPakhsh";
+    private readonly List<HavaleListItem> havales = [];
+    private List<HavaleListItem> filteredHavales = [];
+    private string searchText = "";
+    private string? errorMessage;
+    private bool loading;
+    private int currentPage = 1;
+
+    private List<HavaleListItem> FilteredHavales => filteredHavales;
+    private int TotalPages => Math.Max(1, (int)Math.Ceiling(FilteredHavales.Count / (double)PageSize));
+    private int PageStart => FilteredHavales.Count == 0 ? 0 : (currentPage - 1) * PageSize + 1;
+    private int PageEnd => Math.Min(currentPage * PageSize, FilteredHavales.Count);
+    private List<HavaleListItem> CurrentPageHavales => FilteredHavales.Skip((currentPage - 1) * PageSize).Take(PageSize).ToList();
+    private IEnumerable<int> VisiblePages => TotalPages <= 4
+        ? Enumerable.Range(1, TotalPages)
+        : currentPage <= 2
+            ? Enumerable.Range(1, 3)
+            : currentPage >= TotalPages - 1
+                ? Enumerable.Range(Math.Max(1, TotalPages - 2), 3)
+                : Enumerable.Range(currentPage - 1, 3);
+    private bool ShowLastPageShortcut => TotalPages > 4 && currentPage < TotalPages - 1;
+
+    protected override async Task OnInitializedAsync() => await LoadHavalesAsync();
+
+    private async Task LoadHavalesAsync()
+    {
+        loading = true;
+        errorMessage = null;
+        try
+        {
+            using var client = await ApiClient.CreateAuthorizedClientAsync();
+            using var response = await client.GetAsync(HavalesEndpoint);
+            var json = await response.Content.ReadAsStringAsync();
+            EnsureApiSuccess(response, json);
+
+            var collection = FindCollection(JsonDocument.Parse(json).RootElement);
+            var rows = ReadArray(collection).Select(ReadHavale)
+                .Where(x => x.HavaleMamoorPakhshSN != 0 || !string.IsNullOrWhiteSpace(x.HavaleMamoorPakhshNO))
+                .OrderByDescending(x => NormalizeDate(x.HavaleMamoorPakhshDate), StringComparer.Ordinal)
+                .ThenByDescending(x => x.HavaleMamoorPakhshSN)
+                .ToList();
+
+            havales.Clear();
+            havales.AddRange(rows);
+            ApplySearch();
+        }
+        catch (Exception ex)
+        {
+            havales.Clear();
+            filteredHavales.Clear();
+            currentPage = 1;
+            errorMessage = ex is HttpRequestException
+                ? $"ارتباط با سرور برقرار نشد. (مسیر: {HavalesEndpoint})"
+                : ex.Message;
+        }
+        finally { loading = false; }
+    }
+
+    private void ApplySearch()
+    {
+        var term = NormalizeDigits(searchText.Trim());
+        filteredHavales = havales.Where(x =>
+            string.IsNullOrWhiteSpace(term) ||
+            Contains(x.HavaleMamoorPakhshNO, term) ||
+            Contains(x.HavaleMamoorPakhshDs, term) ||
+            Contains(x.MamoorPakhshName, term) ||
+            Contains(x.RanandehName, term) ||
+            Contains(x.KhodrooName, term) ||
+            Contains(x.HavaleMamoorPakhshDate, term) ||
+            Contains(x.HavaleMamoorPakhshDateErsal, term) ||
+            StatusText(x.HavaleMamoorPakhshStatus).Contains(term, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+        currentPage = 1;
+    }
+
+    private static bool Contains(string? source, string term) =>
+        NormalizeDigits(source ?? "").Contains(term, StringComparison.OrdinalIgnoreCase);
+
+    private void GoToPage(int page) => currentPage = Math.Clamp(page, 1, TotalPages);
+    private void PreviousPage() => GoToPage(currentPage - 1);
+    private void NextPage() => GoToPage(currentPage + 1);
+
+    private static HavaleListItem ReadHavale(JsonElement item) => new()
+    {
+        HavaleMamoorPakhshSN = ReadDecimal(item, "HavaleMamoorPakhshSN"),
+        HavaleMamoorPakhshNO = ReadString(item, "HavaleMamoorPakhshNO"),
+        HavaleMamoorPakhshDs = ReadString(item, "HavaleMamoorPakhshDs"),
+        HavaleMamoorPakhshDate = ReadString(item, "HavaleMamoorPakhshDate"),
+        HavaleMamoorPakhshDateErsal = ReadString(item, "HavaleMamoorPakhshDateErsal"),
+        HavaleMamoorPakhshStatus = (byte)Math.Clamp(ReadDecimal(item, "HavaleMamoorPakhshStatus"), 0, 255),
+        MamoorPakhshName = ReadString(item, "MamoorPakhshName", "MamoorPakhshFullName", "MamoorName"),
+        RanandehName = ReadString(item, "RanandehName", "RanandehFullName", "DriverName"),
+        KhodrooName = ReadString(item, "KhodrooName", "KhodrooDS", "KhodrooDescription", "VehicleName")
+    };
+
+    private static string StatusText(byte status) => status switch
+    {
+        4 => "موقت",
+        1 => "ثبت‌شده",
+        2 => "تأییدشده",
+        3 => "ارسال‌شده",
+        _ => $"وضعیت {status}"
+    };
+
+    private static string StatusCss(byte status) => status switch
+    {
+        4 => "temporary",
+        1 => "registered",
+        2 => "confirmed",
+        3 => "sent",
+        _ => "unknown"
+    };
+
+    private static string Display(string? value) => string.IsNullOrWhiteSpace(value) ? "—" : value.Trim();
+    private static string NormalizeDate(string? value) => new string((value ?? "").Where(char.IsDigit).ToArray());
+
+    private static string NormalizeDigits(string? value) => (value ?? "")
+        .Replace('۰','0').Replace('۱','1').Replace('۲','2').Replace('۳','3').Replace('۴','4')
+        .Replace('۵','5').Replace('۶','6').Replace('۷','7').Replace('۸','8').Replace('۹','9')
+        .Replace('٠','0').Replace('١','1').Replace('٢','2').Replace('٣','3').Replace('٤','4')
+        .Replace('٥','5').Replace('٦','6').Replace('٧','7').Replace('٨','8').Replace('٩','9');
+
+    private static JsonElement FindCollection(JsonElement value, int depth = 0)
+    {
+        if (value.ValueKind == JsonValueKind.Array) return value;
+        if (depth > 7 || value.ValueKind != JsonValueKind.Object) return value;
+        foreach (var key in new[] { "data", "result", "items", "list", "records", "results", "havales", "havaleList", "havaleMamoorPakhshList" })
+            if (TryGetProperty(value, key, out var nested))
+            {
+                var found = FindCollection(nested, depth + 1);
+                if (found.ValueKind == JsonValueKind.Array) return found;
+            }
+        foreach (var property in value.EnumerateObject())
+        {
+            var found = FindCollection(property.Value, depth + 1);
+            if (found.ValueKind == JsonValueKind.Array) return found;
+        }
+        return value;
+    }
+
+    private static IEnumerable<JsonElement> ReadArray(JsonElement value) =>
+        value.ValueKind == JsonValueKind.Array
+            ? value.EnumerateArray().Select(x => x.Clone()).ToList()
+            : value.ValueKind == JsonValueKind.Object ? new[] { value.Clone() } : [];
+
+    private static decimal ReadDecimal(JsonElement item, params string[] names)
+    {
+        foreach (var name in names)
+            if (TryGetProperty(item, name, out var value))
+            {
+                if (value.ValueKind == JsonValueKind.Number && value.TryGetDecimal(out var number)) return number;
+                if (value.ValueKind == JsonValueKind.String && decimal.TryParse(NormalizeDigits(value.GetString()), NumberStyles.Any, CultureInfo.InvariantCulture, out number)) return number;
+            }
+        return 0;
+    }
+
+    private static string ReadString(JsonElement item, params string[] names)
+    {
+        foreach (var name in names)
+            if (TryGetProperty(item, name, out var value))
+            {
+                if (value.ValueKind == JsonValueKind.String) return value.GetString() ?? "";
+                if (value.ValueKind == JsonValueKind.Number) return value.ToString();
+            }
+        return "";
+    }
+
+    private static bool TryGetProperty(JsonElement element, string name, out JsonElement value)
+    {
+        if (element.ValueKind == JsonValueKind.Object)
+            foreach (var property in element.EnumerateObject())
+                if (string.Equals(property.Name, name, StringComparison.OrdinalIgnoreCase))
+                { value = property.Value; return true; }
+        value = default;
+        return false;
+    }
+
+    private static void EnsureApiSuccess(HttpResponseMessage response, string json)
+    {
+        if (!response.IsSuccessStatusCode)
+            throw new InvalidOperationException($"HTTP {(int)response.StatusCode} ({response.ReasonPhrase}). {ReadError(json)}");
+        using var doc = JsonDocument.Parse(json);
+        var root = doc.RootElement;
+        if (TryGetProperty(root, "statusCode", out var status) && status.ValueKind == JsonValueKind.Number && status.GetInt32() >= 400)
+            throw new InvalidOperationException(ReadError(json));
+        if (TryGetProperty(root, "errMsg", out var err) && err.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(err.GetString()))
+            throw new InvalidOperationException(err.GetString());
+        if (TryGetProperty(root, "success", out var success) && success.ValueKind == JsonValueKind.False)
+            throw new InvalidOperationException(ReadError(json));
+    }
+
+    private static string ReadError(string json)
+    {
+        try
+        {
+            using var doc = JsonDocument.Parse(json);
+            foreach (var key in new[] { "errMsg", "message", "Message", "title", "detail" })
+                if (TryGetProperty(doc.RootElement, key, out var value) && value.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(value.GetString()))
+                    return value.GetString()!;
+        }
+        catch { }
+        return "پاسخ سرویس قابل پردازش نیست.";
+    }
+
+    private sealed class HavaleListItem
+    {
+        public decimal HavaleMamoorPakhshSN { get; set; }
+        public string HavaleMamoorPakhshNO { get; set; } = "";
+        public string HavaleMamoorPakhshDs { get; set; } = "";
+        public string HavaleMamoorPakhshDate { get; set; } = "";
+        public string HavaleMamoorPakhshDateErsal { get; set; } = "";
+        public byte HavaleMamoorPakhshStatus { get; set; }
+        public string MamoorPakhshName { get; set; } = "";
+        public string RanandehName { get; set; } = "";
+        public string KhodrooName { get; set; } = "";
+    }
+}
