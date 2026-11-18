@@ -1,0 +1,61 @@
+.khodroo-page{max-width:1440px;margin:0 auto;padding:30px 34px 48px;color:var(--text-primary,#202b3c)}
+.khodroo-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:25px}
+.khodroo-eyebrow{font-size:12px;color:#64748b;margin-bottom:8px}
+.khodroo-heading h1{font-size:25px;font-weight:800;margin:0 0 8px}
+.khodroo-heading p{margin:0;color:#8490a2;font-size:13px}
+.khodroo-heading-icon{width:54px;height:54px;border-radius:16px;background:#eaf1fb;display:grid;place-items:center;font-size:25px}
+.khodroo-panel{background:var(--surface,#fff);border:1px solid var(--border,#e7ebf1);border-radius:16px;padding:22px;box-shadow:0 5px 20px rgba(25,45,75,.035)}
+.khodroo-toolbar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:18px;flex-wrap:wrap}
+.khodroo-search-wrap{position:relative;flex:1;max-width:600px}
+.khodroo-search-wrap>span{position:absolute;right:13px;top:7px;color:#8490a2;font-size:22px}
+.khodroo-search{width:100%;height:44px;border:1px solid #dfe5ed;border-radius:10px;padding:0 42px 0 13px;background:transparent;color:inherit;font:inherit;font-size:13px;outline:none}
+.khodroo-search:focus,.khodroo-form-grid input:focus{border-color:#6b91bd;box-shadow:0 0 0 3px rgba(55,111,169,.1)}
+.khodroo-toolbar-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.khodroo-count{font-size:12px;color:#456b94;background:#eff5fb;border-radius:20px;padding:9px 13px}
+.khodroo-button{min-height:39px;padding:0 14px;border:1px solid transparent;border-radius:9px;font:inherit;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap}
+.khodroo-button:disabled{opacity:.55;cursor:wait}
+.khodroo-button-primary{background:#245a92;color:#fff}
+.khodroo-button-primary:hover{background:#194a7d}
+.khodroo-button-light{background:#f8fafc;border-color:#dfe5ed;color:#53657b}
+.khodroo-button-danger{background:#b42318;color:#fff}
+.khodroo-alert{padding:12px 15px;border-radius:10px;margin:0 0 15px;font-size:13px}
+.khodroo-alert-error{background:#fff1f0;color:#b42318;border:1px solid #ffd5d2}
+.khodroo-alert-success{background:#ecfdf3;color:#187443;border:1px solid #c9f0d8}
+.khodroo-table-wrap{overflow-x:auto;border:1px solid #edf0f4;border-radius:11px}
+.khodroo-table{width:100%;border-collapse:collapse;min-width:900px}
+.khodroo-table th{font-size:12px;color:#718096;font-weight:700;background:#f8fafc;text-align:right;padding:14px 12px;white-space:nowrap}
+.khodroo-table td{font-size:12px;padding:13px 12px;border-bottom:1px solid #edf0f4;white-space:nowrap;color:#39485c}
+.khodroo-table tbody tr:hover{background:#f9fbfd}
+.khodroo-table tbody tr:last-child td{border-bottom:0}
+.khodroo-row-number{color:#9aa5b4!important;font-variant-numeric:tabular-nums}
+.khodroo-ltr{direction:ltr;text-align:right;font-variant-numeric:tabular-nums}
+.khodroo-status{display:inline-flex;padding:5px 9px;border-radius:20px;background:#f1f3f6;color:#667085;font-size:11px}
+.khodroo-row-actions{display:flex;gap:6px}
+.khodroo-icon-button{width:31px;height:31px;border-radius:8px;border:1px solid #e2e8f0;background:#fff;cursor:pointer;font-size:16px}
+.khodroo-icon-button.edit{color:#245a92}
+.khodroo-icon-button.delete{color:#b42318}
+.khodroo-empty{min-height:210px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;text-align:center;color:#8994a4;font-size:13px}
+.khodroo-empty strong{color:#526174;font-size:14px}
+.khodroo-spinner{width:25px;height:25px;border:3px solid #e5edf5;border-top-color:#245a92;border-radius:50%;animation:khodroo-spin .8s linear infinite}
+@keyframes khodroo-spin{to{transform:rotate(360deg)}}
+.khodroo-pagination-summary{display:flex;justify-content:space-between;color:#8490a2;font-size:12px;margin:4px 0 10px}
+.khodroo-pagination{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:18px;flex-wrap:wrap}
+.khodroo-page-button,.khodroo-page-arrow{display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:36px;padding:0 10px;border:1px solid #e1e7ef;border-radius:9px;background:var(--surface,#fff);color:#526174;font:inherit;font-size:12px;font-weight:650;cursor:pointer}
+.khodroo-page-button.active{background:#245a92;border-color:#245a92;color:#fff}
+.khodroo-page-button:disabled,.khodroo-page-arrow:disabled{opacity:.35;cursor:not-allowed}
+.khodroo-page-arrow{font-size:19px}
+.khodroo-ellipsis{color:#8b96a6}
+.khodroo-modal-backdrop{position:fixed;inset:0;z-index:1000;background:rgba(15,23,42,.48);display:flex;align-items:center;justify-content:center;padding:18px}
+.khodroo-modal,.khodroo-confirm-modal{width:min(620px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:17px;padding:24px;box-shadow:0 20px 60px rgba(15,23,42,.2);color:#202b3c}
+.khodroo-modal-heading{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px}
+.khodroo-modal-heading h2,.khodroo-confirm-modal h2{font-size:19px;margin:0;font-weight:800}
+.khodroo-close{border:0;background:#f1f5f9;border-radius:8px;width:32px;height:32px;font-size:22px;cursor:pointer;color:#64748b}
+.khodroo-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.khodroo-form-grid label{display:flex;flex-direction:column;gap:8px;color:#526174;font-size:12px;font-weight:700}
+.khodroo-form-grid input{height:42px;border:1px solid #dfe5ed;border-radius:9px;padding:0 11px;font:inherit;font-size:13px;outline:none;color:#202b3c}
+.khodroo-modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:23px}
+.khodroo-confirm-modal{width:min(440px,100%);text-align:center}
+.khodroo-confirm-modal p{font-size:13px;line-height:1.9;color:#64748b}
+.khodroo-confirm-icon{width:42px;height:42px;margin:0 auto 12px;border-radius:50%;background:#fff1f0;color:#b42318;display:grid;place-items:center;font-weight:800;font-size:20px}
+@media(max-width:760px){.khodroo-page{padding:22px 15px 36px}.khodroo-panel{padding:16px}.khodroo-toolbar{align-items:stretch;flex-direction:column}.khodroo-search-wrap{max-width:none}.khodroo-toolbar-actions{justify-content:space-between}.khodroo-heading h1{font-size:21px}}
+@media(max-width:520px){.khodroo-form-grid{grid-template-columns:1fr}.khodroo-modal{padding:18px}.khodroo-modal-actions{flex-wrap:wrap}.khodroo-pagination-summary{gap:8px;flex-wrap:wrap}}
