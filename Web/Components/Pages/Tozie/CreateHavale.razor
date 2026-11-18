@@ -20,7 +20,7 @@
     <section class="havale-panel">
         <div class="havale-section-heading">
             <div><span class="havale-step">۱</span><div><h2>انتخاب فاکتورها</h2><p>امکان انتخاب هم‌زمان چند فاکتور وجود دارد.</p></div></div>
-            <button type="button" class="havale-button havale-button-light" @onclick="LoadFactorsAsync" disabled="@loadingFactors">@(loadingFactors ? "در حال دریافت..." : "به‌روزرسانی فهرست")</button>
+            <button type="button" class="havale-button havale-button-light" @onclick="RefreshFactorsAsync" disabled="@loadingFactors">@(loadingFactors ? "در حال دریافت..." : "به‌روزرسانی فهرست")</button>
         </div>
         @if (!string.IsNullOrWhiteSpace(factorError)) { <div class="havale-alert havale-alert-error"><strong>خطای دریافت فاکتورها:</strong> @factorError</div> }
         <div class="havale-toolbar">
@@ -35,8 +35,8 @@
                 <input type="text" inputmode="numeric" autocomplete="off" maxlength="10" placeholder="۱۴۰۵/۰۸/۳۰" @bind="factorDateToText" />
             </label>
             <div class="havale-date-filter-actions">
-                <button type="button" class="havale-button havale-button-primary" @onclick="ApplyFactorSearch">اعمال فیلتر</button>
-                <button type="button" class="havale-button havale-button-light" @onclick="ClearFactorDateFilter">پاک کردن تاریخ</button>
+                <button type="button" class="havale-button havale-button-primary" @onclick="ApplyFactorDateFilterAsync">اعمال فیلتر</button>
+                <button type="button" class="havale-button havale-button-light" @onclick="ClearFactorDateFilterAsync">پاک کردن تاریخ</button>
             </div>
         </div>
         @if (!string.IsNullOrWhiteSpace(factorDateFilterError)) { <div class="havale-alert havale-alert-error">@factorDateFilterError</div> }
@@ -133,6 +133,7 @@
     private string havaleDateText = TodayPersianDate();
     private string sendDateText = TodayPersianDate();
     private bool loadingFactors, loadingLookups, submitting;
+    private string? appliedFactorDateFrom, appliedFactorDateTo;
 
     private int SelectedCount => selectedFactorSNs.Count;
     private List<AvailableFactorItem> FilteredFactors => filteredFactors;
@@ -158,7 +159,8 @@
         try
         {
             using var client = await ApiClient.CreateAuthorizedClientAsync();
-            using var response = await client.GetAsync(FactorsEndpoint);
+            var requestUrl = BuildFactorsRequestUrl(appliedFactorDateFrom, appliedFactorDateTo);
+            using var response = await client.GetAsync(requestUrl);
             var json = await response.Content.ReadAsStringAsync();
             EnsureApiSuccess(response, json, "دریافت فاکتورها");
             var rawItems = ReadArray(ExtractPayload(json)).ToList();
@@ -225,8 +227,21 @@
         }
     }
 
-    // فیلتر جستجو و بازه تاریخ صدور فقط هنگام تغییر ورودی‌ها/اعمال فیلتر محاسبه می‌شود.
+    // جستجوی شماره و شرح فاکتور در داده‌های دریافت‌شده محلی انجام می‌شود.
+    // فیلتر تاریخ فقط از طریق API اعمال می‌شود تا همه رکوردهای بازه از سرور دریافت شوند.
     private void ApplyFactorSearch()
+    {
+        var term = searchText.Trim();
+        filteredFactors = factors
+            .Where(x => string.IsNullOrEmpty(term) ||
+                x.FactorNo.Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                x.FactorDs.Contains(term, StringComparison.OrdinalIgnoreCase))
+            .OrderByDescending(x => NormalizeFactorDate(x.SodoorDate), StringComparer.Ordinal)
+            .ToList();
+        currentFactorPage = 1;
+    }
+
+    private async Task ApplyFactorDateFilterAsync()
     {
         factorDateFilterError = null;
         string? fromDate = null;
@@ -243,34 +258,35 @@
         catch (FormatException ex)
         {
             factorDateFilterError = ex.Message;
-            filteredFactors = [];
-            currentFactorPage = 1;
             return;
         }
 
-        var term = searchText.Trim();
-        filteredFactors = factors
-            .Where(x => string.IsNullOrEmpty(term) ||
-                x.FactorNo.Contains(term, StringComparison.OrdinalIgnoreCase) ||
-                x.FactorDs.Contains(term, StringComparison.OrdinalIgnoreCase))
-            .Where(x =>
-            {
-                if (fromDate is null && toDate is null) return true;
-                var issueDate = NormalizeFactorDate(x.SodoorDate);
-                if (issueDate.Length != 8) return false;
-                return (fromDate is null || string.CompareOrdinal(issueDate, fromDate) >= 0) &&
-                       (toDate is null || string.CompareOrdinal(issueDate, toDate) <= 0);
-            })
-            .OrderByDescending(x => NormalizeFactorDate(x.SodoorDate), StringComparer.Ordinal)
-            .ToList();
-        currentFactorPage = 1;
+        appliedFactorDateFrom = fromDate;
+        appliedFactorDateTo = toDate;
+        await LoadFactorsAsync();
     }
 
-    private void ClearFactorDateFilter()
+    private async Task ClearFactorDateFilterAsync()
     {
         factorDateFromText = "";
         factorDateToText = "";
-        ApplyFactorSearch();
+        appliedFactorDateFrom = null;
+        appliedFactorDateTo = null;
+        factorDateFilterError = null;
+        await LoadFactorsAsync();
+    }
+
+    private async Task RefreshFactorsAsync() => await LoadFactorsAsync();
+
+    private static string BuildFactorsRequestUrl(string? dateFrom, string? dateTo)
+    {
+        var query = new List<string>();
+        if (!string.IsNullOrWhiteSpace(dateFrom))
+            query.Add($"dateFrom={Uri.EscapeDataString(dateFrom)}");
+        if (!string.IsNullOrWhiteSpace(dateTo))
+            query.Add($"dateTo={Uri.EscapeDataString(dateTo)}");
+
+        return query.Count == 0 ? FactorsEndpoint : $"{FactorsEndpoint}?{string.Join("&", query)}";
     }
 
     private static string NormalizeFactorDate(string? input)
