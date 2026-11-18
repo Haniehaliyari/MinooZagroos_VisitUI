@@ -27,6 +27,19 @@
             <input class="havale-search" placeholder="جستجو بر اساس شماره یا شرح فاکتور..." @bind="searchText" @bind:event="oninput" @bind:after="ApplyFactorSearch" />
             <div class="havale-selection-count">@SelectedCount فاکتور انتخاب شده</div>
         </div>
+        <div class="havale-date-filter">
+            <label>از تاریخ صدور
+                <input type="text" inputmode="numeric" autocomplete="off" maxlength="10" placeholder="۱۴۰۵/۰۸/۰۱" @bind="factorDateFromText" />
+            </label>
+            <label>تا تاریخ صدور
+                <input type="text" inputmode="numeric" autocomplete="off" maxlength="10" placeholder="۱۴۰۵/۰۸/۳۰" @bind="factorDateToText" />
+            </label>
+            <div class="havale-date-filter-actions">
+                <button type="button" class="havale-button havale-button-primary" @onclick="ApplyFactorSearch">اعمال فیلتر</button>
+                <button type="button" class="havale-button havale-button-light" @onclick="ClearFactorDateFilter">پاک کردن تاریخ</button>
+            </div>
+        </div>
+        @if (!string.IsNullOrWhiteSpace(factorDateFilterError)) { <div class="havale-alert havale-alert-error">@factorDateFilterError</div> }
         @if (loadingFactors) { <div class="havale-empty">در حال دریافت فهرست فاکتورهای قابل حواله...</div> }
         else if (factors.Count == 0 && string.IsNullOrWhiteSpace(factorError)) { <div class="havale-empty">در حال حاضر فاکتور تخصیص‌نیافته‌ای از سرویس دریافت نشد.</div> }
         else if (FilteredFactors.Count == 0 && factors.Count > 0) { <div class="havale-empty">فاکتوری با عبارت جستجو شده پیدا نشد.</div> }
@@ -113,6 +126,9 @@
     private readonly List<LookupItem> agents = [];
     private readonly HashSet<decimal> selectedFactorSNs = [];
     private string searchText = "";
+    private string factorDateFromText = "";
+    private string factorDateToText = "";
+    private string? factorDateFilterError;
     private string? selectedDriverSN, selectedAgentSN, factorError, driverError, agentError, submitError, successMessage;
     private string havaleDateText = TodayPersianDate();
     private string sendDateText = TodayPersianDate();
@@ -209,17 +225,63 @@
         }
     }
 
-    // فیلتر فقط هنگام تغییر عبارت جستجو یا دریافت مجدد داده‌ها محاسبه می‌شود،
-    // نه در هر بار رندر کامپوننت.
+    // فیلتر جستجو و بازه تاریخ صدور فقط هنگام تغییر ورودی‌ها/اعمال فیلتر محاسبه می‌شود.
     private void ApplyFactorSearch()
     {
+        factorDateFilterError = null;
+        string? fromDate = null;
+        string? toDate = null;
+        try
+        {
+            if (!string.IsNullOrWhiteSpace(factorDateFromText))
+                fromDate = ParsePersianDate(factorDateFromText);
+            if (!string.IsNullOrWhiteSpace(factorDateToText))
+                toDate = ParsePersianDate(factorDateToText);
+            if (fromDate is not null && toDate is not null && string.CompareOrdinal(fromDate, toDate) > 0)
+                throw new FormatException("تاریخ شروع بازه نمی‌تواند بعد از تاریخ پایان باشد.");
+        }
+        catch (FormatException ex)
+        {
+            factorDateFilterError = ex.Message;
+            filteredFactors = [];
+            currentFactorPage = 1;
+            return;
+        }
+
         var term = searchText.Trim();
-        filteredFactors = string.IsNullOrEmpty(term)
-            ? factors.ToList()
-            : factors.Where(x =>
+        filteredFactors = factors
+            .Where(x => string.IsNullOrEmpty(term) ||
                 x.FactorNo.Contains(term, StringComparison.OrdinalIgnoreCase) ||
-                x.FactorDs.Contains(term, StringComparison.OrdinalIgnoreCase)).ToList();
+                x.FactorDs.Contains(term, StringComparison.OrdinalIgnoreCase))
+            .Where(x =>
+            {
+                if (fromDate is null && toDate is null) return true;
+                var issueDate = NormalizeFactorDate(x.SodoorDate);
+                if (issueDate.Length != 8) return false;
+                return (fromDate is null || string.CompareOrdinal(issueDate, fromDate) >= 0) &&
+                       (toDate is null || string.CompareOrdinal(issueDate, toDate) <= 0);
+            })
+            .OrderByDescending(x => NormalizeFactorDate(x.SodoorDate), StringComparer.Ordinal)
+            .ToList();
         currentFactorPage = 1;
+    }
+
+    private void ClearFactorDateFilter()
+    {
+        factorDateFromText = "";
+        factorDateToText = "";
+        ApplyFactorSearch();
+    }
+
+    private static string NormalizeFactorDate(string? input)
+    {
+        var value = (input ?? "").Trim()
+            .Replace('۰','0').Replace('۱','1').Replace('۲','2').Replace('۳','3').Replace('۴','4')
+            .Replace('۵','5').Replace('۶','6').Replace('۷','7').Replace('۸','8').Replace('۹','9')
+            .Replace('٠','0').Replace('١','1').Replace('٢','2').Replace('٣','3').Replace('٤','4')
+            .Replace('٥','5').Replace('٦','6').Replace('٧','7').Replace('٨','8').Replace('٩','9');
+        var digits = new string(value.Where(char.IsDigit).ToArray());
+        return digits.Length == 8 ? digits : "";
     }
     private void GoToFactorPage(int page) => currentFactorPage = Math.Clamp(page, 1, TotalFactorPages);
     private void PreviousFactorPage() => GoToFactorPage(currentFactorPage - 1);
