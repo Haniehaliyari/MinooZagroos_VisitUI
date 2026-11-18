@@ -160,14 +160,33 @@
             havales.AddRange(rows);
             ApplySearch();
         }
-        catch (Exception ex)
+        catch (HttpRequestException)
         {
             havales.Clear();
             filteredHavales.Clear();
             currentPage = 1;
-            errorMessage = ex is HttpRequestException
-                ? $"ارتباط با سرور برقرار نشد. (مسیر: {HavalesEndpoint})"
-                : ex.Message;
+            errorMessage = "خطای ارتباط با سرور؛ لطفاً اتصال خود به سرور را بررسی کنید و دوباره تلاش کنید.";
+        }
+        catch (OperationCanceledException)
+        {
+            havales.Clear();
+            filteredHavales.Clear();
+            currentPage = 1;
+            errorMessage = "زمان انتظار برای دریافت اطلاعات از سرور به پایان رسید. لطفاً دوباره تلاش کنید.";
+        }
+        catch (UnauthorizedAccessException)
+        {
+            havales.Clear();
+            filteredHavales.Clear();
+            currentPage = 1;
+            errorMessage = "نشست کاربری شما معتبر نیست. لطفاً دوباره وارد سامانه شوید.";
+        }
+        catch (Exception)
+        {
+            havales.Clear();
+            filteredHavales.Clear();
+            currentPage = 1;
+            errorMessage = "در دریافت اطلاعات حواله‌ها مشکلی رخ داد. لطفاً چند لحظه دیگر دوباره تلاش کنید.";
         }
         finally { loading = false; }
     }
