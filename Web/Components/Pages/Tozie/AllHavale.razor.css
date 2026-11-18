@@ -46,3 +46,19 @@
 .all-havale-ellipsis{min-width:20px;text-align:center;color:#8b96a6;font-size:15px;letter-spacing:2px}
 @media(max-width:760px){.all-havale-page{padding:22px 15px 36px}.all-havale-panel{padding:16px}.all-havale-toolbar{align-items:stretch;flex-direction:column}.all-havale-search-wrap{max-width:none}.all-havale-toolbar-actions{justify-content:space-between}.all-havale-heading h1{font-size:21px}}
 @media(max-width:480px){.all-havale-pagination{gap:4px}.all-havale-page-button,.all-havale-page-arrow{min-width:32px;height:33px;padding:0 8px}.all-havale-pagination-summary{gap:8px;flex-wrap:wrap}}
+
+.all-havale-finalize{border:0;border-radius:8px;background:#187443;color:#fff;padding:8px 12px;font:inherit;font-size:11px;font-weight:750;white-space:nowrap;cursor:pointer;transition:background .16s,opacity .16s}
+.all-havale-finalize:hover:not(:disabled){background:#125d35}
+.all-havale-finalize:disabled{opacity:.55;cursor:wait}
+.all-havale-finalized-label{display:inline-flex;align-items:center;border-radius:8px;background:#eaf8ef;color:#187443;padding:7px 10px;font-size:11px;font-weight:700}
+.all-havale-no-action{color:#a0a8b4}
+.all-havale-confirm{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:13px 15px;margin:0 0 16px;border:1px solid #f0d9a8;border-radius:10px;background:#fffbf2;color:#745318;font-size:13px}
+.all-havale-confirm-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.all-havale-confirm-yes,.all-havale-confirm-no{border:0;border-radius:8px;padding:9px 13px;font:inherit;font-size:12px;font-weight:700;cursor:pointer}
+.all-havale-confirm-yes{background:#187443;color:#fff}
+.all-havale-confirm-no{background:#edf0f4;color:#526174}
+.all-havale-confirm-yes:disabled,.all-havale-confirm-no:disabled{opacity:.55;cursor:wait}
+.all-havale-action-message{padding:11px 14px;border-radius:9px;margin-bottom:13px;font-size:13px}
+.all-havale-action-message.success{background:#eaf8ef;border:1px solid #c6ead2;color:#187443}
+.all-havale-action-message.error{background:#fff1f0;border:1px solid #ffd5d2;color:#b42318}
+@media(max-width:760px){.all-havale-confirm{align-items:stretch;flex-direction:column}.all-havale-confirm-actions{justify-content:flex-start}}
