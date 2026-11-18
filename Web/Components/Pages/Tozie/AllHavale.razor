@@ -160,12 +160,30 @@
             havales.AddRange(rows);
             ApplySearch();
         }
+        catch (HttpRequestException ex) when (ex.StatusCode.HasValue)
+        {
+            havales.Clear();
+            filteredHavales.Clear();
+            currentPage = 1;
+            var statusCode = ex.StatusCode.Value;
+            errorMessage = statusCode switch
+            {
+                System.Net.HttpStatusCode.Unauthorized or System.Net.HttpStatusCode.Forbidden =>
+                    "دسترسی به سرویس حواله‌ها مجاز نیست. لطفاً دوباره وارد سامانه شوید یا دسترسی حساب خود را بررسی کنید.",
+                System.Net.HttpStatusCode.NotFound =>
+                    "سرویس دریافت حواله‌ها در سرور پیدا نشد. آدرس API یا مسیر کنترلر باید بررسی شود. (کد 404)",
+                _ when (int)statusCode >= 500 =>
+                    $"سرور هنگام دریافت حواله‌ها با خطا مواجه شد. لطفاً لاگ بک‌اند را بررسی کنید. (کد {(int)statusCode})",
+                _ =>
+                    $"سرور نتوانست درخواست دریافت حواله‌ها را انجام دهد. (کد {(int)statusCode})"
+            };
+        }
         catch (HttpRequestException)
         {
             havales.Clear();
             filteredHavales.Clear();
             currentPage = 1;
-            errorMessage = "خطای ارتباط با سرور؛ لطفاً اتصال خود به سرور را بررسی کنید و دوباره تلاش کنید.";
+            errorMessage = "ارتباط با سرور برقرار نشد؛ لطفاً روشن بودن بک‌اند و آدرس سرور را بررسی کنید.";
         }
         catch (OperationCanceledException)
         {
@@ -180,6 +198,20 @@
             filteredHavales.Clear();
             currentPage = 1;
             errorMessage = "نشست کاربری شما معتبر نیست. لطفاً دوباره وارد سامانه شوید.";
+        }
+        catch (JsonException)
+        {
+            havales.Clear();
+            filteredHavales.Clear();
+            currentPage = 1;
+            errorMessage = "پاسخ سرور در قالب اطلاعات معتبر ارسال نشده است. لطفاً API دریافت حواله‌ها را بررسی کنید.";
+        }
+        catch (InvalidOperationException)
+        {
+            havales.Clear();
+            filteredHavales.Clear();
+            currentPage = 1;
+            errorMessage = "سرویس دریافت حواله‌ها درخواست را با خطا پاسخ داده است. لطفاً منطق خروجی API و لاگ بک‌اند را بررسی کنید.";
         }
         catch (Exception)
         {
@@ -301,7 +333,7 @@
     private static void EnsureApiSuccess(HttpResponseMessage response, string json)
     {
         if (!response.IsSuccessStatusCode)
-            throw new InvalidOperationException($"HTTP {(int)response.StatusCode} ({response.ReasonPhrase}). {ReadError(json)}");
+            throw new HttpRequestException("درخواست دریافت حواله‌ها با خطای HTTP پاسخ داده شد.", null, response.StatusCode);
         using var doc = JsonDocument.Parse(json);
         var root = doc.RootElement;
         if (TryGetProperty(root, "statusCode", out var status) && status.ValueKind == JsonValueKind.Number && status.GetInt32() >= 400)
