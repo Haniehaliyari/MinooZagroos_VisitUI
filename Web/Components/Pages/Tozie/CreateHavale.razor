@@ -41,7 +41,7 @@
         </div>
         @if (!string.IsNullOrWhiteSpace(factorDateFilterError)) { <div class="havale-alert havale-alert-error">@factorDateFilterError</div> }
         @if (loadingFactors) { <div class="havale-empty">در حال دریافت فهرست فاکتورهای قابل حواله...</div> }
-        else if (factors.Count == 0 && string.IsNullOrWhiteSpace(factorError)) { <div class="havale-empty">در حال حاضر فاکتور تخصیص‌نیافته‌ای از سرویس دریافت نشد.</div> }
+        else if (factors.Count == 0 && string.IsNullOrWhiteSpace(factorError)) { <div class="havale-empty">@(HasAppliedFactorDateFilter ? "در بازه تاریخی انتخاب‌شده هیچ فاکتوری وجود ندارد." : "در حال حاضر فاکتور تخصیص‌نیافته‌ای برای نمایش وجود ندارد.")</div> }
         else if (FilteredFactors.Count == 0 && factors.Count > 0) { <div class="havale-empty">فاکتوری با عبارت جستجو شده پیدا نشد.</div> }
         else if (factors.Count > 0)
         {
@@ -135,6 +135,7 @@
     private bool loadingFactors, loadingLookups, submitting;
     private string? appliedFactorDateFrom, appliedFactorDateTo;
 
+    private bool HasAppliedFactorDateFilter => !string.IsNullOrWhiteSpace(appliedFactorDateFrom) || !string.IsNullOrWhiteSpace(appliedFactorDateTo);
     private int SelectedCount => selectedFactorSNs.Count;
     private List<AvailableFactorItem> FilteredFactors => filteredFactors;
     private int TotalFactorPages => Math.Max(1, (int)Math.Ceiling(FilteredFactors.Count / (double)FactorPageSize));
@@ -169,10 +170,6 @@
             ApplyFactorSearch();
             currentFactorPage = 1;
             selectedFactorSNs.RemoveWhere(id => factors.All(x => x.FactorSN != id));
-            if (rawItems.Count == 0)
-                factorError = "پاسخ API موفق بود، اما آرایه فاکتورها در بدنه پاسخ پیدا نشد. ساختار پاسخ باید با DTO سرویس تطبیق داده شود.";
-            else if (items.Count == 0)
-                factorError = $"API تعداد {rawItems.Count} رکورد برگرداند، اما هیچ‌کدام فیلد شماره شناسایی فاکتور قابل تشخیص نداشتند. نام فیلدهای DTO باید بررسی شود.";
         }
         catch (Exception ex) { factors.Clear(); filteredFactors.Clear(); currentFactorPage = 1; factorError = DescribeRequestError(FactorsEndpoint, ex); }
         finally { loadingFactors = false; }
