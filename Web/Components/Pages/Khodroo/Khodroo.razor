@@ -1,0 +1,468 @@
+@page "/khodroo"
+@attribute [Authorize]
+@layout MainLayout
+@using System.Globalization
+@using System.Net.Http.Json
+@using System.Text.Json
+@using Microsoft.AspNetCore.Authorization
+@using Web.Components.Layout
+@using MyProject.Services.Api
+@inject BackendApiClient ApiClient
+
+<PageTitle>مدیریت خودروها | مینو زاگرس</PageTitle>
+
+<div class="khodroo-page" dir="rtl">
+    <header class="khodroo-heading">
+        <div>
+            <div class="khodroo-eyebrow">مدیریت اطلاعات پایه</div>
+            <h1>مدیریت خودروها</h1>
+            <p>ثبت، مشاهده، ویرایش و حذف اطلاعات خودروهای ناوگان</p>
+        </div>
+        <div class="khodroo-heading-icon" aria-hidden="true">🚚</div>
+    </header>
+
+    <section class="khodroo-panel">
+        <div class="khodroo-toolbar">
+            <div class="khodroo-search-wrap">
+                <span aria-hidden="true">⌕</span>
+                <input class="khodroo-search" type="search" placeholder="جستجو بر اساس شماره، شرح، پلاک یا شماره موتور..."
+                       @bind="searchText" @bind:event="oninput" @bind:after="ApplySearch" />
+            </div>
+            <div class="khodroo-toolbar-actions">
+                <span class="khodroo-count">@FilteredVehicles.Count خودرو</span>
+                <button type="button" class="khodroo-button khodroo-button-light" @onclick="LoadVehiclesAsync" disabled="@loading">↻ به‌روزرسانی</button>
+                <button type="button" class="khodroo-button khodroo-button-primary" @onclick="OpenCreate">＋ افزودن خودرو</button>
+            </div>
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(errorMessage))
+        {
+            <div class="khodroo-alert khodroo-alert-error">@errorMessage</div>
+        }
+        @if (!string.IsNullOrWhiteSpace(successMessage))
+        {
+            <div class="khodroo-alert khodroo-alert-success">@successMessage</div>
+        }
+
+        @if (loading)
+        {
+            <div class="khodroo-empty"><span class="khodroo-spinner"></span>در حال دریافت فهرست خودروها...</div>
+        }
+        else if (vehicles.Count == 0)
+        {
+            <div class="khodroo-empty"><strong>خودرویی برای نمایش وجود ندارد</strong><span>برای شروع، یک خودرو ثبت کنید.</span></div>
+        }
+        else if (FilteredVehicles.Count == 0)
+        {
+            <div class="khodroo-empty"><strong>نتیجه‌ای پیدا نشد</strong><span>عبارت جستجو را تغییر دهید.</span></div>
+        }
+        else
+        {
+            <div class="khodroo-pagination-summary">
+                <span>نمایش @PageStart تا @PageEnd از @FilteredVehicles.Count خودرو</span>
+                <span>صفحه @currentPage از @TotalPages</span>
+            </div>
+            <div class="khodroo-table-wrap">
+                <table class="khodroo-table">
+                    <thead><tr>
+                        <th>ردیف</th><th>شماره خودرو</th><th>شرح خودرو</th><th>شماره پلاک</th>
+                        <th>شماره موتور</th><th>نوع خودرو</th><th>وضعیت</th><th>عملیات</th>
+                    </tr></thead>
+                    <tbody>
+                        @foreach (var row in CurrentPageVehicles.Select((value, index) => new { value, index }))
+                        {
+                            <tr @key="row.value.KhodrooSN">
+                                <td class="khodroo-row-number">@((currentPage - 1) * PageSize + row.index + 1)</td>
+                                <td>@Display(row.value.KhodrooNO)</td>
+                                <td>@Display(row.value.KhodrooDS)</td>
+                                <td class="khodroo-ltr">@Display(row.value.PelakNO)</td>
+                                <td class="khodroo-ltr">@Display(row.value.MotoorNO)</td>
+                                <td>@Display(row.value.NoeKhodrooSN)</td>
+                                <td><span class="khodroo-status">@Display(row.value.KhodrooStatus)</span></td>
+                                <td>
+                                    <div class="khodroo-row-actions">
+                                        <button type="button" class="khodroo-icon-button edit" title="ویرایش" aria-label="ویرایش خودرو" @onclick="() => OpenEditAsync(row.value.KhodrooSN)">✎</button>
+                                        <button type="button" class="khodroo-icon-button delete" title="حذف" aria-label="حذف خودرو" @onclick="() => AskDelete(row.value)">⌫</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <nav class="khodroo-pagination" aria-label="صفحه‌بندی خودروها">
+                <button type="button" class="khodroo-page-arrow" @onclick="NextPage" disabled="@(currentPage >= TotalPages)">‹</button>
+                @foreach (var pageNumber in VisiblePages)
+                {
+                    <button @key="pageNumber" type="button" class="khodroo-page-button @(currentPage == pageNumber ? "active" : "")" @onclick="() => GoToPage(pageNumber)">@pageNumber</button>
+                }
+                @if (ShowLastPageShortcut)
+                {
+                    <span class="khodroo-ellipsis">…</span>
+                    <button type="button" class="khodroo-page-button" @onclick="() => GoToPage(TotalPages)">@TotalPages</button>
+                }
+                <button type="button" class="khodroo-page-arrow" @onclick="PreviousPage" disabled="@(currentPage <= 1)">›</button>
+            </nav>
+        }
+    </section>
+</div>
+
+@if (formVisible)
+{
+    <div class="khodroo-modal-backdrop" @onclick="CloseForm">
+        <section class="khodroo-modal" role="dialog" aria-modal="true" aria-labelledby="khodroo-form-title" @onclick:stopPropagation="true">
+            <div class="khodroo-modal-heading">
+                <div><span class="khodroo-eyebrow">اطلاعات خودرو</span><h2 id="khodroo-form-title">@(editing ? "ویرایش خودرو" : "ثبت خودروی جدید")</h2></div>
+                <button type="button" class="khodroo-close" @onclick="CloseForm" aria-label="بستن">×</button>
+            </div>
+            @if (!string.IsNullOrWhiteSpace(formError)) { <div class="khodroo-alert khodroo-alert-error">@formError</div> }
+            <div class="khodroo-form-grid">
+                <label>شماره خودرو
+                    <input @bind="form.KhodrooNO" maxlength="100" placeholder="شماره خودرو را وارد کنید" />
+                </label>
+                <label>شرح خودرو
+                    <input @bind="form.KhodrooDS" maxlength="250" placeholder="شرح یا نام خودرو" />
+                </label>
+                <label>شماره پلاک
+                    <input @bind="form.PelakNO" maxlength="50" placeholder="شماره پلاک" />
+                </label>
+                <label>شماره موتور
+                    <input @bind="form.MotoorNO" maxlength="100" placeholder="شماره موتور" />
+                </label>
+                <label>شناسه نوع خودرو
+                    <input @bind="form.NoeKhodrooSNText" inputmode="decimal" placeholder="شناسه نوع خودرو" />
+                </label>
+                <label>وضعیت خودرو
+                    <input @bind="form.KhodrooStatusText" inputmode="numeric" placeholder="وضعیت خودرو" />
+                </label>
+            </div>
+            <div class="khodroo-modal-actions">
+                <button type="button" class="khodroo-button khodroo-button-light" @onclick="CloseForm" disabled="@saving">انصراف</button>
+                <button type="button" class="khodroo-button khodroo-button-primary" @onclick="SaveVehicleAsync" disabled="@saving">@(saving ? "در حال ذخیره..." : editing ? "ذخیره تغییرات" : "ثبت خودرو")</button>
+            </div>
+        </section>
+    </div>
+}
+
+@if (vehicleToDelete is not null)
+{
+    <div class="khodroo-modal-backdrop" @onclick="CancelDelete">
+        <section class="khodroo-confirm-modal" role="dialog" aria-modal="true" @onclick:stopPropagation="true">
+            <div class="khodroo-confirm-icon">!</div>
+            <h2>حذف خودرو</h2>
+            <p>آیا از حذف خودروی «@Display(vehicleToDelete.KhodrooDS)» مطمئن هستید؟ این عملیات قابل بازگشت نیست.</p>
+            @if (!string.IsNullOrWhiteSpace(deleteError)) { <div class="khodroo-alert khodroo-alert-error">@deleteError</div> }
+            <div class="khodroo-modal-actions">
+                <button type="button" class="khodroo-button khodroo-button-light" @onclick="CancelDelete" disabled="@deleting">انصراف</button>
+                <button type="button" class="khodroo-button khodroo-button-danger" @onclick="DeleteVehicleAsync" disabled="@deleting">@(deleting ? "در حال حذف..." : "بله، حذف شود")</button>
+            </div>
+        </section>
+    </div>
+}
+
+@code {
+    private const int PageSize = 5;
+    private const string AllEndpoint = "api/v1/Khodroo/GetAllKhodroo";
+    private const string ByIdEndpoint = "api/v1/Khodroo/GetKhodrooByID";
+    private const string CreateEndpoint = "api/v1/Khodroo/CreateKhodroo";
+    private const string UpdateEndpoint = "api/v1/Khodroo/UpdateKhodroo";
+    private const string DeleteEndpoint = "api/v1/Khodroo/DeleteKhodroo";
+    private readonly List<KhodrooItem> vehicles = [];
+    private List<KhodrooItem> filteredVehicles = [];
+    private string searchText = "";
+    private string? errorMessage;
+    private string? successMessage;
+    private string? formError;
+    private string? deleteError;
+    private bool loading;
+    private bool saving;
+    private bool deleting;
+    private bool formVisible;
+    private bool editing;
+    private decimal editingId;
+    private int currentPage = 1;
+    private KhodrooForm form = new();
+    private KhodrooItem? vehicleToDelete;
+
+    private List<KhodrooItem> FilteredVehicles => filteredVehicles;
+    private int TotalPages => Math.Max(1, (int)Math.Ceiling(FilteredVehicles.Count / (double)PageSize));
+    private int PageStart => FilteredVehicles.Count == 0 ? 0 : (currentPage - 1) * PageSize + 1;
+    private int PageEnd => Math.Min(currentPage * PageSize, FilteredVehicles.Count);
+    private List<KhodrooItem> CurrentPageVehicles => FilteredVehicles.Skip((currentPage - 1) * PageSize).Take(PageSize).ToList();
+    private IEnumerable<int> VisiblePages => TotalPages <= 4 ? Enumerable.Range(1, TotalPages) :
+        currentPage <= 2 ? Enumerable.Range(1, 3) :
+        currentPage >= TotalPages - 1 ? Enumerable.Range(Math.Max(1, TotalPages - 2), 3) : Enumerable.Range(currentPage - 1, 3);
+    private bool ShowLastPageShortcut => TotalPages > 4 && currentPage < TotalPages - 1;
+
+    protected override async Task OnInitializedAsync() => await LoadVehiclesAsync();
+
+    private async Task LoadVehiclesAsync()
+    {
+        loading = true; errorMessage = null;
+        try
+        {
+            using var client = await ApiClient.CreateAuthorizedClientAsync();
+            using var response = await client.GetAsync(AllEndpoint);
+            var json = await response.Content.ReadAsStringAsync();
+            EnsureSuccess(response, json, "دریافت خودروها");
+            var root = JsonDocument.Parse(json).RootElement.Clone();
+            var rows = ReadArray(FindCollection(root)).Select(ReadVehicle)
+                .Where(x => x.KhodrooSN != 0)
+                .OrderByDescending(x => x.KhodrooSN).ToList();
+            vehicles.Clear(); vehicles.AddRange(rows); ApplySearch();
+        }
+        catch (Exception ex)
+        {
+            vehicles.Clear(); filteredVehicles.Clear(); currentPage = 1;
+            errorMessage = DescribeError("دریافت فهرست خودروها", ex);
+        }
+        finally { loading = false; }
+    }
+
+    private void ApplySearch()
+    {
+        var term = NormalizeDigits(searchText.Trim());
+        filteredVehicles = vehicles.Where(x => string.IsNullOrWhiteSpace(term) ||
+            Match(x.KhodrooNO, term) || Match(x.KhodrooDS, term) || Match(x.PelakNO, term) ||
+            Match(x.MotoorNO, term) || Match(x.NoeKhodrooSN.ToString(CultureInfo.InvariantCulture), term) ||
+            Match(x.KhodrooStatus.ToString(CultureInfo.InvariantCulture), term)).ToList();
+        currentPage = 1;
+    }
+
+    private void OpenCreate()
+    {
+        editing = false; editingId = 0; form = new(); formError = null; formVisible = true;
+    }
+
+    private async Task OpenEditAsync(decimal id)
+    {
+        formError = null; errorMessage = null;
+        try
+        {
+            using var client = await ApiClient.CreateAuthorizedClientAsync();
+            var url = $"{ByIdEndpoint}?KhodrooSN={Uri.EscapeDataString(id.ToString(CultureInfo.InvariantCulture))}";
+            using var response = await client.GetAsync(url);
+            var json = await response.Content.ReadAsStringAsync();
+            EnsureSuccess(response, json, "دریافت اطلاعات خودرو");
+            var root = JsonDocument.Parse(json).RootElement.Clone();
+            var item = ReadVehicle(FindObject(root));
+            if (item.KhodrooSN == 0) item.KhodrooSN = id;
+            editingId = id;
+            form = KhodrooForm.From(item);
+            editing = true; formVisible = true;
+        }
+        catch (Exception ex) { errorMessage = DescribeError("دریافت اطلاعات خودرو", ex); }
+    }
+
+    private async Task SaveVehicleAsync()
+    {
+        formError = null;
+        if (string.IsNullOrWhiteSpace(form.KhodrooNO) && string.IsNullOrWhiteSpace(form.KhodrooDS))
+        { formError = "شماره یا شرح خودرو را وارد کنید."; return; }
+        if (!decimal.TryParse(NormalizeDigits(form.NoeKhodrooSNText), NumberStyles.Number, CultureInfo.InvariantCulture, out var typeSn))
+        { formError = "شناسه نوع خودرو باید عددی باشد."; return; }
+        if (!byte.TryParse(NormalizeDigits(form.KhodrooStatusText), NumberStyles.Integer, CultureInfo.InvariantCulture, out var status))
+        { formError = "وضعیت خودرو باید عددی بین ۰ تا ۲۵۵ باشد."; return; }
+
+        saving = true;
+        try
+        {
+            var payload = new KhodrooRequest {
+                KhodrooSN = editing ? editingId : 0,
+                KhodrooNO = form.KhodrooNO.Trim(), KhodrooDS = form.KhodrooDS.Trim(),
+                PelakNO = form.PelakNO.Trim(), MotoorNO = form.MotoorNO.Trim(),
+                NoeKhodrooSN = typeSn, KhodrooStatus = status
+            };
+            using var client = await ApiClient.CreateAuthorizedClientAsync();
+            using var response = editing
+                ? await client.PostAsJsonAsync(UpdateEndpoint, payload)
+                : await client.PostAsJsonAsync(CreateEndpoint, payload);
+            var json = await response.Content.ReadAsStringAsync();
+            EnsureSuccess(response, json, editing ? "ویرایش خودرو" : "ثبت خودرو");
+            formVisible = false;
+            successMessage = editing ? "اطلاعات خودرو با موفقیت ویرایش شد." : "خودرو با موفقیت ثبت شد.";
+            await LoadVehiclesAsync();
+        }
+        catch (Exception ex) { formError = DescribeError(editing ? "ویرایش خودرو" : "ثبت خودرو", ex); }
+        finally { saving = false; }
+    }
+
+    private void AskDelete(KhodrooItem item) { vehicleToDelete = item; deleteError = null; }
+    private void CancelDelete() { if (!deleting) { vehicleToDelete = null; deleteError = null; } }
+
+    private async Task DeleteVehicleAsync()
+    {
+        if (vehicleToDelete is null) return;
+        deleting = true; deleteError = null;
+        try
+        {
+            using var client = await ApiClient.CreateAuthorizedClientAsync();
+            var url = $"{DeleteEndpoint}/{Uri.EscapeDataString(vehicleToDelete.KhodrooSN.ToString(CultureInfo.InvariantCulture))}";
+            using var response = await client.PostAsync(url, null);
+            var json = await response.Content.ReadAsStringAsync();
+            EnsureSuccess(response, json, "حذف خودرو");
+            vehicleToDelete = null;
+            successMessage = "خودرو با موفقیت حذف شد.";
+            await LoadVehiclesAsync();
+        }
+        catch (Exception ex) { deleteError = DescribeError("حذف خودرو", ex); }
+        finally { deleting = false; }
+    }
+
+    private void CloseForm() { if (!saving) formVisible = false; }
+    private void GoToPage(int page) => currentPage = Math.Clamp(page, 1, TotalPages);
+    private void PreviousPage() => GoToPage(currentPage - 1);
+    private void NextPage() => GoToPage(currentPage + 1);
+    private static string Display(string? value) => string.IsNullOrWhiteSpace(value) ? "—" : value.Trim();
+    private static bool Match(string? value, string term) => NormalizeDigits(value ?? "").Contains(term, StringComparison.OrdinalIgnoreCase);
+
+    private static KhodrooItem ReadVehicle(JsonElement item) => new() {
+        KhodrooSN = ReadDecimal(item, "KhodrooSN"),
+        KhodrooDS = ReadString(item, "KhodrooDS"),
+        KhodrooNO = ReadString(item, "KhodrooNO"),
+        PelakNO = ReadString(item, "PelakNO"),
+        MotoorNO = ReadString(item, "MotoorNO"),
+        NoeKhodrooSN = ReadDecimal(item, "NoeKhodrooSN"),
+        KhodrooStatus = (byte)Math.Clamp(ReadDecimal(item, "KhodrooStatus"), 0, 255)
+    };
+
+    private static JsonElement FindCollection(JsonElement value, int depth = 0)
+    {
+        if (value.ValueKind == JsonValueKind.Array) return value;
+        if (depth > 7 || value.ValueKind != JsonValueKind.Object) return value;
+        foreach (var key in new[] { "data", "result", "items", "list", "records", "results", "khodroos", "khodrooList" })
+            if (TryGetProperty(value, key, out var nested)) {
+                var found = FindCollection(nested, depth + 1);
+                if (found.ValueKind == JsonValueKind.Array) return found;
+            }
+        foreach (var property in value.EnumerateObject()) {
+            var found = FindCollection(property.Value, depth + 1);
+            if (found.ValueKind == JsonValueKind.Array) return found;
+        }
+        return value;
+    }
+
+    private static JsonElement FindObject(JsonElement value, int depth = 0)
+    {
+        if (value.ValueKind == JsonValueKind.Object && TryGetProperty(value, "KhodrooSN", out _)) return value;
+        if (depth > 7 || value.ValueKind != JsonValueKind.Object) return value;
+        foreach (var property in value.EnumerateObject()) {
+            var found = FindObject(property.Value, depth + 1);
+            if (found.ValueKind == JsonValueKind.Object && TryGetProperty(found, "KhodrooSN", out _)) return found;
+        }
+        return value;
+    }
+
+    private static IEnumerable<JsonElement> ReadArray(JsonElement value) =>
+        value.ValueKind == JsonValueKind.Array ? value.EnumerateArray().Select(x => x.Clone()).ToList() :
+        value.ValueKind == JsonValueKind.Object ? new[] { value.Clone() } : [];
+
+    private static decimal ReadDecimal(JsonElement item, params string[] names)
+    {
+        foreach (var name in names) if (TryGetProperty(item, name, out var value)) {
+            if (value.ValueKind == JsonValueKind.Number && value.TryGetDecimal(out var number)) return number;
+            if (value.ValueKind == JsonValueKind.String && decimal.TryParse(NormalizeDigits(value.GetString()), NumberStyles.Any, CultureInfo.InvariantCulture, out number)) return number;
+        }
+        return 0;
+    }
+
+    private static string ReadString(JsonElement item, params string[] names)
+    {
+        foreach (var name in names) if (TryGetProperty(item, name, out var value)) {
+            if (value.ValueKind == JsonValueKind.String) return value.GetString() ?? "";
+            if (value.ValueKind == JsonValueKind.Number) return value.ToString();
+        }
+        return "";
+    }
+
+    private static bool TryGetProperty(JsonElement element, string name, out JsonElement value)
+    {
+        if (element.ValueKind == JsonValueKind.Object)
+            foreach (var property in element.EnumerateObject())
+                if (string.Equals(property.Name, name, StringComparison.OrdinalIgnoreCase)) { value = property.Value; return true; }
+        value = default; return false;
+    }
+
+    private static void EnsureSuccess(HttpResponseMessage response, string json, string operation)
+    {
+        if (!response.IsSuccessStatusCode)
+            throw new HttpRequestException($"{operation}: HTTP {(int)response.StatusCode}", null, response.StatusCode);
+        using var doc = JsonDocument.Parse(json);
+        var root = doc.RootElement;
+        if (TryGetProperty(root, "statusCode", out var status) && status.ValueKind == JsonValueKind.Number && status.GetInt32() >= 400)
+            throw new InvalidOperationException(ReadError(root));
+        if (TryGetProperty(root, "success", out var success) && success.ValueKind == JsonValueKind.False)
+            throw new InvalidOperationException(ReadError(root));
+        if (TryGetProperty(root, "errMsg", out var err) && err.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(err.GetString()))
+            throw new InvalidOperationException(ReadError(root));
+    }
+
+    private static string ReadError(JsonElement root)
+    {
+        foreach (var key in new[] { "errMsg", "message", "Message", "title", "detail" })
+            if (TryGetProperty(root, key, out var value) && value.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(value.GetString()))
+                return value.GetString()!;
+        return "سرویس درخواست را با خطا پاسخ داد.";
+    }
+
+    private static string DescribeError(string operation, Exception ex) => ex switch
+    {
+        HttpRequestException http when http.StatusCode.HasValue => http.StatusCode.Value switch
+        {
+            System.Net.HttpStatusCode.Unauthorized or System.Net.HttpStatusCode.Forbidden => "دسترسی مجاز نیست؛ لطفاً دوباره وارد سامانه شوید.",
+            System.Net.HttpStatusCode.NotFound => $"مسیر سرویس برای {operation} پیدا نشد (۴۰۴).",
+            _ when (int)http.StatusCode.Value >= 500 => $"سرور هنگام {operation} با خطا مواجه شد (کد {(int)http.StatusCode.Value}).",
+            _ => $"درخواست {operation} با خطای سرور مواجه شد (کد {(int)http.StatusCode.Value})."
+        },
+        HttpRequestException => $"ارتباط با سرور برای {operation} برقرار نشد.",
+        OperationCanceledException => $"زمان انتظار برای {operation} به پایان رسید.",
+        UnauthorizedAccessException => "نشست کاربری معتبر نیست؛ لطفاً دوباره وارد سامانه شوید.",
+        JsonException => "پاسخ سرور در قالب اطلاعات معتبر ارسال نشده است.",
+        InvalidOperationException => $"سرویس در {operation} خطا برگرداند.",
+        _ => $"در {operation} مشکلی رخ داد. لطفاً دوباره تلاش کنید."
+    };
+
+    private static string NormalizeDigits(string? value) => (value ?? "")
+        .Replace('۰','0').Replace('۱','1').Replace('۲','2').Replace('۳','3').Replace('۴','4')
+        .Replace('۵','5').Replace('۶','6').Replace('۷','7').Replace('۸','8').Replace('۹','9')
+        .Replace('٠','0').Replace('١','1').Replace('٢','2').Replace('٣','3').Replace('٤','4')
+        .Replace('٥','5').Replace('٦','6').Replace('٧','7').Replace('٨','8').Replace('٩','9');
+
+    private sealed class KhodrooItem
+    {
+        public decimal KhodrooSN { get; set; }
+        public string KhodrooDS { get; set; } = "";
+        public string KhodrooNO { get; set; } = "";
+        public string PelakNO { get; set; } = "";
+        public string MotoorNO { get; set; } = "";
+        public decimal NoeKhodrooSN { get; set; }
+        public byte KhodrooStatus { get; set; }
+    }
+
+    private sealed class KhodrooForm
+    {
+        public string KhodrooDS { get; set; } = "";
+        public string KhodrooNO { get; set; } = "";
+        public string PelakNO { get; set; } = "";
+        public string MotoorNO { get; set; } = "";
+        public string NoeKhodrooSNText { get; set; } = "";
+        public string KhodrooStatusText { get; set; } = "1";
+        public static KhodrooForm From(KhodrooItem item) => new() {
+            KhodrooDS = item.KhodrooDS, KhodrooNO = item.KhodrooNO,
+            PelakNO = item.PelakNO, MotoorNO = item.MotoorNO,
+            NoeKhodrooSNText = item.NoeKhodrooSN.ToString(CultureInfo.InvariantCulture),
+            KhodrooStatusText = item.KhodrooStatus.ToString(CultureInfo.InvariantCulture)
+        };
+    }
+
+    private sealed class KhodrooRequest
+    {
+        public decimal KhodrooSN { get; set; }
+        public string KhodrooDS { get; set; } = "";
+        public string KhodrooNO { get; set; } = "";
+        public string PelakNO { get; set; } = "";
+        public string MotoorNO { get; set; } = "";
+        public decimal NoeKhodrooSN { get; set; }
+        public byte KhodrooStatus { get; set; }
+    }
+}
