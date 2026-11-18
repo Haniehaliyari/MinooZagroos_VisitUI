@@ -117,23 +117,23 @@
             </div>
             @if (!string.IsNullOrWhiteSpace(formError)) { <div class="khodroo-alert khodroo-alert-error">@formError</div> }
             <div class="khodroo-form-grid">
-                <label>شماره خودرو
-                    <input @bind="form.KhodrooNO" maxlength="100" placeholder="شماره خودرو را وارد کنید" />
-                </label>
-                <label>شرح خودرو
+                <label>شرح خودرو <span class="required">*</span>
                     <input @bind="form.KhodrooDS" maxlength="250" placeholder="شرح یا نام خودرو" />
                 </label>
-                <label>شماره پلاک
+                <label>شماره پلاک <span class="required">*</span>
                     <input @bind="form.PelakNO" maxlength="50" placeholder="شماره پلاک" />
                 </label>
+                <label>شناسه راننده <span class="required">*</span>
+                    <input @bind="form.RanandehSNText" inputmode="decimal" placeholder="شناسه راننده" />
+                </label>
+                <label>شناسه واحد تجاری <span class="required">*</span>
+                    <input @bind="form.VahedeTejariSNText" inputmode="decimal" placeholder="شناسه واحد تجاری" />
+                </label>
+                <label>شناسه نوع مالکیت <span class="required">*</span>
+                    <input @bind="form.NoeMalekiatSNText" inputmode="decimal" placeholder="شناسه نوع مالکیت" />
+                </label>
                 <label>شماره موتور
-                    <input @bind="form.MotoorNO" maxlength="100" placeholder="شماره موتور" />
-                </label>
-                <label>شناسه نوع خودرو
-                    <input @bind="form.NoeKhodrooSNText" inputmode="decimal" placeholder="شناسه نوع خودرو" />
-                </label>
-                <label>وضعیت خودرو
-                    <input @bind="form.KhodrooStatusText" inputmode="numeric" placeholder="وضعیت خودرو" />
+                    <input @bind="form.MotoorNO" maxlength="100" placeholder="شماره موتور (اختیاری)" />
                 </label>
             </div>
             <div class="khodroo-modal-actions">
@@ -257,21 +257,28 @@
     private async Task SaveVehicleAsync()
     {
         formError = null;
-        if (string.IsNullOrWhiteSpace(form.KhodrooNO) && string.IsNullOrWhiteSpace(form.KhodrooDS))
-        { formError = "شماره یا شرح خودرو را وارد کنید."; return; }
-        if (!decimal.TryParse(NormalizeDigits(form.NoeKhodrooSNText), NumberStyles.Number, CultureInfo.InvariantCulture, out var typeSn))
-        { formError = "شناسه نوع خودرو باید عددی باشد."; return; }
-        if (!byte.TryParse(NormalizeDigits(form.KhodrooStatusText), NumberStyles.Integer, CultureInfo.InvariantCulture, out var status))
-        { formError = "وضعیت خودرو باید عددی بین ۰ تا ۲۵۵ باشد."; return; }
+        if (string.IsNullOrWhiteSpace(form.KhodrooDS))
+        { formError = "شرح خودرو را وارد کنید."; return; }
+        if (string.IsNullOrWhiteSpace(form.PelakNO))
+        { formError = "شماره پلاک را وارد کنید."; return; }
+        if (!decimal.TryParse(NormalizeDigits(form.RanandehSNText), NumberStyles.Number, CultureInfo.InvariantCulture, out var ranandehSn) || ranandehSn <= 0)
+        { formError = "شناسه راننده معتبر و بزرگ‌تر از صفر وارد کنید."; return; }
+        if (!decimal.TryParse(NormalizeDigits(form.VahedeTejariSNText), NumberStyles.Number, CultureInfo.InvariantCulture, out var vahedeTejariSn) || vahedeTejariSn <= 0)
+        { formError = "شناسه واحد تجاری معتبر و بزرگ‌تر از صفر وارد کنید."; return; }
+        if (!decimal.TryParse(NormalizeDigits(form.NoeMalekiatSNText), NumberStyles.Number, CultureInfo.InvariantCulture, out var noeMalekiatSn) || noeMalekiatSn <= 0)
+        { formError = "شناسه نوع مالکیت معتبر و بزرگ‌تر از صفر وارد کنید."; return; }
 
         saving = true;
         try
         {
             var payload = new KhodrooRequest {
                 KhodrooSN = editing ? editingId : 0,
-                KhodrooNO = form.KhodrooNO.Trim(), KhodrooDS = form.KhodrooDS.Trim(),
-                PelakNO = form.PelakNO.Trim(), MotoorNO = form.MotoorNO.Trim(),
-                NoeKhodrooSN = typeSn, KhodrooStatus = status
+                KhodrooDS = form.KhodrooDS.Trim(),
+                PelakNO = form.PelakNO.Trim(),
+                MotoorNO = form.MotoorNO.Trim(),
+                RanandehSN = ranandehSn,
+                VahedeTejariSN = vahedeTejariSn,
+                NoeMalekiatSN = noeMalekiatSn
             };
             using var client = await ApiClient.CreateAuthorizedClientAsync();
             using var response = editing
@@ -323,7 +330,10 @@
         PelakNO = ReadString(item, "PelakNO"),
         MotoorNO = ReadString(item, "MotoorNO"),
         NoeKhodrooSN = ReadDecimal(item, "NoeKhodrooSN"),
-        KhodrooStatus = (byte)Math.Clamp(ReadDecimal(item, "KhodrooStatus"), 0, 255)
+        KhodrooStatus = (byte)Math.Clamp(ReadDecimal(item, "KhodrooStatus"), 0, 255),
+        RanandehSN = ReadDecimal(item, "RanandehSN"),
+        VahedeTejariSN = ReadDecimal(item, "VahedeTejariSN"),
+        NoeMalekiatSN = ReadDecimal(item, "NoeMalekiatSN")
     };
 
     private static JsonElement FindCollection(JsonElement value, int depth = 0)
@@ -437,6 +447,9 @@
         public string MotoorNO { get; set; } = "";
         public decimal NoeKhodrooSN { get; set; }
         public byte KhodrooStatus { get; set; }
+        public decimal RanandehSN { get; set; }
+        public decimal VahedeTejariSN { get; set; }
+        public decimal NoeMalekiatSN { get; set; }
     }
 
     private sealed class KhodrooForm
@@ -445,13 +458,15 @@
         public string KhodrooNO { get; set; } = "";
         public string PelakNO { get; set; } = "";
         public string MotoorNO { get; set; } = "";
-        public string NoeKhodrooSNText { get; set; } = "";
-        public string KhodrooStatusText { get; set; } = "1";
+        public string RanandehSNText { get; set; } = "";
+        public string VahedeTejariSNText { get; set; } = "";
+        public string NoeMalekiatSNText { get; set; } = "";
         public static KhodrooForm From(KhodrooItem item) => new() {
             KhodrooDS = item.KhodrooDS, KhodrooNO = item.KhodrooNO,
             PelakNO = item.PelakNO, MotoorNO = item.MotoorNO,
-            NoeKhodrooSNText = item.NoeKhodrooSN.ToString(CultureInfo.InvariantCulture),
-            KhodrooStatusText = item.KhodrooStatus.ToString(CultureInfo.InvariantCulture)
+            RanandehSNText = item.RanandehSN.ToString(CultureInfo.InvariantCulture),
+            VahedeTejariSNText = item.VahedeTejariSN.ToString(CultureInfo.InvariantCulture),
+            NoeMalekiatSNText = item.NoeMalekiatSN.ToString(CultureInfo.InvariantCulture)
         };
     }
 
@@ -464,5 +479,8 @@
         public string MotoorNO { get; set; } = "";
         public decimal NoeKhodrooSN { get; set; }
         public byte KhodrooStatus { get; set; }
+        public decimal? RanandehSN { get; set; }
+        public decimal VahedeTejariSN { get; set; }
+        public decimal NoeMalekiatSN { get; set; }
     }
 }
