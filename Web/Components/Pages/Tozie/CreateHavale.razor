@@ -171,7 +171,7 @@
             currentFactorPage = 1;
             selectedFactorSNs.RemoveWhere(id => factors.All(x => x.FactorSN != id));
         }
-        catch (Exception ex) { factors.Clear(); filteredFactors.Clear(); currentFactorPage = 1; factorError = DescribeRequestError(FactorsEndpoint, ex); }
+        catch (Exception ex) { factors.Clear(); filteredFactors.Clear(); currentFactorPage = 1; factorError = DescribeRequestError("دریافت فاکتورها", ex); }
         finally { loadingFactors = false; }
     }
 
@@ -189,6 +189,26 @@
             if (drivers.Count == 0 && driverError is null) driverError = "پاسخ موفق بود اما راننده‌ای در داده برگشتی پیدا نشد.";
             if (agents.Count == 0 && agentError is null) agentError = "پاسخ موفق بود اما مأمور پخشی در داده برگشتی پیدا نشد.";
         }
+        catch (HttpRequestException)
+        {
+            driverError = "خطای ارتباط با سرور هنگام دریافت فهرست افراد؛ لطفاً اتصال خود را بررسی و دوباره تلاش کنید.";
+            agentError = "خطای ارتباط با سرور هنگام دریافت فهرست افراد؛ لطفاً اتصال خود را بررسی و دوباره تلاش کنید.";
+        }
+        catch (OperationCanceledException)
+        {
+            driverError = "زمان انتظار برای دریافت فهرست راننده‌ها به پایان رسید. لطفاً دوباره تلاش کنید.";
+            agentError = "زمان انتظار برای دریافت فهرست مأموران پخش به پایان رسید. لطفاً دوباره تلاش کنید.";
+        }
+        catch (UnauthorizedAccessException)
+        {
+            driverError = "نشست کاربری شما معتبر نیست. لطفاً دوباره وارد سامانه شوید.";
+            agentError = "نشست کاربری شما معتبر نیست. لطفاً دوباره وارد سامانه شوید.";
+        }
+        catch (Exception)
+        {
+            driverError = "در دریافت فهرست راننده‌ها مشکلی رخ داد. لطفاً دوباره تلاش کنید.";
+            agentError = "در دریافت فهرست مأموران پخش مشکلی رخ داد. لطفاً دوباره تلاش کنید.";
+        }
         finally { loadingLookups = false; }
     }
 
@@ -203,8 +223,8 @@
         }
         catch (Exception ex)
         {
-            if (isDriver) driverError = DescribeRequestError(endpoint, ex);
-            else agentError = DescribeRequestError(endpoint, ex);
+            if (isDriver) driverError = DescribeRequestError(isDriver ? "دریافت راننده‌ها" : "دریافت مأموران پخش", ex);
+            else agentError = DescribeRequestError(isDriver ? "دریافت راننده‌ها" : "دریافت مأموران پخش", ex);
             return [];
         }
     }
@@ -324,7 +344,7 @@
             await LoadFactorsAsync();
             successMessage = "حواله با موفقیت ثبت شد.";
         }
-        catch (Exception ex) { submitError = DescribeRequestError(CreateEndpoint, ex); }
+        catch (Exception ex) { submitError = DescribeRequestError("ثبت حواله", ex); }
         finally { submitting = false; }
     }
 
@@ -422,10 +442,18 @@
         catch { }
         return "پاسخ سرویس جزئیات خطا را ارسال نکرد.";
     }
-    private static string DescribeRequestError(string endpoint, Exception ex)
+    private static string DescribeRequestError(string operation, Exception ex)
     {
-        var detail = ex is HttpRequestException ? "ارتباط با سرور برقرار نشد یا آدرس سرویس در دسترس نیست." : ex.Message;
-        return $"{detail} (مسیر: {endpoint})";
+        if (ex is HttpRequestException)
+            return $"خطای ارتباط با سرور هنگام {operation}؛ لطفاً اتصال خود به سرور را بررسی کنید و دوباره تلاش کنید.";
+
+        if (ex is OperationCanceledException)
+            return $"زمان انتظار برای {operation} به پایان رسید. لطفاً دوباره تلاش کنید.";
+
+        if (ex is UnauthorizedAccessException)
+            return "نشست کاربری شما معتبر نیست. لطفاً دوباره وارد سامانه شوید.";
+
+        return $"در {operation} مشکلی رخ داد. لطفاً چند لحظه دیگر دوباره تلاش کنید.";
     }
     private static string TodayPersianDate()
     {
