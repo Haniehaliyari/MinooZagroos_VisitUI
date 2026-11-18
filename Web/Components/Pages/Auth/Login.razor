@@ -111,9 +111,9 @@
 
             Navigation.NavigateTo("/dashboard", forceLoad: true);
         }
-        catch (JSException ex)
+        catch (JSException)
         {
-            errorMessage = ex.Message;
+            errorMessage = "ارتباط با سرویس ورود برقرار نشد. لطفاً صفحه را تازه‌سازی کنید و دوباره تلاش کنید.";
         }
         catch (Exception)
         {
