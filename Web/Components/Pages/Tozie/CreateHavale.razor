@@ -403,7 +403,7 @@
     };
     private static LookupItem ReadLookup(JsonElement item) => new()
     {
-        Id = ReadDecimal(item, "Id", "SN", "RanandehSN", "MamoorPakhshSN", "PersonSN", "Code"),
+        Id = ReadDecimal(item, "Id", "RanandehSN", "MamoorPakhshSN", "PersonSN", "SN"),
         Title = ReadString(item, "Title", "Name", "FullName", "PersonName", "RanandehName", "MamoorPakhshName", "Description", "Ds"),
         Code = ReadString(item, "Code")
     };
