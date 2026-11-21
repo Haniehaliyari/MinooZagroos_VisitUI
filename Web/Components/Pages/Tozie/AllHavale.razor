@@ -103,9 +103,9 @@
                                 <td class="all-havale-description">@Display(item.value.HavaleMamoorPakhshDs)</td>
                                 <td class="all-havale-date">@Display(item.value.HavaleMamoorPakhshDate)</td>
                                 <td class="all-havale-date">@Display(item.value.HavaleMamoorPakhshDateErsal)</td>
-                                <td>@Display(item.value.MamoorPakhshName)</td>
-                                <td>@Display(item.value.RanandehName)</td>
-                                <td>@Display(item.value.KhodrooName)</td>
+                                <td>@Display(item.value.MamoorPakhshDs)</td>
+                                <td>@Display(item.value.RanandehDs)</td>
+                                <td>@Display(item.value.KhodrooDs)</td>
                                 <td><span class="all-havale-status @StatusCss(item.value.HavaleMamoorPakhshStatus)">@StatusText(item.value.HavaleMamoorPakhshStatus)</span></td>
                                 <td>
                                     @if (item.value.HavaleMamoorPakhshStatus == 4)
@@ -346,9 +346,9 @@
             string.IsNullOrWhiteSpace(term) ||
             Contains(x.HavaleMamoorPakhshNO, term) ||
             Contains(x.HavaleMamoorPakhshDs, term) ||
-            Contains(x.MamoorPakhshName, term) ||
-            Contains(x.RanandehName, term) ||
-            Contains(x.KhodrooName, term) ||
+            Contains(x.MamoorPakhshDs, term) ||
+            Contains(x.RanandehDs, term) ||
+            Contains(x.KhodrooDs, term) ||
             Contains(x.HavaleMamoorPakhshDate, term) ||
             Contains(x.HavaleMamoorPakhshDateErsal, term) ||
             StatusText(x.HavaleMamoorPakhshStatus).Contains(term, StringComparison.OrdinalIgnoreCase))
@@ -371,9 +371,9 @@
         HavaleMamoorPakhshDate = ReadString(item, "HavaleMamoorPakhshDate"),
         HavaleMamoorPakhshDateErsal = ReadString(item, "HavaleMamoorPakhshDateErsal"),
         HavaleMamoorPakhshStatus = (byte)Math.Clamp(ReadDecimal(item, "HavaleMamoorPakhshStatus"), 0, 255),
-        MamoorPakhshName = ReadString(item, "MamoorPakhshName", "MamoorPakhshFullName", "MamoorName"),
-        RanandehName = ReadString(item, "RanandehName", "RanandehFullName", "DriverName"),
-        KhodrooName = ReadString(item, "KhodrooName", "KhodrooDS", "KhodrooDescription", "VehicleName")
+        MamoorPakhshDs = ReadString(item, "MamoorPakhshDs", "MamoorPakhshFullName", "MamoorName"),
+        RanandehDs = ReadString(item, "RanandehDs", "RanandehFullName", "DriverName"),
+        KhodrooDs = ReadString(item, "KhodrooDs", "KhodrooDS", "KhodrooDescription", "VehicleName")
     };
 
     private static string StatusText(byte status) =>
@@ -491,8 +491,8 @@
         public string HavaleMamoorPakhshDate { get; set; } = "";
         public string HavaleMamoorPakhshDateErsal { get; set; } = "";
         public byte HavaleMamoorPakhshStatus { get; set; }
-        public string MamoorPakhshName { get; set; } = "";
-        public string RanandehName { get; set; } = "";
-        public string KhodrooName { get; set; } = "";
+        public string MamoorPakhshDs { get; set; } = "";
+        public string RanandehDs { get; set; } = "";
+        public string KhodrooDs { get; set; } = "";
     }
 }

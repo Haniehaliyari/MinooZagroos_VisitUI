@@ -29,10 +29,10 @@
         </div>
         <div class="havale-date-filter">
             <label>از تاریخ صدور
-                <input type="text" inputmode="numeric" autocomplete="off" maxlength="10" placeholder="۱۴۰۵/۰۸/۰۱" @bind="factorDateFromText" />
+                <input type="text" inputmode="numeric" autocomplete="off" maxlength="10" placeholder="مثال : ۱۴۰۵/۰۸/۰۱" @bind="factorDateFromText" />
             </label>
             <label>تا تاریخ صدور
-                <input type="text" inputmode="numeric" autocomplete="off" maxlength="10" placeholder="۱۴۰۵/۰۸/۳۰" @bind="factorDateToText" />
+                <input type="text" inputmode="numeric" autocomplete="off" maxlength="10" placeholder="مثال : ۱۴۰۵/۰۸/۳۰" @bind="factorDateToText" />
             </label>
             <div class="havale-date-filter-actions">
                 <button type="button" class="havale-button havale-button-primary" @onclick="ApplyFactorDateFilterAsync">اعمال فیلتر</button>
@@ -115,13 +115,13 @@
     private int currentFactorPage = 1;
     private const byte DefaultServiceNo = 1;
     private const byte DefaultHavaleStatus = 1;
-    private const string FactorsEndpoint = "api/v1/Havale/GetAvailableFactors";
-    private const string DriversEndpoint = "api/v1/Havale/GetAllRanandeh";
-    private const string AgentsEndpoint = "api/v1/Havale/GetAllMamoorPakhsh";
+    private const string FactorsEndpoint = "api/v1/Factor/GetFactorByDate";
+    private const string DriversEndpoint = "api/v1/Ranandeh/GetRanandehByCombo";
+    private const string AgentsEndpoint = "api/v1/MamoorPakhsh/GetMamoorPakhshByCombo";
     private const string CreateEndpoint = "api/v1/Havale/CreateHavaleMamoorPakhsh";
 
-    private readonly List<AvailableFactorItem> factors = [];
-    private List<AvailableFactorItem> filteredFactors = [];
+    private readonly List<foFactorByDateDTO> factors = [];
+    private List<foFactorByDateDTO> filteredFactors = [];
     private readonly List<LookupItem> drivers = [];
     private readonly List<LookupItem> agents = [];
     private readonly HashSet<decimal> selectedFactorSNs = [];
@@ -137,7 +137,7 @@
 
     private bool HasAppliedFactorDateFilter => !string.IsNullOrWhiteSpace(appliedFactorDateFrom) || !string.IsNullOrWhiteSpace(appliedFactorDateTo);
     private int SelectedCount => selectedFactorSNs.Count;
-    private List<AvailableFactorItem> FilteredFactors => filteredFactors;
+    private List<foFactorByDateDTO> FilteredFactors => filteredFactors;
     private int TotalFactorPages => Math.Max(1, (int)Math.Ceiling(FilteredFactors.Count / (double)FactorPageSize));
     private IEnumerable<int> VisibleFactorPages => TotalFactorPages <= 4
         ? Enumerable.Range(1, TotalFactorPages)
@@ -149,7 +149,7 @@
     private bool ShowLastPageShortcut => TotalFactorPages > 4 && currentFactorPage < TotalFactorPages - 1;
     private int PageStart => FilteredFactors.Count == 0 ? 0 : (currentFactorPage - 1) * FactorPageSize + 1;
     private int PageEnd => Math.Min(currentFactorPage * FactorPageSize, FilteredFactors.Count);
-    private List<AvailableFactorItem> CurrentPageFactors => FilteredFactors.Skip((currentFactorPage - 1) * FactorPageSize).Take(FactorPageSize).ToList();
+    private List<foFactorByDateDTO> CurrentPageFactors => FilteredFactors.Skip((currentFactorPage - 1) * FactorPageSize).Take(FactorPageSize).ToList();
     private bool AllCurrentPageSelected => CurrentPageFactors.Count > 0 && CurrentPageFactors.All(x => selectedFactorSNs.Contains(x.FactorSN));
 
     protected override async Task OnInitializedAsync() => await Task.WhenAll(LoadFactorsAsync(), LoadLookupsAsync());
@@ -392,7 +392,7 @@
         if (value.ValueKind == JsonValueKind.Object) return new[] { value.Clone() };
         return [];
     }
-    private static AvailableFactorItem ReadFactor(JsonElement item) => new()
+    private static foFactorByDateDTO ReadFactor(JsonElement item) => new()
     {
         FactorSN = ReadDecimal(item, "FactorSN", "FactorSn", "factor_sn", "Factor_S_N", "Id", "SN"),
         FactorNo = ReadString(item, "FactorNo", "No", "FactorNumber"),
@@ -484,7 +484,7 @@
         }
     }
 
-    private sealed class AvailableFactorItem
+    private sealed class foFactorByDateDTO
     {
         public decimal FactorSN { get; set; }
         public string FactorNo { get; set; } = "";
@@ -492,7 +492,11 @@
         public string SodoorDate { get; set; } = "";
         public decimal MablaghKol { get; set; }
     }
-    private sealed class LookupItem { public decimal Id { get; set; } public string Title { get; set; } = ""; }
+    private sealed class LookupItem 
+    { 
+        public decimal Id { get; set; }
+        public string TitleCode { get; set; } = ""; 
+    }
     private sealed class CreateHavaleRequest
     {
         public List<decimal> FactorSNs { get; set; } = [];
