@@ -83,7 +83,7 @@
         <div class="havale-form-grid">
             <label>راننده
                 <select @bind="selectedDriverSN" disabled="@loadingLookups"><option value="">@(loadingLookups ? "در حال دریافت راننده‌ها..." : "انتخاب راننده")</option>
-                    @foreach (var item in drivers) { <option value="@item.Id.ToString(CultureInfo.InvariantCulture)">@(string.IsNullOrWhiteSpace(item.Code) ? item.Title : $"{item.Title} - {item.Code}")</option> }
+                    @foreach (var item in drivers) { <option value="@item.Id.ToString(CultureInfo.InvariantCulture)">@item.Title</option> }
                 </select><small>@(drivers.Count == 0 && !loadingLookups ? "فهرست راننده‌ای دریافت نشده است." : $"{drivers.Count} راننده")</small>
             </label>
             <label>مأمور پخش
@@ -403,9 +403,9 @@
     };
     private static LookupItem ReadLookup(JsonElement item) => new()
     {
-        Id = ReadDecimal(item, "Id", "RanandehSN", "MamoorPakhshSN", "PersonSN", "SN"),
-        Title = ReadString(item, "Title", "Name", "FullName", "PersonName", "RanandehName", "MamoorPakhshName", "Description", "Ds"),
-        Code = ReadString(item, "Code")
+        // ComboDTO راننده: Id همان RanandehSN و Title شامل نام + کد راننده است.
+        Id = ReadDecimal(item, "Id"),
+        Title = ReadString(item, "Title")
     };
     private static decimal? ReadNullableDecimal(JsonElement item, params string[] names)
     {
@@ -510,7 +510,6 @@
     {
         public decimal Id { get; set; }
         public string Title { get; set; } = "";
-        public string Code { get; set; } = "";
     }
     private sealed class CreateHavaleRequest
     {
