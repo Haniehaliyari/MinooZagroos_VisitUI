@@ -106,7 +106,7 @@
     @if (!string.IsNullOrWhiteSpace(submitError)) { <div class="havale-alert havale-alert-error">@submitError</div> }
     <div class="havale-submit-row">
         <div class="havale-submit-summary"><strong>@SelectedCount</strong><span>فاکتور برای ثبت حواله انتخاب شده است</span></div>
-        <button type="button" class="havale-button havale-button-primary" @onclick="CreateHavaleAsync" disabled="@(submitting || SelectedCount == 0 || string.IsNullOrWhiteSpace(selectedDriverSN) || string.IsNullOrWhiteSpace(selectedAgentSN))">@(submitting ? "در حال ثبت..." : "ثبت حواله")</button>
+        <button type="button" class="havale-button havale-button-primary" @onclick="CreateHavaleAsync" disabled="@(submitting || SelectedCount == 0 || !selectedDriverSN.HasValue || string.IsNullOrWhiteSpace(selectedAgentSN))">@(submitting ? "در حال ثبت..." : "ثبت حواله")</button>
     </div>
 </div>
 
@@ -129,7 +129,8 @@
     private string factorDateFromText = "";
     private string factorDateToText = "";
     private string? factorDateFilterError;
-    private string? selectedDriverSN, selectedAgentSN, factorError, driverError, agentError, submitError, successMessage;
+    private decimal? selectedDriverSN;
+    private string? selectedAgentSN, factorError, driverError, agentError, submitError, successMessage;
     private string havaleDateText = TodayPersianDate();
     private string sendDateText = TodayPersianDate();
     private bool loadingFactors, loadingLookups, submitting;
@@ -326,7 +327,9 @@
         if (SelectedCount == 0) { submitError = "حداقل یک فاکتور انتخاب کنید."; return; }
         try { _ = ParsePersianDate(havaleDateText); _ = ParsePersianDate(sendDateText); }
         catch (FormatException ex) { submitError = ex.Message; return; }
-        if (!decimal.TryParse(selectedDriverSN, NumberStyles.Number, CultureInfo.InvariantCulture, out var driverSN)) { submitError = "راننده را انتخاب کنید."; return; }
+        if (!selectedDriverSN.HasValue) { submitError = "راننده را انتخاب کنید."; return; }
+        var driverSN = selectedDriverSN.Value;
+        if (!drivers.Any(x => x.Id == driverSN)) { submitError = "شناسه راننده انتخاب‌شده در فهرست راننده‌ها معتبر نیست. فهرست را دوباره بارگذاری کنید."; return; }
         if (!decimal.TryParse(selectedAgentSN, NumberStyles.Number, CultureInfo.InvariantCulture, out var agentSN)) { submitError = "مأمور پخش را انتخاب کنید."; return; }
         submitting = true;
         try
