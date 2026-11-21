@@ -54,7 +54,7 @@
                 <tbody>@foreach (var factor in CurrentPageFactors) { <tr>
                     <td><input type="checkbox" checked="@selectedFactorSNs.Contains(factor.FactorSN)" @onchange="args => ToggleFactor(factor.FactorSN, args)" /></td>
                     <td class="havale-number">@factor.FactorNo</td><td>@(string.IsNullOrWhiteSpace(factor.FactorDs) ? "—" : factor.FactorDs)</td>
-                    <td>@(string.IsNullOrWhiteSpace(factor.SodoorDate) ? "—" : factor.SodoorDate)</td><td class="havale-number">@factor.(factor.MablaghKol?.ToString("N0") ?? "—")</td>
+                    <td>@(string.IsNullOrWhiteSpace(factor.SodoorDate) ? "—" : factor.SodoorDate)</td><td class="havale-number">@(factor.MablaghKol?.ToString("N0") ?? "-")</td>
                 </tr> }</tbody>
             </table></div>
             <nav class="havale-pagination" aria-label="صفحه‌بندی فاکتورها" dir="rtl">
