@@ -54,7 +54,7 @@
                 <tbody>@foreach (var factor in CurrentPageFactors) { <tr>
                     <td><input type="checkbox" checked="@selectedFactorSNs.Contains(factor.FactorSN)" @onchange="args => ToggleFactor(factor.FactorSN, args)" /></td>
                     <td class="havale-number">@factor.FactorNo</td><td>@(string.IsNullOrWhiteSpace(factor.FactorDs) ? "—" : factor.FactorDs)</td>
-                    <td>@(string.IsNullOrWhiteSpace(factor.SodoorDate) ? "—" : factor.SodoorDate)</td><td class="havale-number">@factor.MablaghKol.ToString("N0")</td>
+                    <td>@(string.IsNullOrWhiteSpace(factor.SodoorDate) ? "—" : factor.SodoorDate)</td><td class="havale-number">@factor.(factor.MablaghKol?.ToString("N0") ?? "—")</td>
                 </tr> }</tbody>
             </table></div>
             <nav class="havale-pagination" aria-label="صفحه‌بندی فاکتورها" dir="rtl">
@@ -83,7 +83,7 @@
         <div class="havale-form-grid">
             <label>راننده
                 <select @bind="selectedDriverSN" disabled="@loadingLookups"><option value="">@(loadingLookups ? "در حال دریافت راننده‌ها..." : "انتخاب راننده")</option>
-                    @foreach (var item in drivers) { <option value="@item.Id.ToString(CultureInfo.InvariantCulture)">@item.Title</option> }
+                    @foreach (var item in drivers) { <option value="@item.Id.ToString(CultureInfo.InvariantCulture)">@(string.IsNullOrWhiteSpace(item.Code) ? item.Title : $"{item.Title} - {item.Code}")</option> }
                 </select><small>@(drivers.Count == 0 && !loadingLookups ? "فهرست راننده‌ای دریافت نشده است." : $"{drivers.Count} راننده")</small>
             </label>
             <label>مأمور پخش
@@ -398,13 +398,26 @@
         FactorNo = ReadString(item, "FactorNo", "No", "FactorNumber"),
         FactorDs = ReadString(item, "FactorDs", "FactorDesc", "Description", "Title", "Name"),
         SodoorDate = ReadString(item, "SodoorDate", "FactorDate", "Date", "Tarikh"),
-        MablaghKol = ReadDecimal(item, "MablaghKol", "Mablagh", "TotalAmount", "Amount")
+        MablaghKol = ReadNullableDecimal(item, "MablaghKol", "Mablagh", "TotalAmount", "Amount"),
+        VahedeTejariSN = ReadNullableDecimal(item, "VahedeTejariSN")
     };
     private static LookupItem ReadLookup(JsonElement item) => new()
     {
         Id = ReadDecimal(item, "Id", "SN", "RanandehSN", "MamoorPakhshSN", "PersonSN", "Code"),
-        Title = ReadString(item, "Title", "Name", "FullName", "PersonName", "RanandehName", "MamoorPakhshName", "Description", "Ds")
+        Title = ReadString(item, "Title", "Name", "FullName", "PersonName", "RanandehName", "MamoorPakhshName", "Description", "Ds"),
+        Code = ReadString(item, "Code")
     };
+    private static decimal? ReadNullableDecimal(JsonElement item, params string[] names)
+    {
+        foreach (var name in names) if (TryGetProperty(item, name, out var value))
+        {
+            if (value.ValueKind == JsonValueKind.Number && value.TryGetDecimal(out var number)) return number;
+            if (value.ValueKind == JsonValueKind.String && decimal.TryParse(value.GetString(), NumberStyles.Any, CultureInfo.InvariantCulture, out number)) return number;
+            if (value.ValueKind == JsonValueKind.Null) return null;
+        }
+        return null;
+    }
+
     private static decimal ReadDecimal(JsonElement item, params string[] names)
     {
         foreach (var name in names) if (TryGetProperty(item, name, out var value))
@@ -490,12 +503,14 @@
         public string FactorNo { get; set; } = "";
         public string FactorDs { get; set; } = "";
         public string SodoorDate { get; set; } = "";
-        public decimal MablaghKol { get; set; }
+        public decimal? MablaghKol { get; set; }
+        public decimal? VahedeTejariSN { get; set; }
     }
-    private sealed class LookupItem 
-    { 
+    private sealed class LookupItem
+    {
         public decimal Id { get; set; }
-        public string TitleCode { get; set; } = ""; 
+        public string Title { get; set; } = "";
+        public string Code { get; set; } = "";
     }
     private sealed class CreateHavaleRequest
     {
