@@ -46,10 +46,10 @@
         @if (pendingFinalize is not null)
         {
             <div class="all-havale-confirm">
-                <span>آیا از قطعی کردن حواله شماره <strong>@Display(pendingFinalize.HavaleMamoorPakhshNO)</strong> مطمئن هستید؟ پس از تأیید، وضعیت آن به قطعی تغییر می‌کند.</span>
+                <span>آیا از @PendingActionText حواله شماره <strong>@Display(pendingFinalize.HavaleMamoorPakhshNO)</strong> مطمئن هستید؟ وضعیت حواله پس از تأیید تغییر می‌کند.</span>
                 <div class="all-havale-confirm-actions">
-                    <button type="button" class="all-havale-confirm-yes" @onclick="FinalizeHavaleAsync" disabled="@finalizingSN.HasValue">
-                        @(finalizingSN.HasValue ? "در حال ثبت..." : "بله، قطعی شود")
+                    <button type="button" class="all-havale-confirm-yes @(pendingFinalize.HavaleMamoorPakhshStatus == 8 ? "temporary" : "finalize")" @onclick="ChangeHavaleStatusAsync" disabled="@finalizingSN.HasValue">
+                        @(finalizingSN.HasValue ? "در حال ثبت..." : $"بله، {PendingActionText}")
                     </button>
                     <button type="button" class="all-havale-confirm-no" @onclick="CancelFinalize" disabled="@finalizingSN.HasValue">انصراف</button>
                 </div>
@@ -112,14 +112,19 @@
                                     {
                                         <button type="button"
                                                 class="all-havale-finalize"
-                                                @onclick="() => RequestFinalize(item.value)"
+                                                @onclick="() => RequestStatusChange(item.value)"
                                                 disabled="@(finalizingSN.HasValue)">
                                             قطعی کردن حواله
                                         </button>
                                     }
                                     else if (item.value.HavaleMamoorPakhshStatus == 8)
                                     {
-                                        <span class="all-havale-finalized-label">قطعی شده</span>
+                                        <button type="button"
+                                                class="all-havale-temporary"
+                                                @onclick="() => RequestStatusChange(item.value)"
+                                                disabled="@(finalizingSN.HasValue)">
+                                            موقت کردن حواله
+                                        </button>
                                     }
                                     else
                                     {
@@ -166,6 +171,9 @@
     private decimal? finalizingSN;
     private string? actionMessage;
     private bool actionSucceeded;
+    private string PendingActionText => pendingFinalize?.HavaleMamoorPakhshStatus == 8
+        ? "موقت کردن"
+        : "قطعی کردن";
 
     private List<HavaleListItem> FilteredHavales => filteredHavales;
     private int TotalPages => Math.Max(1, (int)Math.Ceiling(FilteredHavales.Count / (double)PageSize));
@@ -268,9 +276,9 @@
         finally { loading = false; }
     }
 
-    private void RequestFinalize(HavaleListItem item)
+    private void RequestStatusChange(HavaleListItem item)
     {
-        if (item.HavaleMamoorPakhshStatus != 4 || finalizingSN.HasValue)
+        if (item.HavaleMamoorPakhshStatus is not (4 or 8) || finalizingSN.HasValue)
             return;
 
         actionMessage = null;
@@ -285,12 +293,13 @@
         pendingFinalize = null;
     }
 
-    private async Task FinalizeHavaleAsync()
+    private async Task ChangeHavaleStatusAsync()
     {
-        if (pendingFinalize is null || pendingFinalize.HavaleMamoorPakhshStatus != 4)
+        if (pendingFinalize is null || pendingFinalize.HavaleMamoorPakhshStatus is not (4 or 8))
             return;
 
         var havaleSN = pendingFinalize.HavaleMamoorPakhshSN;
+        var actionText = PendingActionText;
         finalizingSN = havaleSN;
         actionMessage = null;
 
@@ -305,7 +314,9 @@
             EnsureApiSuccess(response, json);
 
             actionSucceeded = true;
-            actionMessage = "حواله با موفقیت قطعی شد.";
+            actionMessage = actionText == "قطعی کردن"
+                ? "حواله با موفقیت قطعی شد."
+                : "حواله با موفقیت به وضعیت موقت برگشت.";
             pendingFinalize = null;
 
             await LoadHavalesAsync();
@@ -313,13 +324,13 @@
         catch (HttpRequestException ex) when (ex.StatusCode.HasValue)
         {
             actionSucceeded = false;
-            actionMessage = $"قطعی کردن حواله انجام نشد. خطای سرور: {(int)ex.StatusCode.Value}";
+            actionMessage = $"{actionText} حواله انجام نشد. خطای سرور: {(int)ex.StatusCode.Value}";
         }
         catch (Exception ex)
         {
             actionSucceeded = false;
             actionMessage = string.IsNullOrWhiteSpace(ex.Message)
-                ? "در قطعی کردن حواله خطایی رخ داد."
+                ? $"در {actionText} حواله خطایی رخ داد."
                 : ex.Message;
         }
         finally
