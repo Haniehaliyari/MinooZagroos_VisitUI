@@ -109,11 +109,13 @@
         <section class="mamoor-modal" role="dialog" aria-modal="true" aria-labelledby="mamoor-modal-title" @onclick:stopPropagation="true" dir="rtl">
             <header class="mamoor-modal-header">
                 <div class="mamoor-modal-title-icon">@(isEdit ? "✎" : "＋")</div>
-                <div><h2 id="mamoor-modal-title">@(isEdit ? "ویرایش مأمور پخش" : "ثبت مأمور پخش جدید")</h2><p>اطلاعات موردنیاز را در فرم زیر وارد کنید.</p></div>
+                <div class="mamoor-modal-heading-copy"><span class="mamoor-modal-eyebrow">اطلاعات پرسنلی و سازمانی</span><h2 id="mamoor-modal-title">@(isEdit ? "ویرایش مأمور پخش" : "ثبت مأمور پخش جدید")</h2><p>مشخصات مأمور را با دقت تکمیل کنید تا در فرآیند توزیع قابل استفاده باشد.</p></div>
                 <button type="button" class="mamoor-modal-close" @onclick="CloseEditor" aria-label="بستن">×</button>
             </header>
             @if (!string.IsNullOrWhiteSpace(editorError)) { <div class="mamoor-inline-error mamoor-modal-error">@editorError</div> }
+            <div class="mamoor-form-intro"><span class="mamoor-form-intro-icon">✦</span><div><strong>فرم اطلاعات مأمور</strong><small>فیلدهای ستاره‌دار برای ثبت اطلاعات الزامی هستند.</small></div><span class="mamoor-form-step">۰۱ <i>/</i> ۰۱</span></div>
             <div class="mamoor-form-grid">
+                <div class="mamoor-form-section-title full">مشخصات اصلی <span>نام، واحد سازمانی و سرپرست</span></div>
                 <label class="mamoor-field full">نام مأمور پخش <b>*</b>
                     <input @bind="form.MamoorPakhshDS" maxlength="150" placeholder="نام و نام خانوادگی مأمور را وارد کنید" />
                 </label>
@@ -123,7 +125,7 @@
                     @if (showVahedeOptions)
                     {
                         <div class="mamoor-options">
-                            @if (FilteredVahedes.Count == 0) { <div class="mamoor-option-empty">واحدی پیدا نشد.</div> }
+                            @if (FilteredVahedes.Count == 0) { <div class="mamoor-option-empty"><span>ⓘ</span>اطلاعاتی در دسترس نیست</div> }
                             @foreach (var option in FilteredVahedes)
                             {
                                 <button type="button" @key="option.Id" @onmousedown:preventDefault @onclick="() => SelectVahede(option)">@option.Title</button>
@@ -137,7 +139,7 @@
                     @if (showSarparastOptions)
                     {
                         <div class="mamoor-options">
-                            @if (FilteredSarparasts.Count == 0) { <div class="mamoor-option-empty">سرپرستی پیدا نشد.</div> }
+                            @if (FilteredSarparasts.Count == 0) { <div class="mamoor-option-empty"><span>ⓘ</span>اطلاعاتی در دسترس نیست</div> }
                             @foreach (var option in FilteredSarparasts)
                             {
                                 <button type="button" @key="option.Id" @onmousedown:preventDefault @onclick="() => SelectSarparast(option)">@option.Title</button>
@@ -156,6 +158,7 @@
                     <input @bind="form.OptimePhoneNumber" inputmode="tel" maxlength="20" placeholder="شماره تماس عملیات" />
                 </label>
 
+                <div class="mamoor-form-section-title full mamoor-contact-section">اطلاعات تماس و دسترسی <span>راه‌های ارتباطی و وضعیت فعالیت</span></div>
                 <div class="mamoor-field mamoor-status-field">
                     <span>وضعیت مأمور پخش</span>
                     <button type="button" class="mamoor-switch-row" role="switch" aria-checked="@(form.MamoorPakhshStatus == 1)" @onclick="ToggleStatus">
@@ -204,6 +207,7 @@
     private MamoorItem? pendingDelete;
     private string searchText = "", vahedeSearch = "", sarparastSearch = "";
     private string? loadError, pageMessage, editorError, deleteError;
+    private string? vahedeLookupMessage, sarparastLookupMessage;
     private bool messageIsError, loading, showEditor, isEdit, saving, deleting, showVahedeOptions, showSarparastOptions;
     private decimal editingSN;
 
@@ -239,27 +243,41 @@
 
     private async Task LoadCombosAsync()
     {
-        try
-        {
-            using var client = await ApiClient.CreateAuthorizedClientAsync();
-            var sarparastTask = ReadLookupAsync(client, SarparastEndpoint, "دریافت سرپرستان پخش");
-            var vahedeTask = ReadLookupAsync(client, VahedeEndpoint, "دریافت واحدهای تجاری");
-            await Task.WhenAll(sarparastTask, vahedeTask);
-            sarparasts.Clear(); sarparasts.AddRange(await sarparastTask);
-            vahedes.Clear(); vahedes.AddRange(await vahedeTask);
-        }
-        catch (Exception ex) { editorError = DescribeError("دریافت اطلاعات کمبوباکس‌ها", ex); }
+        sarparastLookupMessage = null;
+        vahedeLookupMessage = null;
+        using var client = await ApiClient.CreateAuthorizedClientAsync();
+
+        // هر کمبو مستقل بارگذاری می‌شود؛ خطای سرپرست نباید مانع دریافت واحد تجاری شود.
+        var sarparastTask = ReadLookupAsync(client, SarparastEndpoint, "سرپرست");
+        var vahedeTask = ReadLookupAsync(client, VahedeEndpoint, "واحد تجاری");
+        await Task.WhenAll(sarparastTask, vahedeTask);
+
+        sarparasts.Clear();
+        sarparasts.AddRange(await sarparastTask);
+        vahedes.Clear();
+        vahedes.AddRange(await vahedeTask);
+
+        if (sarparasts.Count == 0) sarparastLookupMessage = "اطلاعات سرپرست پخش در دسترس نیست.";
+        if (vahedes.Count == 0) vahedeLookupMessage = "اطلاعات واحد تجاری در دسترس نیست.";
     }
 
-    private async Task<List<LookupItem>> ReadLookupAsync(HttpClient client, string endpoint, string operation)
+    private async Task<List<LookupItem>> ReadLookupAsync(HttpClient client, string endpoint, string lookupName)
     {
-        using var response = await client.GetAsync(endpoint);
-        var json = await response.Content.ReadAsStringAsync();
-        EnsureSuccess(response, json, operation);
-        return ReadArray(ExtractPayload(json)).Select(x => new LookupItem {
-            Id = ReadDecimal(x, "Id", "SN", "SarparastPakhshSN", "VahedeTejariSN"),
-            Title = ReadString(x, "Title", "Name", "DS", "SarparastPakhshDS", "VahedeTejariDS")
-        }).Where(x => x.Id != 0 && !string.IsNullOrWhiteSpace(x.Title)).ToList();
+        try
+        {
+            using var response = await client.GetAsync(endpoint);
+            var json = await response.Content.ReadAsStringAsync();
+            EnsureSuccess(response, json, $"دریافت {lookupName}");
+            return ReadArray(ExtractPayload(json)).Select(x => new LookupItem {
+                Id = ReadDecimal(x, "Id", "SN", "SarparastPakhshSN", "VahedeTejariSN", "SarparastSN", "VahedeSN"),
+                Title = ReadString(x, "Title", "Name", "DS", "SarparastPakhshDS", "VahedeTejariDS", "SarparastDS", "VahedeDS")
+            }).Where(x => x.Id != 0 && !string.IsNullOrWhiteSpace(x.Title)).ToList();
+        }
+        catch
+        {
+            // نبودن داده یا خطای سرویس کمبو نباید فرم اصلی را از کار بیندازد.
+            return [];
+        }
     }
 
     private void OpenCreate()
@@ -274,29 +292,38 @@
 
     private async Task EnsureCombosLoadedAsync()
     {
-        if (vahedes.Count == 0 || sarparasts.Count == 0) await LoadCombosAsync();
+        if (vahedes.Count == 0 || sarparasts.Count == 0)
+        {
+            try { await LoadCombosAsync(); }
+            catch { /* وضعیت خالی کمبو در خود فهرست گزینه‌ها نمایش داده می‌شود. */ }
+        }
         await InvokeAsync(StateHasChanged);
     }
 
-    private async Task OpenEditAsync(MamoorItem item)
+    private Task OpenEditAsync(MamoorItem item)
     {
-        isEdit = true; editingSN = item.MamoorPakhshSN; editorError = null;
-        showEditor = true;
-        form = new MamoorForm();
-        try
+        // اطلاعات سطر انتخاب‌شده مبنای فرم ویرایش است؛ فراخوانی GetByID که در API
+        // برای بعضی رکوردهای موجود پاسخ «مأمورپخش یافت نشد» می‌داد حذف شده است.
+        isEdit = true;
+        editingSN = item.MamoorPakhshSN;
+        editorError = null;
+        form = new MamoorForm
         {
-            using var client = await ApiClient.CreateAuthorizedClientAsync();
-            var url = $"{ByIdEndpoint}?MamoorPakhshSN={Uri.EscapeDataString(editingSN.ToString(CultureInfo.InvariantCulture))}";
-            using var response = await client.GetAsync(url);
-            var json = await response.Content.ReadAsStringAsync();
-            EnsureSuccess(response, json, "دریافت اطلاعات مأمور پخش");
-            var data = ExtractPayload(json);
-            if (data.ValueKind == JsonValueKind.Array && data.GetArrayLength() > 0) data = data[0];
-            form = ReadForm(data);
-            vahedeSearch = FindTitle(vahedes, form.VahedeTejariSN) ?? item.VahedeTitle;
-            sarparastSearch = FindTitle(sarparasts, form.SarparastPakhshSN) ?? item.SarparastTitle;
-        }
-        catch (Exception ex) { editorError = DescribeError("دریافت اطلاعات مأمور پخش", ex); }
+            MamoorPakhshDS = item.MamoorPakhshDS,
+            MamoorPakhshStatus = item.MamoorPakhshStatus,
+            SarparastPakhshSN = item.SarparastPakhshSN,
+            VahedeTejariSN = item.VahedeTejariSN ?? 0,
+            MblPhone = item.MblPhone,
+            OptimeUserName = item.OptimeUserName,
+            OptimePhoneNumber = item.OptimePhoneNumber
+        };
+        vahedeSearch = FindTitle(vahedes, form.VahedeTejariSN) ?? item.VahedeTitle;
+        sarparastSearch = FindTitle(sarparasts, form.SarparastPakhshSN) ?? item.SarparastTitle;
+        showVahedeOptions = false;
+        showSarparastOptions = false;
+        showEditor = true;
+        _ = EnsureCombosLoadedAsync();
+        return Task.CompletedTask;
     }
 
     private async Task SaveAsync()
@@ -304,6 +331,7 @@
         editorError = null;
         form.MamoorPakhshDS = form.MamoorPakhshDS.Trim();
         if (string.IsNullOrWhiteSpace(form.MamoorPakhshDS)) { editorError = "نام مأمور پخش را وارد کنید."; return; }
+        if (vahedes.Count == 0) { editorError = "اطلاعات واحد تجاری در دسترس نیست؛ امکان ثبت یا ویرایش تا زمان دریافت این اطلاعات وجود ندارد."; return; }
         if (form.VahedeTejariSN <= 0) { editorError = "واحد تجاری را انتخاب کنید."; return; }
         if (!vahedes.Any(x => x.Id == form.VahedeTejariSN)) { editorError = "واحد تجاری انتخاب‌شده معتبر نیست؛ دوباره انتخاب کنید."; return; }
         if (form.SarparastPakhshSN.HasValue && !sarparasts.Any(x => x.Id == form.SarparastPakhshSN.Value)) { editorError = "سرپرست انتخاب‌شده معتبر نیست؛ دوباره انتخاب کنید."; return; }
@@ -390,7 +418,9 @@
         VahedeTejariSN = ReadNullableDecimal(x, "VahedeTejariSN"),
         SarparastTitle = ReadString(x, "SarparastPakhshDS", "SarparastTitle", "SarparastName"),
         VahedeTitle = ReadString(x, "VahedeTejariDS", "VahedeTitle", "VahedeTejariName"),
-        MblPhone = ReadString(x, "MblPhone")
+        MblPhone = ReadString(x, "MblPhone"),
+        OptimeUserName = ReadString(x, "OptimeUserName"),
+        OptimePhoneNumber = ReadString(x, "OptimePhoneNumber")
     };
 
     private static MamoorForm ReadForm(JsonElement x) => new() {
@@ -481,6 +511,8 @@
         public string SarparastTitle { get; set; } = "";
         public string VahedeTitle { get; set; } = "";
         public string MblPhone { get; set; } = "";
+        public string OptimeUserName { get; set; } = "";
+        public string OptimePhoneNumber { get; set; } = "";
     }
     private sealed class MamoorForm
     {
