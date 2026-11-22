@@ -290,3 +290,17 @@
         overflow-x:hidden;
     }
 }
+
+/* Global page-history navigation */
+.topbar-leading{display:flex;align-items:center;min-width:0}
+.page-back-button{
+    display:inline-flex;align-items:center;justify-content:center;gap:7px;
+    min-height:36px;padding:0 12px;
+    border:1px solid var(--line);border-radius:10px;
+    background:var(--surface);color:var(--accent);
+    font:inherit;font-size:12px;font-weight:750;cursor:pointer;
+    transition:background .18s,border-color .18s,transform .18s;
+}
+.page-back-button:hover{background:var(--surface-soft);border-color:var(--accent);transform:translateX(2px)}
+.page-back-button svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+@media(max-width:760px){.page-back-button{min-height:34px;padding:0 9px;font-size:11px}.page-back-button svg{width:16px;height:16px}}
