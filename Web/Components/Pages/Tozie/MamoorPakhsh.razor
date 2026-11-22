@@ -113,18 +113,10 @@
             @if (!string.IsNullOrWhiteSpace(editorError)) { <div class="mamoor-inline-error mamoor-modal-error">@editorError</div> }
             <div class="mamoor-form-intro"><span class="mamoor-form-intro-icon">✦</span><div><strong>فرم اطلاعات مأمور</strong><small>فیلدهای ستاره‌دار برای ثبت اطلاعات الزامی هستند.</small></div><span class="mamoor-form-step">۰۱ <i>/</i> ۰۱</span></div>
             <div class="mamoor-form-grid">
-                <div class="mamoor-form-section-title full">مشخصات اصلی <span>نام، واحد سازمانی و سرپرست</span></div>
+                <div class="mamoor-form-section-title full">مشخصات اصلی <span>نام مأمور و سرپرست پخش</span></div>
                 <label class="mamoor-field full">نام مأمور پخش <b>*</b>
                     <input @bind="form.MamoorPakhshDS" maxlength="150" placeholder="نام و نام خانوادگی مأمور را وارد کنید" />
                 </label>
-
-                <div class="mamoor-field full">
-                    <span>واحد تجاری</span>
-                    <select class="mamoor-fixed-combo" value="230034.935" disabled aria-label="واحد تجاری ثابت">
-                        <option value="230034.935">مینو زاگرس — 230034.935</option>
-                    </select>
-                    <small>این کمبو فقط خواندنی است و کد واحد تجاری همیشه 230034.935 به بک‌اند ارسال می‌شود.</small>
-                </div>
 
                 <label class="mamoor-field lookup-field">سرپرست پخش
                     <input value="@sarparastSearch" @oninput="OnSarparastInput" @onfocus="() => showSarparastOptions = true" @onblur="CloseSarparastOptionsAsync" autocomplete="off" placeholder="جستجو و انتخاب سرپرست" />
