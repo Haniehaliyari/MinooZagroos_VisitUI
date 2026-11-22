@@ -314,7 +314,7 @@
             var payload = new {
                 MamoorPakhshSN = isEdit ? editingSN : 0m,
                 MamoorPakhshDS = form.MamoorPakhshDS,
-                MamoorPakhshNO = (string?)null,
+                MamoorPakhshNO = isEdit ? items.FirstOrDefault(x => x.MamoorPakhshSN == editingSN)?.MamoorPakhshNO : null,
                 MamoorPakhshStatus = form.MamoorPakhshStatus,
                 SarparastPakhshSN = form.SarparastPakhshSN,
                 VahedeTejariSN = form.VahedeTejariSN,
