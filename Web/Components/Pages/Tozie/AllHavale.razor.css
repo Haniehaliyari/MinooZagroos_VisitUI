@@ -71,3 +71,12 @@
 .all-havale-confirm-yes.finalize:hover:not(:disabled){background:#125d35}
 .all-havale-confirm-yes.temporary{background:#7e22ce;color:#fff}
 .all-havale-confirm-yes.temporary:hover:not(:disabled){background:#6b21a8}
+
+
+/* عملیات تغییر وضعیت حواله */
+.all-havale-row-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.all-havale-send{border:1px solid #a5d8e5;border-radius:8px;background:#eaf7fb;color:#08718a;padding:8px 12px;font:inherit;font-size:11px;font-weight:750;white-space:nowrap;cursor:pointer;transition:background .16s,opacity .16s}
+.all-havale-send:hover:not(:disabled){background:#d8f0f6}
+.all-havale-send:disabled{opacity:.55;cursor:wait}
+.all-havale-confirm-yes.sent{background:#08718a;color:#fff}
+.all-havale-confirm-yes.sent:hover:not(:disabled){background:#075d70}
