@@ -83,3 +83,44 @@
 @media(max-width:760px){.mamoor-page{padding:22px 15px 36px}.mamoor-panel{padding:15px}.mamoor-heading h1{font-size:21px}.mamoor-toolbar{align-items:stretch;flex-direction:column}.mamoor-search-wrap{max-width:none}.mamoor-toolbar-actions{flex-wrap:wrap}.mamoor-count{margin-left:auto}}
 @media(max-width:520px){.mamoor-form-grid{grid-template-columns:1fr;padding:17px}.mamoor-field.full{grid-column:auto}.mamoor-modal-header{padding:17px}.mamoor-modal-footer{padding:14px 17px}.mamoor-modal-footer .mamoor-button{flex:1}.mamoor-heading-icon{width:46px;height:46px;flex-basis:46px}}
 @media(max-width:380px){.mamoor-toolbar-actions{display:grid;grid-template-columns:1fr 1fr}.mamoor-count{grid-column:1/-1;margin:0;text-align:center}.mamoor-button{padding:0 9px;font-size:11px}}
+
+/* Refined, premium modal treatment */
+.mamoor-modal{width:min(100%,760px);border-radius:22px;background:linear-gradient(145deg,color-mix(in srgb,var(--surface) 96%,var(--accent-soft)),var(--surface));box-shadow:0 32px 90px rgba(9,20,38,.28);border-color:color-mix(in srgb,var(--accent) 16%,var(--line))}
+.mamoor-modal-header{position:relative;overflow:hidden;gap:16px;padding:25px 27px;background:linear-gradient(110deg,color-mix(in srgb,var(--accent) 10%,var(--surface)),var(--surface) 65%);border-bottom:1px solid color-mix(in srgb,var(--accent) 12%,var(--line))}
+.mamoor-modal-header:after{content:"";position:absolute;left:-35px;top:-75px;width:190px;height:190px;border:1px solid color-mix(in srgb,var(--accent) 12%,transparent);border-radius:50%;box-shadow:0 0 0 22px color-mix(in srgb,var(--accent) 4%,transparent),0 0 0 44px color-mix(in srgb,var(--accent) 3%,transparent);pointer-events:none}
+.mamoor-modal-title-icon{width:50px;height:50px;flex-basis:50px;border-radius:16px;background:var(--accent);color:#fff;box-shadow:0 8px 18px color-mix(in srgb,var(--accent) 28%,transparent);font-size:24px}
+.mamoor-modal-heading-copy{position:relative;z-index:1}
+.mamoor-modal-eyebrow{display:block;margin-bottom:5px;color:var(--accent);font-size:9px;font-weight:850;letter-spacing:.4px}
+.mamoor-modal-header h2{font-size:18px;letter-spacing:-.3px}
+.mamoor-modal-header p{font-size:11px;line-height:1.9}
+.mamoor-modal-close{position:relative;z-index:2;width:35px;height:35px;border-radius:11px;font-size:23px;transition:.18s}
+.mamoor-modal-close:hover{border-color:#d45a5a;background:#fff1f0;color:#c43d3d}
+.mamoor-form-intro{display:flex;align-items:center;gap:11px;margin:19px 23px 0;padding:12px 14px;border:1px solid color-mix(in srgb,var(--accent) 13%,var(--line));border-radius:13px;background:color-mix(in srgb,var(--accent-soft) 12%,var(--surface))}
+.mamoor-form-intro-icon{width:32px;height:32px;display:grid;place-items:center;border-radius:10px;background:color-mix(in srgb,var(--accent) 12%,var(--surface));color:var(--accent);font-size:17px}
+.mamoor-form-intro strong{display:block;color:var(--text);font-size:11px;font-weight:850}
+.mamoor-form-intro small{display:block;margin-top:4px;color:var(--muted);font-size:9px}
+.mamoor-form-step{margin-right:auto;color:var(--accent);font-size:10px;font-weight:850;direction:ltr}
+.mamoor-form-step i{padding:0 4px;color:var(--muted);font-style:normal}
+.mamoor-form-grid{gap:18px 16px;padding:17px 23px 23px}
+.mamoor-form-section-title{display:flex;align-items:center;gap:10px;margin-top:3px;color:var(--text);font-size:11px;font-weight:900}
+.mamoor-form-section-title:before{content:"";width:4px;height:17px;border-radius:4px;background:var(--accent)}
+.mamoor-form-section-title span{margin-right:auto;color:var(--muted);font-size:9px;font-weight:450}
+.mamoor-contact-section{padding-top:13px;border-top:1px dashed var(--line)}
+.mamoor-field{gap:9px;font-size:11px}
+.mamoor-field input{height:45px;padding:0 13px;border-radius:11px;background:color-mix(in srgb,var(--surface) 94%,var(--surface-soft));transition:border-color .18s,box-shadow .18s,background .18s}
+.mamoor-field input:hover{border-color:color-mix(in srgb,var(--accent) 35%,var(--line))}
+.mamoor-field input:focus{background:var(--surface)}
+.mamoor-field input::placeholder{font-size:10px}
+.mamoor-options{top:calc(100% + 6px);padding:7px;border-radius:12px;border-color:color-mix(in srgb,var(--accent) 16%,var(--line));box-shadow:0 16px 35px rgba(15,30,50,.16)}
+.mamoor-options button{padding:11px;border-radius:8px;font-size:11px}
+.mamoor-option-empty{display:flex;align-items:center;gap:8px;padding:13px 10px;color:var(--muted);font-size:10px}
+.mamoor-option-empty span{color:var(--accent);font-size:14px}
+.mamoor-switch-row{min-height:62px;padding:10px 12px;border-radius:12px;background:color-mix(in srgb,var(--surface) 94%,var(--surface-soft));transition:border-color .18s,box-shadow .18s}
+.mamoor-switch-row:hover{border-color:color-mix(in srgb,var(--accent) 40%,var(--line))}
+.mamoor-switch-row strong{font-size:11px}
+.mamoor-switch-row small{font-size:9px;line-height:1.8}
+.mamoor-modal-footer{gap:10px;padding:17px 23px 21px;background:color-mix(in srgb,var(--surface-soft) 30%,var(--surface))}
+.mamoor-modal-footer .mamoor-button{min-width:125px;min-height:43px;border-radius:11px}
+.mamoor-modal-footer .mamoor-button-primary{box-shadow:0 5px 13px color-mix(in srgb,var(--accent) 20%,transparent)}
+.mamoor-modal-error{margin:15px 23px 0}
+@media(max-width:600px){.mamoor-modal-header{padding:19px}.mamoor-form-intro{margin:15px 16px 0}.mamoor-form-grid{padding:15px 16px 19px;gap:15px}.mamoor-form-section-title span{font-size:8px}.mamoor-modal-footer{padding:14px 16px 17px}.mamoor-modal-footer .mamoor-button{min-width:0}.mamoor-modal-header h2{font-size:15px}.mamoor-modal-header p{max-width:245px}}
