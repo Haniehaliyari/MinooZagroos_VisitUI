@@ -353,15 +353,33 @@
 
     private static void EnsureApiSuccess(HttpResponseMessage response, string json, string operation)
     {
-        if (!response.IsSuccessStatusCode) throw new InvalidOperationException($"{operation}: HTTP {(int)response.StatusCode} ({response.ReasonPhrase}). {ReadError(json)}");
+        // پیام خطای API را بدون بازنویسی یا جایگزینی با پیام عمومی منتقل می‌کنیم.
+        if (!response.IsSuccessStatusCode)
+        {
+            var apiMessage = ReadError(json);
+            if (apiMessage == "پاسخ سرویس جزئیات خطا را ارسال نکرد.")
+                apiMessage = $"خطای HTTP {(int)response.StatusCode} ({response.ReasonPhrase})";
+            throw new InvalidOperationException(apiMessage);
+        }
+
         using var doc = JsonDocument.Parse(json);
         var root = doc.RootElement;
-        if (TryGetProperty(root, "statusCode", out var status) && status.ValueKind == JsonValueKind.Number && status.GetInt32() >= 400)
-            throw new InvalidOperationException($"{operation}: {ReadError(json)}");
-        if (TryGetProperty(root, "errMsg", out var err) && err.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(err.GetString()))
-            throw new InvalidOperationException($"{operation}: {err.GetString()}");
-        if (TryGetProperty(root, "success", out var success) && success.ValueKind == JsonValueKind.False)
-            throw new InvalidOperationException($"{operation}: {ReadError(json)}");
+
+        if (TryGetProperty(root, "statusCode", out var status) &&
+            status.ValueKind == JsonValueKind.Number && status.GetInt32() >= 400)
+            throw new InvalidOperationException(ReadError(json));
+
+        if (TryGetProperty(root, "success", out var success) &&
+            success.ValueKind == JsonValueKind.False)
+            throw new InvalidOperationException(ReadError(json));
+
+        if (TryGetProperty(root, "isSuccess", out var isSuccess) &&
+            isSuccess.ValueKind == JsonValueKind.False)
+            throw new InvalidOperationException(ReadError(json));
+
+        if (TryGetProperty(root, "errMsg", out var err) &&
+            err.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(err.GetString()))
+            throw new InvalidOperationException(err.GetString()!);
     }
 
     private static JsonElement ExtractPayload(string json)
@@ -451,15 +469,65 @@
         try
         {
             using var doc = JsonDocument.Parse(json);
-            foreach (var key in new[] { "errMsg", "message", "Message", "title", "detail" })
-                if (TryGetProperty(doc.RootElement, key, out var value) && value.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(value.GetString())) return value.GetString()!;
-            if (TryGetProperty(doc.RootElement, "data", out var data) && data.ValueKind == JsonValueKind.String) return data.GetString()!;
+            return FindErrorMessage(doc.RootElement, 0)
+                ?? "پاسخ سرویس جزئیات خطا را ارسال نکرد.";
         }
-        catch { }
-        return "پاسخ سرویس جزئیات خطا را ارسال نکرد.";
+        catch
+        {
+            return string.IsNullOrWhiteSpace(json)
+                ? "پاسخ سرویس جزئیات خطا را ارسال نکرد."
+                : json.Trim();
+        }
+    }
+
+    private static string? FindErrorMessage(JsonElement element, int depth)
+    {
+        if (depth > 8) return null;
+
+        if (element.ValueKind == JsonValueKind.String)
+            return string.IsNullOrWhiteSpace(element.GetString()) ? null : element.GetString();
+
+        if (element.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var item in element.EnumerateArray())
+            {
+                var message = FindErrorMessage(item, depth + 1);
+                if (!string.IsNullOrWhiteSpace(message)) return message;
+            }
+            return null;
+        }
+
+        if (element.ValueKind != JsonValueKind.Object) return null;
+
+        // اولویت با فیلدهای متداول پیام خطا در پاسخ API است.
+        foreach (var key in new[] { "message", "errMsg", "errorMessage", "detail", "title", "error", "Message", "ErrMsg" })
+        {
+            if (TryGetProperty(element, key, out var value))
+            {
+                var message = FindErrorMessage(value, depth + 1);
+                if (!string.IsNullOrWhiteSpace(message)) return message;
+            }
+        }
+
+        // بعضی EndpointResultها پیام را داخل Data یا Result قرار می‌دهند.
+        foreach (var key in new[] { "data", "result", "errors", "innerException", "exception" })
+        {
+            if (TryGetProperty(element, key, out var value))
+            {
+                var message = FindErrorMessage(value, depth + 1);
+                if (!string.IsNullOrWhiteSpace(message)) return message;
+            }
+        }
+
+        return null;
     }
     private static string DescribeRequestError(string operation, Exception ex)
     {
+        // خطاهای برگشتی از API از نوع InvalidOperationException هستند؛
+        // متن آن‌ها باید عیناً به کاربر نمایش داده شود.
+        if (ex is InvalidOperationException && !string.IsNullOrWhiteSpace(ex.Message))
+            return ex.Message;
+
         if (ex is HttpRequestException)
             return $"خطای ارتباط با سرور هنگام {operation}؛ لطفاً اتصال خود به سرور را بررسی کنید و دوباره تلاش کنید.";
 
@@ -469,7 +537,9 @@
         if (ex is UnauthorizedAccessException)
             return "نشست کاربری شما معتبر نیست. لطفاً دوباره وارد سامانه شوید.";
 
-        return $"در {operation} مشکلی رخ داد. لطفاً چند لحظه دیگر دوباره تلاش کنید.";
+        return string.IsNullOrWhiteSpace(ex.Message)
+            ? $"در {operation} مشکلی رخ داد."
+            : ex.Message;
     }
     private static string TodayPersianDate()
     {
