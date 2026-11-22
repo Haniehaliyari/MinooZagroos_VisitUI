@@ -460,11 +460,41 @@
         try
         {
             using var doc = JsonDocument.Parse(json);
+            var root = doc.RootElement;
+
+            // پاسخ پیش‌فرض اعتبارسنجی ASP.NET معمولاً خطاها را داخل آبجکت errors برمی‌گرداند.
+            if (TryGetProperty(root, "errors", out var errors) && errors.ValueKind == JsonValueKind.Object)
+            {
+                var details = new List<string>();
+                foreach (var property in errors.EnumerateObject())
+                {
+                    var messages = property.Value.ValueKind == JsonValueKind.Array
+                        ? property.Value.EnumerateArray()
+                            .Where(x => x.ValueKind == JsonValueKind.String)
+                            .Select(x => x.GetString())
+                            .Where(x => !string.IsNullOrWhiteSpace(x))
+                            .ToList()
+                        : property.Value.ValueKind == JsonValueKind.String
+                            ? new List<string> { property.Value.GetString()! }
+                            : new List<string>();
+
+                    foreach (var message in messages)
+                        details.Add($"{property.Name}: {message}");
+                }
+
+                if (details.Count > 0)
+                    return "اطلاعات ارسالی معتبر نیست:\\n" + string.Join("\\n", details);
+            }
+
             foreach (var key in new[] { "message", "errMsg", "errorMessage", "detail", "title", "error" })
-                if (TryGetProperty(doc.RootElement, key, out var value) && value.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(value.GetString())) return value.GetString()!;
+                if (TryGetProperty(root, key, out var value) && value.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(value.GetString()))
+                    return value.GetString()!;
         }
         catch { }
-        return string.IsNullOrWhiteSpace(json) ? $"خطای HTTP {(int)response.StatusCode} ({response.ReasonPhrase})" : json;
+
+        return string.IsNullOrWhiteSpace(json)
+            ? $"خطای HTTP {(int)response.StatusCode} ({response.ReasonPhrase})"
+            : json;
     }
     private static string DescribeError(string operation, Exception ex) => ex is InvalidOperationException && !string.IsNullOrWhiteSpace(ex.Message)
         ? ex.Message : ex is UnauthorizedAccessException ? "نشست کاربری معتبر نیست؛ دوباره وارد سامانه شوید."
