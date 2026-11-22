@@ -130,3 +130,150 @@
 .mamoor-fixed-combo{display:block;width:100%;min-height:45px;padding:0 13px;border:1px solid color-mix(in srgb,var(--accent) 24%,var(--line));border-radius:11px;background:color-mix(in srgb,var(--accent-soft) 35%,var(--surface));color:var(--text);font:inherit;font-size:12px;font-weight:850;opacity:1;cursor:not-allowed}
 .mamoor-fixed-combo:disabled{-webkit-text-fill-color:var(--text);color:var(--text);opacity:1}
 .mamoor-field>small{color:var(--muted);font-size:9px;line-height:1.8}
+
+
+/* Premium spacious editor modal */
+.mamoor-modal-backdrop{
+    padding:24px;
+    background:rgba(10,18,32,.62);
+    backdrop-filter:blur(7px) saturate(115%);
+}
+.mamoor-modal{
+    box-sizing:border-box;
+    width:min(94vw,900px);
+    max-width:900px;
+    max-height:none;
+    overflow:visible;
+    border:1px solid color-mix(in srgb,var(--accent) 22%,var(--line));
+    border-radius:25px;
+    background:var(--surface);
+    box-shadow:0 35px 100px rgba(5,12,25,.34),0 5px 18px rgba(5,12,25,.10);
+}
+.mamoor-modal-header{
+    min-height:112px;
+    padding:27px 32px;
+    background:
+        radial-gradient(circle at 8% 10%,color-mix(in srgb,var(--accent) 16%,transparent),transparent 34%),
+        linear-gradient(115deg,color-mix(in srgb,var(--accent) 11%,var(--surface)),var(--surface) 72%);
+    border-bottom:1px solid color-mix(in srgb,var(--accent) 15%,var(--line));
+}
+.mamoor-modal-title-icon{
+    width:56px;
+    height:56px;
+    flex-basis:56px;
+    border-radius:18px;
+    box-shadow:0 9px 22px color-mix(in srgb,var(--accent) 30%,transparent);
+}
+.mamoor-modal-header h2{font-size:20px;margin-bottom:7px}
+.mamoor-modal-header p{font-size:12px}
+.mamoor-modal-close{
+    width:38px;
+    height:38px;
+    border-radius:12px;
+    background:color-mix(in srgb,var(--surface) 82%,transparent);
+}
+.mamoor-form-intro{
+    margin:21px 30px 0;
+    min-height:54px;
+    padding:12px 16px;
+    border-radius:15px;
+    background:linear-gradient(100deg,color-mix(in srgb,var(--accent-soft) 24%,var(--surface)),var(--surface));
+}
+.mamoor-form-intro-icon{width:36px;height:36px;border-radius:12px}
+.mamoor-form-intro strong{font-size:12px}
+.mamoor-form-intro small{font-size:10px}
+.mamoor-form-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:17px 20px;
+    padding:20px 30px 25px;
+}
+.mamoor-form-section-title{
+    padding-bottom:9px;
+    border-bottom:1px solid color-mix(in srgb,var(--accent) 13%,var(--line));
+    font-size:12px;
+}
+.mamoor-form-section-title:before{height:19px;width:5px}
+.mamoor-form-section-title span{font-size:10px}
+.mamoor-contact-section{padding-top:15px;border-top:0}
+.mamoor-field{
+    gap:9px;
+    font-size:12px;
+}
+.mamoor-field input{
+    height:48px;
+    padding:0 14px;
+    border-radius:12px;
+    border-color:color-mix(in srgb,var(--text) 12%,var(--line));
+    background:color-mix(in srgb,var(--surface-soft) 42%,var(--surface));
+    font-size:12px;
+}
+.mamoor-field input:focus{
+    border-color:var(--accent);
+    box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 12%,transparent);
+}
+.mamoor-field input::placeholder{font-size:11px}
+.mamoor-fixed-combo{
+    min-height:48px;
+    border-radius:12px;
+    border-color:color-mix(in srgb,var(--accent) 28%,var(--line));
+    background:linear-gradient(100deg,color-mix(in srgb,var(--accent-soft) 38%,var(--surface)),var(--surface));
+    font-size:12px;
+}
+.mamoor-field>small{font-size:10px;line-height:1.7}
+.mamoor-switch-row{
+    min-height:68px;
+    padding:12px 15px;
+    border-radius:13px;
+    background:linear-gradient(100deg,color-mix(in srgb,#21945b 7%,var(--surface)),var(--surface));
+}
+.mamoor-switch-row strong{font-size:12px}
+.mamoor-switch-row small{font-size:10px}
+.mamoor-modal-footer{
+    min-height:76px;
+    align-items:center;
+    padding:15px 30px;
+    border-top:1px solid var(--line);
+    border-radius:0 0 25px 25px;
+    background:color-mix(in srgb,var(--surface-soft) 48%,var(--surface));
+}
+.mamoor-modal-footer .mamoor-button{
+    min-width:145px;
+    min-height:46px;
+    border-radius:12px;
+    font-size:12px;
+}
+.mamoor-modal-footer .mamoor-button-primary{
+    box-shadow:0 7px 18px color-mix(in srgb,var(--accent) 25%,transparent);
+}
+.mamoor-modal-error{margin:16px 30px 0;border-radius:12px}
+
+/* Keep the complete form visible on regular desktop screens */
+@media(min-width:761px) and (min-height:760px){
+    .mamoor-modal-backdrop{overflow-y:auto}
+    .mamoor-modal{max-height:none;overflow:visible}
+}
+
+/* On compact screens, allow page scrolling instead of clipping fields */
+@media(max-width:760px), (max-height:759px){
+    .mamoor-modal-backdrop{align-items:flex-start;padding:14px;overflow-y:auto}
+    .mamoor-modal{
+        width:min(100%,700px);
+        max-height:none;
+        overflow:visible;
+        margin:auto;
+        border-radius:19px;
+    }
+    .mamoor-modal-header{padding:19px 20px;min-height:0}
+    .mamoor-modal-header h2{font-size:16px}
+    .mamoor-form-intro{margin:15px 18px 0}
+    .mamoor-form-grid{padding:17px 18px 20px;gap:15px}
+    .mamoor-modal-footer{padding:14px 18px;border-radius:0 0 19px 19px}
+}
+@media(max-width:520px){
+    .mamoor-modal-backdrop{padding:8px}
+    .mamoor-form-grid{grid-template-columns:1fr}
+    .mamoor-field.full{grid-column:1}
+    .mamoor-form-section-title span{font-size:8px}
+    .mamoor-modal-header p{max-width:220px}
+    .mamoor-modal-footer .mamoor-button{min-width:0;flex:1}
+}
