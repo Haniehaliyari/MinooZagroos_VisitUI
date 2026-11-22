@@ -122,3 +122,10 @@ a.distribution-card:focus-visible{outline:3px solid color-mix(in srgb,var(--acce
 @media(max-width:1050px){.distribution-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}}
 @media(max-width:760px){.distribution-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.dispatch-card{padding:15px 11px}.dispatch-card-heading{gap:8px}.dispatch-card-heading .distribution-icon{flex-basis:46px;width:46px;height:46px}.dispatch-card-heading h2{font-size:13px}.dispatch-create-button{width:34px;height:34px}.dispatch-card>p{font-size:9px}.dispatch-all-link{font-size:10px;padding:7px}}
 @media(max-width:380px){.distribution-grid{grid-template-columns:1fr}}
+
+/* Minimal dispatch tile: only the dispatch icon and create (+) action */
+.dispatch-icon-only{min-height:164px;align-items:center;justify-content:center;gap:15px;padding:18px}
+.dispatch-icon-only .distribution-icon{width:64px;height:64px;border-radius:19px}
+.dispatch-icon-only .distribution-icon svg{width:36px;height:36px}
+.dispatch-icon-only .dispatch-create-button{width:40px;height:40px;flex:0 0 40px}
+@media(max-width:760px){.dispatch-icon-only{min-height:145px;padding:14px 8px;gap:12px}.dispatch-icon-only .distribution-icon{width:54px;height:54px}.dispatch-icon-only .distribution-icon svg{width:31px;height:31px}}
