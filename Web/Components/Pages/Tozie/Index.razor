@@ -1,0 +1,94 @@
+@page "/tozie"
+@attribute [Authorize]
+@layout MainLayout
+@using Microsoft.AspNetCore.Authorization
+@using Web.Components.Layout
+
+<PageTitle>مینو زاگرس | سیستم توزیع</PageTitle>
+
+<div class="distribution-home" dir="rtl">
+    <header class="distribution-heading">
+        <span class="distribution-heading-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M3 7h11v11H3zM14 11h4l3 4v3h-7z"/><circle cx="7" cy="19" r="2"/><circle cx="18" cy="19" r="2"/></svg>
+        </span>
+        <h1>سیستم توزیع</h1>
+    </header>
+
+    <section class="distribution-grid" aria-label="امکانات سیستم توزیع">
+        <article class="distribution-card distribution-placeholder">
+            <span class="distribution-icon"><svg viewBox="0 0 48 48"><path d="M24 7a10 10 0 1 0 0 20 10 10 0 0 0 0-20ZM7 41c1-8 7-12 17-12s16 4 17 12"/></svg></span>
+            <h2>مشتریان</h2>
+            <p>مدیریت اطلاعات مشتریان</p>
+        </article>
+
+        <a class="distribution-card" href="/khodroo">
+            <span class="distribution-icon"><svg viewBox="0 0 48 48"><path d="M5 29h3l4-12h24l5 12h2v10h-5a5 5 0 0 1-10 0H20a5 5 0 0 1-10 0H5zM12 17l3-7h18l3 7M12 29h.1M36 29h.1"/></svg></span>
+            <h2>خودرو</h2>
+            <p>مدیریت خودروها</p>
+            <span class="distribution-arrow">←</span>
+        </a>
+
+        <article class="distribution-card distribution-placeholder">
+            <span class="distribution-icon"><svg viewBox="0 0 48 48"><circle cx="17" cy="15" r="7"/><circle cx="33" cy="17" r="6"/><path d="M4 39c1-8 5-12 13-12s12 4 13 12M29 29c8-2 14 2 15 10"/></svg></span>
+            <h2>راننده و موزع</h2>
+            <p>مدیریت رانندگان و موزعین</p>
+        </article>
+
+        <a class="distribution-card" href="/tozie/havale">
+            <span class="distribution-icon"><svg viewBox="0 0 48 48"><path d="M11 8h20l7 7v26H11zM30 8v8h8M17 23h15M17 29h15M17 35h9"/></svg></span>
+            <h2>همه حواله‌ها</h2>
+            <p>مشاهده و پیگیری حواله‌ها</p>
+            <span class="distribution-arrow">←</span>
+        </a>
+
+        <a class="distribution-card" href="/tozie/havale/create">
+            <span class="distribution-icon"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="17"/><path d="M24 15v18M15 24h18"/></svg></span>
+            <h2>ایجاد حواله</h2>
+            <p>ثبت حواله جدید</p>
+            <span class="distribution-arrow">←</span>
+        </a>
+
+        <a class="distribution-card" href="/tozie/havale">
+            <span class="distribution-icon"><svg viewBox="0 0 48 48"><path d="M8 10h32v28H8zM15 18h18M15 25h18M15 32h10"/></svg></span>
+            <h2>پیگیری حواله‌ها</h2>
+            <p>بررسی وضعیت حواله‌های توزیع</p>
+            <span class="distribution-arrow">←</span>
+        </a>
+
+        <article class="distribution-card distribution-placeholder">
+            <span class="distribution-icon"><svg viewBox="0 0 48 48"><path d="M7 12h34v27H7zM14 7v10m20-10v10M7 21h34M15 28h7m5 0h7"/></svg></span>
+            <h2>برنامه‌ریزی توزیع</h2>
+            <p>...</p>
+        </article>
+
+        <article class="distribution-card distribution-placeholder">
+            <span class="distribution-icon"><svg viewBox="0 0 48 48"><path d="M8 39V9h32v30zM15 32V21h6v11m5 0V15h6v17"/></svg></span>
+            <h2>گزارش‌های توزیع</h2>
+            <p>...</p>
+        </article>
+
+        <article class="distribution-card distribution-placeholder">
+            <span class="distribution-icon"><svg viewBox="0 0 48 48"><path d="M24 5v38M5 24h38M11 11l26 26m0-26L11 37"/></svg></span>
+            <h2>...</h2>
+            <p>...</p>
+        </article>
+
+        <article class="distribution-card distribution-placeholder">
+            <span class="distribution-icon"><svg viewBox="0 0 48 48"><rect x="8" y="8" width="32" height="32" rx="5"/><path d="M16 18h16M16 25h16M16 32h9"/></svg></span>
+            <h2>...</h2>
+            <p>...</p>
+        </article>
+
+        <article class="distribution-card distribution-placeholder">
+            <span class="distribution-icon"><svg viewBox="0 0 48 48"><path d="M7 13h34v25H7zM13 7v12m22-12v12M14 26h20M14 32h12"/></svg></span>
+            <h2>...</h2>
+            <p>...</p>
+        </article>
+
+        <article class="distribution-card distribution-placeholder">
+            <span class="distribution-icon"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="17"/><path d="M24 15v18M15 24h18"/></svg></span>
+            <h2>...</h2>
+            <p>...</p>
+        </article>
+    </section>
+</div>
