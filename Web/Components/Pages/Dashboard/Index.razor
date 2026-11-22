@@ -4,6 +4,89 @@
 @using Microsoft.AspNetCore.Authorization
 @using Web.Components.Layout
 
-<PageTitle>مینو زاگرس | فضای کاری</PageTitle>
+<PageTitle>مینو زاگرس | صفحه اصلی</PageTitle>
 
-<div class="dashboard-empty" aria-label="فضای کاری آماده توسعه"></div>
+<div class="dashboard-home" dir="rtl">
+    <div class="dashboard-welcome">
+        <div>
+            <span class="dashboard-eyebrow">MINOO ZAGROS</span>
+            <h1>به سامانه مینو زاگرس خوش آمدید</h1>
+            <p>برای شروع، بخش مورد نظر خود را انتخاب کنید.</p>
+        </div>
+        <div class="welcome-mark" aria-hidden="true">
+            <svg viewBox="0 0 48 48"><path d="M8 20.5 24 8l16 12.5V39H29V27H19v12H8z" /><path d="M17 17h14" /></svg>
+        </div>
+    </div>
+
+    <section class="dashboard-section" aria-label="بخش‌های سامانه">
+        <div class="dashboard-section-heading">
+            <div>
+                <h2>دسترسی سریع</h2>
+                <span>بخش‌های اصلی سامانه</span>
+            </div>
+            <span class="section-indicator"><i></i> فضای کاری</span>
+        </div>
+
+        <div class="dashboard-grid">
+            <article class="module-card module-accounting">
+                <span class="module-icon">
+                    <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="9" y="7" width="30" height="34" rx="5"/><path d="M16 16h16M16 23h6m5 0h5m-16 7h6m5 0h5m-16 6h6"/></svg>
+                </span>
+                <h3>حسابداری و مالی</h3>
+                <p>مدیریت امور مالی و حساب‌ها</p>
+            </article>
+
+            <article class="module-card module-inventory">
+                <span class="module-icon">
+                    <svg viewBox="0 0 48 48" aria-hidden="true"><path d="m24 6 17 9-17 9-17-9z"/><path d="M7 15v19l17 9 17-9V15M24 24v19M15 11l17 9"/></svg>
+                </span>
+                <h3>انبار</h3>
+                <p>مدیریت کالا و موجودی</p>
+            </article>
+
+            <a class="module-card module-distribution" href="/tozie/havale">
+                <span class="module-icon">
+                    <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M5 14h23v22H5zM28 21h8l7 8v7H28z"/><circle cx="14" cy="38" r="4"/><circle cx="36" cy="38" r="4"/><path d="M11 20h11M11 26h8"/></svg>
+                </span>
+                <h3>توزیع</h3>
+                <p>مدیریت حواله‌ها و ارسال</p>
+                <span class="module-arrow" aria-hidden="true">←</span>
+            </a>
+
+            <article class="module-card module-sales">
+                <span class="module-icon">
+                    <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M8 18h32l-3 23H11zM6 18l5-10h26l5 10M18 18l3-10m9 10-3-10"/><path d="M18 27v8m12-8v8"/></svg>
+                </span>
+                <h3>فروش</h3>
+                <p>مدیریت فرایندهای فروش</p>
+            </article>
+
+            <a class="module-card module-vehicles" href="/khodroo">
+                <span class="module-icon">
+                    <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M5 29h3l4-12h24l5 12h2v10h-5a5 5 0 0 1-10 0H20a5 5 0 0 1-10 0H5zM12 17l3-7h18l3 7M12 29h.1M36 29h.1"/></svg>
+                </span>
+                <h3>مدیریت خودروها</h3>
+                <p>مشاهده و مدیریت ناوگان</p>
+                <span class="module-arrow" aria-hidden="true">←</span>
+            </a>
+
+            <a class="module-card module-dispatches" href="/tozie/havale">
+                <span class="module-icon">
+                    <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M11 8h20l7 7v26H11zM30 8v8h8M17 23h15M17 29h15M17 35h9"/></svg>
+                </span>
+                <h3>همه حواله‌ها</h3>
+                <p>پیگیری و مشاهده حواله‌ها</p>
+                <span class="module-arrow" aria-hidden="true">←</span>
+            </a>
+
+            <a class="module-card module-create" href="/tozie/havale/create">
+                <span class="module-icon">
+                    <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="17"/><path d="M24 15v18M15 24h18"/></svg>
+                </span>
+                <h3>ایجاد حواله</h3>
+                <p>ثبت حواله جدید توزیع</p>
+                <span class="module-arrow" aria-hidden="true">←</span>
+            </a>
+        </div>
+    </section>
+</div>
