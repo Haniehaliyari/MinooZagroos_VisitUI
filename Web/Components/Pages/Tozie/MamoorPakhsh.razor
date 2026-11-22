@@ -8,7 +8,6 @@
 @using Web.Components.Layout
 @using MyProject.Services.Api
 @inject BackendApiClient ApiClient
-@attribute [SupplyParameterFromQuery(Name = "create")] public bool CreateFromQuery { get; set; }
 
 <PageTitle>مدیریت مأموران پخش | مینو زاگرس</PageTitle>
 
@@ -193,6 +192,9 @@
 }
 
 @code {
+    [SupplyParameterFromQuery(Name = "create")]
+    public bool CreateFromQuery { get; set; }
+
     private const string AllEndpoint = "api/v1/MamoorPakhsh/GetAllMamoorPakhsh";
     private const string ByIdEndpoint = "api/v1/MamoorPakhsh/GetMamoorPakhshByID";
     private const string CreateEndpoint = "api/v1/MamoorPakhsh/CreateMamoorPakhsh";
