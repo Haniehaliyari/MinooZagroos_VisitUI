@@ -343,10 +343,12 @@
         editorError = null;
         form.MamoorPakhshDS = form.MamoorPakhshDS.Trim();
         if (string.IsNullOrWhiteSpace(form.MamoorPakhshDS)) { editorError = "نام مأمور پخش را وارد کنید."; return; }
-        if (vahedes.Count == 0) { editorError = "اطلاعات واحد تجاری در دسترس نیست؛ امکان ثبت یا ویرایش تا زمان دریافت این اطلاعات وجود ندارد."; return; }
+        // در پاسخ GetAll، علاوه بر شناسه‌های رابطه، عنوان‌های DS نیز برمی‌گردند.
+        // هنگام ویرایش اگر سرویس کمبو در دسترس نبود، شناسه‌های موجود رکورد را حفظ می‌کنیم.
+        if (!isEdit && vahedes.Count == 0) { editorError = "اطلاعات واحد تجاری در دسترس نیست؛ امکان ثبت مأمور جدید وجود ندارد."; return; }
         if (form.VahedeTejariSN <= 0) { editorError = "واحد تجاری را انتخاب کنید."; return; }
-        if (!vahedes.Any(x => x.Id == form.VahedeTejariSN)) { editorError = "واحد تجاری انتخاب‌شده معتبر نیست؛ دوباره انتخاب کنید."; return; }
-        if (form.SarparastPakhshSN.HasValue && !sarparasts.Any(x => x.Id == form.SarparastPakhshSN.Value)) { editorError = "سرپرست انتخاب‌شده معتبر نیست؛ دوباره انتخاب کنید."; return; }
+        if (vahedes.Count > 0 && !vahedes.Any(x => x.Id == form.VahedeTejariSN)) { editorError = "واحد تجاری انتخاب‌شده معتبر نیست؛ دوباره انتخاب کنید."; return; }
+        if (form.SarparastPakhshSN.HasValue && sarparasts.Count > 0 && !sarparasts.Any(x => x.Id == form.SarparastPakhshSN.Value)) { editorError = "سرپرست انتخاب‌شده معتبر نیست؛ دوباره انتخاب کنید."; return; }
 
         saving = true;
         try
@@ -428,8 +430,10 @@
         MamoorPakhshStatus = (byte)Math.Clamp(ReadDecimal(x, "MamoorPakhshStatus"), 0, 255),
         SarparastPakhshSN = ReadNullableDecimal(x, "SarparastPakhshSN"),
         VahedeTejariSN = ReadNullableDecimal(x, "VahedeTejariSN"),
-        SarparastTitle = ReadString(x, "SarparastPakhshDS", "SarparastTitle", "SarparastName"),
-        VahedeTitle = ReadString(x, "VahedeTejariDS", "VahedeTitle", "VahedeTejariName"),
+        // نام propertyهای DTO در بک‌اند با Ds تمام می‌شود؛ تطبیق کلیدها
+        // در ReadString بدون حساسیت به بزرگی/کوچکی حروف انجام می‌شود.
+        SarparastTitle = ReadString(x, "SarparastPakhshDs", "SarparastPakhshDS", "SarparastTitle", "SarparastName"),
+        VahedeTitle = ReadString(x, "VahedeTejariDs", "VahedeTejariDS", "VahedeTitle", "VahedeTejariName"),
         MblPhone = ReadString(x, "MblPhone"),
         OptimeUserName = ReadString(x, "OptimeUserName"),
         OptimePhoneNumber = ReadString(x, "OptimePhoneNumber")
