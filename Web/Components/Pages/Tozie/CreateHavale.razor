@@ -84,7 +84,7 @@
             <label class="havale-lookup-field">راننده
                 <input type="text" class="havale-lookup-input" placeholder="جستجو با نام، نام خانوادگی یا کد راننده..."
                        @bind="driverSearchText" @bind:event="oninput" @bind:after="OnDriverSearchChanged"
-                       @onfocus="() => showDriverOptions = true" disabled="@loadingLookups" autocomplete="off" />
+                       @onfocus="() => showDriverOptions = true" @onblur="() => showDriverOptions = false" disabled="@loadingLookups" autocomplete="off" />
                 @if (showDriverOptions && !loadingLookups)
                 {
                     <div class="havale-lookup-options">
@@ -93,7 +93,7 @@
                         {
                             @foreach (var item in FilteredDrivers)
                             {
-                                <button type="button" class="havale-lookup-option" @key="item.Id" @onclick="() => SelectDriver(item)">@item.Title</button>
+                                <button type="button" class="havale-lookup-option" @key="item.Id" @onmousedown:preventDefault @onclick="() => SelectDriver(item)">@item.Title</button>
                             }
                         }
                     </div>
@@ -103,7 +103,7 @@
             <label class="havale-lookup-field">مأمور پخش
                 <input type="text" class="havale-lookup-input" placeholder="جستجو با نام، نام خانوادگی یا کد مأمور..."
                        @bind="agentSearchText" @bind:event="oninput" @bind:after="OnAgentSearchChanged"
-                       @onfocus="() => showAgentOptions = true" disabled="@loadingLookups" autocomplete="off" />
+                       @onfocus="() => showAgentOptions = true" @onblur="() => showAgentOptions = false" disabled="@loadingLookups" autocomplete="off" />
                 @if (showAgentOptions && !loadingLookups)
                 {
                     <div class="havale-lookup-options">
@@ -112,7 +112,7 @@
                         {
                             @foreach (var item in FilteredAgents)
                             {
-                                <button type="button" class="havale-lookup-option" @key="item.Id" @onclick="() => SelectAgent(item)">@item.Title</button>
+                                <button type="button" class="havale-lookup-option" @key="item.Id" @onmousedown:preventDefault @onclick="() => SelectAgent(item)">@item.Title</button>
                             }
                         }
                     </div>
