@@ -81,15 +81,43 @@
         @if (!string.IsNullOrWhiteSpace(driverError)) { <div class="havale-alert havale-alert-error"><strong>خطای دریافت راننده‌ها:</strong> @driverError</div> }
         @if (!string.IsNullOrWhiteSpace(agentError)) { <div class="havale-alert havale-alert-error"><strong>خطای دریافت مأموران پخش:</strong> @agentError</div> }
         <div class="havale-form-grid">
-            <label>راننده
-                <select @bind="selectedDriverSN" disabled="@loadingLookups"><option value="">@(loadingLookups ? "در حال دریافت راننده‌ها..." : "انتخاب راننده")</option>
-                    @foreach (var item in drivers) { <option value="@item.Id.ToString(CultureInfo.InvariantCulture)">@item.Title</option> }
-                </select><small>@(drivers.Count == 0 && !loadingLookups ? "فهرست راننده‌ای دریافت نشده است." : $"{drivers.Count} راننده")</small>
+            <label class="havale-lookup-field">راننده
+                <input type="text" class="havale-lookup-input" placeholder="جستجو با نام، نام خانوادگی یا کد راننده..."
+                       @bind="driverSearchText" @bind:event="oninput" @bind:after="OnDriverSearchChanged"
+                       @onfocus="() => showDriverOptions = true" disabled="@loadingLookups" autocomplete="off" />
+                @if (showDriverOptions && !loadingLookups)
+                {
+                    <div class="havale-lookup-options">
+                        @if (FilteredDrivers.Count == 0) { <div class="havale-lookup-empty">راننده‌ای با این مشخصات پیدا نشد.</div> }
+                        else
+                        {
+                            @foreach (var item in FilteredDrivers)
+                            {
+                                <button type="button" class="havale-lookup-option" @key="item.Id" @onclick="() => SelectDriver(item)">@item.Title</button>
+                            }
+                        }
+                    </div>
+                }
+                <small>@(selectedDriverSN.HasValue ? "راننده انتخاب شده است." : drivers.Count == 0 && !loadingLookups ? "فهرست راننده‌ای دریافت نشده است." : $"{drivers.Count} راننده؛ جستجو با نام یا کد")</small>
             </label>
-            <label>مأمور پخش
-                <select @bind="selectedAgentSN" disabled="@loadingLookups"><option value="">@(loadingLookups ? "در حال دریافت مأموران..." : "انتخاب مأمور پخش")</option>
-                    @foreach (var item in agents) { <option value="@item.Id.ToString(CultureInfo.InvariantCulture)">@item.Title</option> }
-                </select><small>@(agents.Count == 0 && !loadingLookups ? "فهرست مأمور پخشی دریافت نشده است." : $"{agents.Count} مأمور پخش")</small>
+            <label class="havale-lookup-field">مأمور پخش
+                <input type="text" class="havale-lookup-input" placeholder="جستجو با نام، نام خانوادگی یا کد مأمور..."
+                       @bind="agentSearchText" @bind:event="oninput" @bind:after="OnAgentSearchChanged"
+                       @onfocus="() => showAgentOptions = true" disabled="@loadingLookups" autocomplete="off" />
+                @if (showAgentOptions && !loadingLookups)
+                {
+                    <div class="havale-lookup-options">
+                        @if (FilteredAgents.Count == 0) { <div class="havale-lookup-empty">مأمور پخشی با این مشخصات پیدا نشد.</div> }
+                        else
+                        {
+                            @foreach (var item in FilteredAgents)
+                            {
+                                <button type="button" class="havale-lookup-option" @key="item.Id" @onclick="() => SelectAgent(item)">@item.Title</button>
+                            }
+                        }
+                    </div>
+                }
+                <small>@(!string.IsNullOrWhiteSpace(selectedAgentSN) ? "مأمور پخش انتخاب شده است." : agents.Count == 0 && !loadingLookups ? "فهرست مأمور پخشی دریافت نشده است." : $"{agents.Count} مأمور پخش؛ جستجو با نام یا کد")</small>
             </label>
             <label>تاریخ حواله
                 <input type="text" inputmode="numeric" autocomplete="off" placeholder="۱۴۰۵/۰۸/۲۵" maxlength="10" @bind="havaleDateText" />
@@ -131,6 +159,10 @@
     private string? factorDateFilterError;
     private decimal? selectedDriverSN;
     private string? selectedAgentSN, factorError, driverError, agentError, submitError, successMessage;
+    private string driverSearchText = "", agentSearchText = "";
+    private bool showDriverOptions, showAgentOptions;
+    private List<LookupItem> FilteredDrivers => FilterLookups(drivers, driverSearchText);
+    private List<LookupItem> FilteredAgents => FilterLookups(agents, agentSearchText);
     private string havaleDateText = TodayPersianDate();
     private string sendDateText = TodayPersianDate();
     private bool loadingFactors, loadingLookups, submitting;
@@ -229,6 +261,51 @@
             return [];
         }
     }
+
+    private void OnDriverSearchChanged()
+    {
+        selectedDriverSN = null;
+        showDriverOptions = true;
+    }
+
+    private void OnAgentSearchChanged()
+    {
+        selectedAgentSN = null;
+        showAgentOptions = true;
+    }
+
+    private void SelectDriver(LookupItem item)
+    {
+        selectedDriverSN = item.Id;
+        driverSearchText = item.Title;
+        showDriverOptions = false;
+    }
+
+    private void SelectAgent(LookupItem item)
+    {
+        selectedAgentSN = item.Id.ToString(CultureInfo.InvariantCulture);
+        agentSearchText = item.Title;
+        showAgentOptions = false;
+    }
+
+    private static List<LookupItem> FilterLookups(IEnumerable<LookupItem> source, string searchText)
+    {
+        var term = NormalizeLookupSearch(searchText);
+        if (string.IsNullOrWhiteSpace(term)) return source.ToList();
+
+        return source.Where(item =>
+                NormalizeLookupSearch(item.Title).Contains(term, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+    }
+
+    // یکسان‌سازی ارقام فارسی و عربی باعث می‌شود جستجوی کد با هر نوع صفحه‌کلیدی کار کند.
+    private static string NormalizeLookupSearch(string? value) =>
+        (value ?? "")
+            .Replace('۰', '0').Replace('۱', '1').Replace('۲', '2').Replace('۳', '3').Replace('۴', '4')
+            .Replace('۵', '5').Replace('۶', '6').Replace('۷', '7').Replace('۸', '8').Replace('۹', '9')
+            .Replace('٠', '0').Replace('١', '1').Replace('٢', '2').Replace('٣', '3').Replace('٤', '4')
+            .Replace('٥', '5').Replace('٦', '6').Replace('٧', '7').Replace('٨', '8').Replace('٩', '9')
+            .Trim();
 
     private void ToggleFactor(decimal id, ChangeEventArgs args)
     {
