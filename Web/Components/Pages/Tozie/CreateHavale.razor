@@ -84,7 +84,7 @@
             <label class="havale-lookup-field">راننده
                 <input type="text" class="havale-lookup-input" placeholder="جستجو با نام، نام خانوادگی یا کد راننده..."
                        @bind="driverSearchText" @bind:event="oninput" @bind:after="OnDriverSearchChanged"
-                       @onfocus="() => showDriverOptions = true" @onblur="() => showDriverOptions = false" disabled="@loadingLookups" autocomplete="off" />
+                       @onfocus="() => showDriverOptions = true" @onblur="CloseDriverOptionsAsync" disabled="@loadingLookups" autocomplete="off" />
                 @if (showDriverOptions && !loadingLookups)
                 {
                     <div class="havale-lookup-options">
@@ -103,7 +103,7 @@
             <label class="havale-lookup-field">مأمور پخش
                 <input type="text" class="havale-lookup-input" placeholder="جستجو با نام، نام خانوادگی یا کد مأمور..."
                        @bind="agentSearchText" @bind:event="oninput" @bind:after="OnAgentSearchChanged"
-                       @onfocus="() => showAgentOptions = true" @onblur="() => showAgentOptions = false" disabled="@loadingLookups" autocomplete="off" />
+                       @onfocus="() => showAgentOptions = true" @onblur="CloseAgentOptionsAsync" disabled="@loadingLookups" autocomplete="off" />
                 @if (showAgentOptions && !loadingLookups)
                 {
                     <div class="havale-lookup-options">
@@ -260,6 +260,21 @@
             else agentError = DescribeRequestError(isDriver ? "دریافت راننده‌ها" : "دریافت مأموران پخش", ex);
             return [];
         }
+    }
+
+    // کمی تأخیر در بستن فهرست لازم است تا رویداد کلیک گزینه قبل از blur اجرا شود.
+    private async Task CloseDriverOptionsAsync()
+    {
+        await Task.Delay(200);
+        showDriverOptions = false;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task CloseAgentOptionsAsync()
+    {
+        await Task.Delay(200);
+        showAgentOptions = false;
+        await InvokeAsync(StateHasChanged);
     }
 
     private void OnDriverSearchChanged()
