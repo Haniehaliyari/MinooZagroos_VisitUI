@@ -124,3 +124,164 @@ h1:focus { outline: none; }
 .havale-date-filter-actions .havale-button{height:40px;white-space:nowrap;padding:0 14px}
 @media(max-width:760px){.havale-date-filter{grid-template-columns:1fr 1fr}.havale-date-filter-actions{grid-column:1/-1}.havale-date-filter-actions .havale-button{flex:1}}
 @media(max-width:440px){.havale-date-filter{grid-template-columns:1fr}.havale-date-filter-actions{grid-column:auto;flex-direction:column;align-items:stretch}}
+
+
+/* =========================================================
+   Responsive system-wide layout
+   Targets: desktop, tablet, and touch-first mobile screens
+   ========================================================= */
+html,body{width:100%;max-width:100%;overflow-x:clip}
+body{min-width:320px}
+img,svg,video,canvas{max-width:100%}
+button,input,select,textarea{max-width:100%;font:inherit}
+button,a{-webkit-tap-highlight-color:transparent}
+:focus-visible{outline-offset:3px}
+
+/* Main application frame */
+.app-shell{width:100%;max-width:100%;min-width:0}
+.app-sidebar,.app-main,.page-content{min-width:0}
+.page-content{overscroll-behavior:contain}
+.app-topbar{min-width:0}
+.topbar-leading,.topbar-actions,.user-pill{min-width:0}
+.settings-popover{max-height:min(78dvh,620px);overflow-y:auto;overscroll-behavior:contain}
+.sidebar-backdrop{touch-action:manipulation}
+
+/* Wide tablets and compact laptops */
+@media (max-width:1100px){
+  .app-sidebar{width:218px;flex-basis:218px}
+  .page-content{padding:15px;margin:9px}
+  .dashboard-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .distribution-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .khodroo-page,.all-havale-page,.havale-page{width:100%;max-width:100%}
+}
+
+/* Tablets and phones */
+@media (max-width:760px){
+  .app-shell,.app-main{width:100%;max-width:100%}
+  .app-shell{display:block}
+  .app-topbar{width:100%;min-height:54px;height:54px;flex-basis:54px;padding:0 10px;gap:7px}
+  .page-content{width:auto;max-width:none;margin:7px;padding:11px;border-radius:9px;height:calc(100dvh - 68px - 14px);min-height:0}
+  .topbar-leading{gap:7px}
+  .topbar-actions{gap:7px}
+  .page-back-button{width:36px;min-width:36px;height:36px;min-height:36px}
+  .mobile-nav-trigger{width:38px;height:38px;flex:0 0 38px}
+  .settings-button{width:38px;height:38px}
+  .settings-popover{position:fixed;top:61px;right:8px;left:8px;width:auto;max-width:420px;margin-inline-start:auto}
+  .app-sidebar,.app-shell.sidebar-collapsed .app-sidebar{width:min(290px,88vw);max-width:88vw;height:100dvh;max-height:100dvh;overflow-y:auto;overscroll-behavior:contain}
+  .dashboard-home,.distribution-home,.khodroo-page,.all-havale-page,.havale-page{width:100%;max-width:100%;padding:4px}
+  .dashboard-welcome,.khodroo-heading,.all-havale-heading,.havale-page-heading{gap:12px}
+  .dashboard-grid,.distribution-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+  .module-card{min-width:0;min-height:148px;padding:15px 9px}
+  .module-card h3{overflow-wrap:anywhere}
+  .distribution-card{min-width:0;min-height:138px;padding:13px 9px}
+  .dispatch-card{padding:13px 10px}
+  .dispatch-card-heading{min-width:0;gap:7px}
+  .dispatch-card-heading h2{min-width:0;overflow-wrap:anywhere}
+  .dispatch-create-button{flex:0 0 34px}
+  .khodroo-panel,.all-havale-panel,.havale-panel{padding:14px;border-radius:12px}
+  .khodroo-toolbar,.all-havale-toolbar,.havale-toolbar{align-items:stretch;flex-direction:column;gap:11px}
+  .khodroo-search-wrap,.all-havale-search-wrap,.havale-search{width:100%;max-width:none}
+  .khodroo-toolbar-actions,.all-havale-toolbar-actions{width:100%;justify-content:space-between;flex-wrap:wrap}
+  .khodroo-form-grid,.havale-form-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+  .khodroo-modal-backdrop{padding:12px;align-items:flex-end}
+  .khodroo-modal,.khodroo-confirm-modal{width:100%;max-width:620px;max-height:88dvh;overflow-y:auto;padding:18px;border-radius:17px 17px 12px 12px}
+  .khodroo-modal-actions{flex-wrap:wrap}
+  .khodroo-modal-actions .khodroo-button{flex:1 1 auto}
+  .khodroo-pagination,.all-havale-pagination,.havale-pagination{gap:5px;flex-wrap:wrap}
+  .khodroo-table-wrap,.all-havale-table-wrap,.havale-table-wrap{max-width:100%;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-inline:contain;scrollbar-width:thin}
+  .khodroo-table,.all-havale-table,.havale-table{width:max-content;min-width:760px}
+  .khodroo-table th,.khodroo-table td,.all-havale-table th,.all-havale-table td,.havale-table th,.havale-table td{padding:11px 10px}
+  .havale-date-filter{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .havale-date-filter-actions{grid-column:1/-1}
+}
+
+/* Narrow phones */
+@media (max-width:520px){
+  .app-topbar{padding-inline:8px}
+  .page-content{margin:5px;padding:9px;height:calc(100dvh - 54px - 10px)}
+  .dashboard-welcome{min-height:96px;padding:14px;margin-bottom:14px;border-radius:13px}
+  .dashboard-welcome h1{font-size:16px;line-height:1.7}
+  .dashboard-welcome p{font-size:10px;line-height:1.8}
+  .dashboard-eyebrow{font-size:8px;letter-spacing:1.5px}
+  .welcome-mark{width:43px;height:43px;flex-basis:43px;border-radius:13px}
+  .welcome-mark svg{width:25px;height:25px}
+  .dashboard-section-heading{align-items:flex-start;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+  .dashboard-section-heading h2{font-size:14px}
+  .section-indicator{padding:6px 9px;font-size:9px}
+  .dashboard-grid{gap:9px}
+  .module-card{min-height:128px;padding:12px 7px;gap:7px;border-radius:13px}
+  .module-icon{width:46px;height:46px;border-radius:13px}
+  .module-icon svg{width:25px;height:25px}
+  .module-card h3{font-size:11px;line-height:1.7}
+  .module-card p{font-size:9px;line-height:1.7}
+  .distribution-heading{padding:7px 42px;margin-bottom:12px}
+  .distribution-heading h1{font-size:14px}
+  .distribution-grid{gap:8px}
+  .distribution-card{min-height:124px;padding:10px 6px;gap:7px;border-radius:12px}
+  .distribution-icon{width:42px;height:42px;border-radius:12px}
+  .distribution-icon svg{width:23px;height:23px}
+  .distribution-card h2{font-size:11px}
+  .distribution-card p{font-size:9px}
+  .dispatch-card{gap:9px}
+  .dispatch-card-heading .distribution-icon{width:39px;height:39px;flex-basis:39px}
+  .dispatch-card-heading h2{font-size:12px}
+  .dispatch-create-button{width:31px;height:31px;flex-basis:31px}
+  .dispatch-all-link{min-height:37px;gap:6px;padding:6px;font-size:9px}
+  .dispatch-all-icon{width:23px;height:23px;flex:0 0 23px}
+  .khodroo-heading h1,.all-havale-heading h1,.havale-page-heading h1{font-size:18px;line-height:1.6}
+  .khodroo-heading p,.all-havale-heading p,.havale-page-heading p{font-size:10px;line-height:1.8}
+  .khodroo-heading-icon,.all-havale-heading-icon,.havale-heading-icon{width:42px;height:42px;flex-basis:42px}
+  .khodroo-panel,.all-havale-panel,.havale-panel{padding:11px}
+  .khodroo-toolbar-actions,.all-havale-toolbar-actions{align-items:stretch;gap:8px}
+  .khodroo-toolbar-actions .khodroo-button,.all-havale-refresh{min-height:40px}
+  .khodroo-count,.all-havale-count{align-self:center}
+  .khodroo-form-grid,.havale-form-grid{grid-template-columns:1fr}
+  .havale-date-filter{grid-template-columns:1fr;padding:10px}
+  .havale-date-filter-actions{grid-column:auto;flex-direction:column;align-items:stretch}
+  .havale-date-filter-actions .havale-button{width:100%}
+  .havale-submit-row{gap:12px}
+  .havale-submit-summary{justify-content:space-between}
+  .havale-button-primary{width:100%;min-height:44px}
+  .all-havale-confirm{padding:11px;gap:10px}
+  .all-havale-confirm-actions{width:100%}
+  .all-havale-confirm-actions button{flex:1}
+  .khodroo-pagination-summary,.all-havale-pagination-summary,.havale-pagination-summary{font-size:10px}
+  .khodroo-page-button,.khodroo-page-arrow,.all-havale-page-button,.all-havale-page-arrow,.havale-page-button{min-width:31px;height:32px;padding-inline:7px}
+  .login-card{width:100%;max-width:440px}
+}
+
+/* Very small devices and landscape phones */
+@media (max-width:360px){
+  .page-content{padding:7px}
+  .topbar-actions{gap:5px}
+  .page-back-button{width:33px;min-width:33px;height:33px;min-height:33px}
+  .mobile-nav-trigger,.settings-button{width:34px;height:34px;flex-basis:34px}
+  .dashboard-grid,.distribution-grid{gap:7px}
+  .module-card{min-height:118px;padding:10px 5px}
+  .module-icon{width:41px;height:41px}
+  .module-card h3{font-size:10px}
+  .distribution-card{min-height:116px}
+  .dispatch-card{padding:9px 6px}
+  .dispatch-card-heading{gap:5px}
+  .dispatch-card-heading .distribution-icon{width:34px;height:34px;flex-basis:34px}
+  .dispatch-create-button{width:28px;height:28px;flex-basis:28px}
+  .khodroo-modal-backdrop{padding:7px}
+}
+
+/* Keep all form controls usable on touch screens without iOS zooming. */
+@media (max-width:760px){
+  .khodroo-search,.all-havale-search,.havale-search,
+  .khodroo-form-grid input,.havale-form-grid input,.havale-form-grid select,
+  .havale-date-filter input,.havale-lookup-input,.login-form input{font-size:16px!important}
+  .khodroo-button,.havale-button,.all-havale-refresh,.all-havale-finalize,
+  .all-havale-temporary,.all-havale-send,.all-havale-confirm-yes,.all-havale-confirm-no{min-height:40px}
+  .khodroo-icon-button{width:38px;height:38px}
+}
+
+/* Prevent hover-only motion on touch and respect reduced-motion preferences. */
+@media (hover:none){
+  .module-card:hover,.distribution-card:hover,.ant-card:hover{transform:none;box-shadow:0 5px 18px color-mix(in srgb,var(--text,#202f43) 5%,transparent)!important}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
