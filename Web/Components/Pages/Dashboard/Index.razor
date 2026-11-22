@@ -22,78 +22,45 @@
         <div class="dashboard-section-heading">
             <div>
                 <h2>دسترسی سریع</h2>
-                <span>برای مشاهده بخش‌های کاری، توزیع را انتخاب کنید.</span>
+                <span>بخش‌های اصلی سامانه</span>
             </div>
             <span class="section-indicator"><i></i> فضای کاری</span>
         </div>
 
-        <div class="dashboard-grid dashboard-entry-grid">
-            <button type="button" class="module-card module-distribution module-selector"
-                    @onclick="ToggleDistributionModules" aria-expanded="@showDistributionModules"
-                    aria-controls="distribution-modules">
+        <div class="dashboard-grid">
+            <article class="module-card module-accounting">
+                <span class="module-icon">
+                    <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="9" y="7" width="30" height="34" rx="5"/><path d="M16 16h16M16 23h6m5 0h5m-16 7h6m5 0h5m-16 6h6"/></svg>
+                </span>
+                <h3>حسابداری و مالی</h3>
+                <p>مدیریت امور مالی و حساب‌ها</p>
+            </article>
+
+            <article class="module-card module-inventory">
+                <span class="module-icon">
+                    <svg viewBox="0 0 48 48" aria-hidden="true"><path d="m24 6 17 9-17 9-17-9z"/><path d="M7 15v19l17 9 17-9V15M24 24v19M15 11l17 9"/></svg>
+                </span>
+                <h3>انبار</h3>
+                <p>مدیریت کالا و موجودی</p>
+            </article>
+
+            <a class="module-card module-distribution" href="/tozie">
                 <span class="module-icon">
                     <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M5 14h23v22H5zM28 21h8l7 8v7H28z"/><circle cx="14" cy="38" r="4"/><circle cx="36" cy="38" r="4"/><path d="M11 20h11M11 26h8"/></svg>
                 </span>
                 <h3>توزیع</h3>
-                <p>برای نمایش بخش‌های توزیع، فروش، انبار و حسابداری انتخاب کنید</p>
-                <span class="module-arrow" aria-hidden="true">↓</span>
-            </button>
+                <p>مدیریت حواله‌ها و ارسال</p>
+                <span class="module-arrow" aria-hidden="true">←</span>
+            </a>
+
+            <article class="module-card module-sales">
+                <span class="module-icon">
+                    <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M8 18h32l-3 23H11zM6 18l5-10h26l5 10M18 18l3-10m9 10-3-10"/><path d="M18 27v8m12-8v8"/></svg>
+                </span>
+                <h3>فروش</h3>
+                <p>مدیریت فرایندهای فروش</p>
+            </article>
+
         </div>
     </section>
-
-    @if (showDistributionModules)
-    {
-        <section class="dashboard-section dashboard-submodules" id="distribution-modules" aria-label="بخش‌های کاری">
-            <div class="dashboard-section-heading">
-                <div>
-                    <h2>بخش‌های کاری</h2>
-                    <span>بخش مورد نظر خود را انتخاب کنید.</span>
-                </div>
-            </div>
-
-            <div class="dashboard-grid">
-                <a class="module-card module-distribution" href="/tozie">
-                    <span class="module-icon">
-                        <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M5 14h23v22H5zM28 21h8l7 8v7H28z"/><circle cx="14" cy="38" r="4"/><circle cx="36" cy="38" r="4"/><path d="M11 20h11M11 26h8"/></svg>
-                    </span>
-                    <h3>توزیع</h3>
-                    <p>مدیریت حواله‌ها و ارسال</p>
-                    <span class="module-arrow" aria-hidden="true">←</span>
-                </a>
-
-                <article class="module-card module-sales">
-                    <span class="module-icon">
-                        <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M8 18h32l-3 23H11zM6 18l5-10h26l5 10M18 18l3-10m9 10-3-10"/><path d="M18 27v8m12-8v8"/></svg>
-                    </span>
-                    <h3>فروش</h3>
-                    <p>مدیریت فرایندهای فروش</p>
-                </article>
-
-                <article class="module-card module-inventory">
-                    <span class="module-icon">
-                        <svg viewBox="0 0 48 48" aria-hidden="true"><path d="m24 6 17 9-17 9-17-9z"/><path d="M7 15v19l17 9 17-9V15M24 24v19M15 11l17 9"/></svg>
-                    </span>
-                    <h3>انبار</h3>
-                    <p>مدیریت کالا و موجودی</p>
-                </article>
-
-                <article class="module-card module-accounting">
-                    <span class="module-icon">
-                        <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="9" y="7" width="30" height="34" rx="5"/><path d="M16 16h16M16 23h6m5 0h5m-16 7h6m5 0h5m-16 6h6"/></svg>
-                    </span>
-                    <h3>حسابداری و مالی</h3>
-                    <p>مدیریت امور مالی و حساب‌ها</p>
-                </article>
-            </div>
-        </section>
-    }
 </div>
-
-@code {
-    private bool showDistributionModules;
-
-    private void ToggleDistributionModules()
-    {
-        showDistributionModules = !showDistributionModules;
-    }
-}
