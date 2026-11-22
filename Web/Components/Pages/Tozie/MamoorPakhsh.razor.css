@@ -287,3 +287,14 @@
 .mamoor-status{font-size:12px;padding:7px 11px}
 .mamoor-row-number{font-size:13px!important}
 .mamoor-table-footer{font-size:11px}
+
+
+/* Smoothly rounded top and bottom edges for the editor dialog */
+.mamoor-modal{border-radius:25px;overflow:hidden;}
+.mamoor-modal-header{border-radius:24px 24px 0 0;}
+.mamoor-modal-footer{border-radius:0 0 24px 24px;}
+@media(max-width:760px){
+  .mamoor-modal{border-radius:19px;overflow:hidden;}
+  .mamoor-modal-header{border-radius:18px 18px 0 0;}
+  .mamoor-modal-footer{border-radius:0 0 18px 18px;}
+}
