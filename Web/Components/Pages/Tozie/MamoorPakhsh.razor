@@ -120,11 +120,10 @@
 
                 <div class="mamoor-field full">
                     <span>واحد تجاری</span>
-                    <div class="mamoor-fixed-value" aria-readonly="true">
-                        <strong>مینو زاگرس</strong>
-                        <span>🔒</span>
-                    </div>
-                    <small>واحد تجاری برای تمام مأموران پخش به‌صورت ثابت روی مینو زاگرس تنظیم شده است.</small>
+                    <select class="mamoor-fixed-combo" value="230034.935" disabled aria-label="واحد تجاری ثابت">
+                        <option value="230034.935">مینو زاگرس — 230034.935</option>
+                    </select>
+                    <small>این کمبو فقط خواندنی است و کد واحد تجاری همیشه 230034.935 به بک‌اند ارسال می‌شود.</small>
                 </div>
 
                 <label class="mamoor-field lookup-field">سرپرست پخش
@@ -194,18 +193,16 @@
     private const string UpdateEndpoint = "api/v1/MamoorPakhsh/UpdateMamoorPakhsh";
     private const string DeleteEndpoint = "api/v1/MamoorPakhsh/DeleteMamoorPakhsh";
     private const string SarparastEndpoint = "api/v1/SarparastPakhsh/GetSarparastPakhshByCombo";
-    private const string VahedeEndpoint = "api/v1/VahedeTejari/GetVahedeTejariByCombo";
+    private const decimal FixedVahedeTejariSN = 230034.935m;
 
     private readonly List<MamoorItem> items = [];
     private readonly List<LookupItem> sarparasts = [];
-    private readonly List<LookupItem> vahedes = [];
-    private LookupItem? fixedVahede;
     private MamoorForm form = new();
     private MamoorItem? pendingDelete;
-    private string searchText = "", vahedeSearch = "", sarparastSearch = "";
+    private string searchText = "", sarparastSearch = "";
     private string? loadError, pageMessage, editorError, deleteError;
-    private string? vahedeLookupMessage, sarparastLookupMessage;
-    private bool messageIsError, loading, showEditor, isEdit, saving, deleting, showVahedeOptions, showSarparastOptions;
+    private string? sarparastLookupMessage;
+    private bool messageIsError, loading, showEditor, isEdit, saving, deleting, showSarparastOptions;
     private decimal editingSN;
 
     private List<MamoorItem> FilteredItems => items.Where(x =>
@@ -213,7 +210,6 @@
         Contains(x.MamoorPakhshDS, searchText) || Contains(x.MamoorPakhshNO, searchText) ||
         Contains(x.MblPhone, searchText) || Contains(x.SarparastTitle, searchText)).ToList();
 
-    private List<LookupItem> FilteredVahedes => FilterLookup(vahedes, vahedeSearch);
     private List<LookupItem> FilteredSarparasts => FilterLookup(sarparasts, sarparastSearch);
 
     protected override async Task OnInitializedAsync()
@@ -241,31 +237,18 @@
     private async Task LoadCombosAsync()
     {
         sarparastLookupMessage = null;
-        vahedeLookupMessage = null;
-        fixedVahede = null;
         try
         {
             using var client = await ApiClient.CreateAuthorizedClientAsync();
-
-            // هر کمبو مستقل بارگذاری می‌شود؛ خطای سرپرست نباید مانع دریافت واحد تجاری شود.
-            var sarparastTask = ReadLookupAsync(client, SarparastEndpoint, "سرپرست");
-            var vahedeTask = ReadLookupAsync(client, VahedeEndpoint, "واحد تجاری");
-            await Task.WhenAll(sarparastTask, vahedeTask);
-
             sarparasts.Clear();
-            sarparasts.AddRange(await sarparastTask);
-            vahedes.Clear();
-            vahedes.AddRange(await vahedeTask);
-            fixedVahede = vahedes.FirstOrDefault(IsMinooZagroos);
+            sarparasts.AddRange(await ReadLookupAsync(client, SarparastEndpoint, "سرپرست"));
         }
         catch
         {
             sarparasts.Clear();
-            vahedes.Clear();
         }
 
         if (sarparasts.Count == 0) sarparastLookupMessage = "اطلاعات سرپرست پخش در دسترس نیست.";
-        if (vahedes.Count == 0) vahedeLookupMessage = "اطلاعات واحد تجاری در دسترس نیست.";
     }
 
     private async Task<List<LookupItem>> ReadLookupAsync(HttpClient client, string endpoint, string lookupName)
@@ -290,21 +273,21 @@
     private void OpenCreate()
     {
         isEdit = false; editingSN = 0; editorError = null;
-        form = new MamoorForm { MamoorPakhshStatus = 1, VahedeTejariSN = fixedVahede?.Id ?? 0 };
-        vahedeSearch = "مینو زاگرس"; sarparastSearch = "";
-        showVahedeOptions = false; showSarparastOptions = false;
+        form = new MamoorForm { MamoorPakhshStatus = 1, VahedeTejariSN = FixedVahedeTejariSN };
+        sarparastSearch = "";
+        showSarparastOptions = false;
         showEditor = true;
         _ = EnsureCombosLoadedAsync();
     }
 
     private async Task EnsureCombosLoadedAsync()
     {
-        if (vahedes.Count == 0 || sarparasts.Count == 0)
+        if (sarparasts.Count == 0)
         {
             try { await LoadCombosAsync(); }
             catch { /* وضعیت خالی کمبو در خود فهرست گزینه‌ها نمایش داده می‌شود. */ }
         }
-        if (fixedVahede is not null) form.VahedeTejariSN = fixedVahede.Id;
+        form.VahedeTejariSN = FixedVahedeTejariSN;
         await InvokeAsync(StateHasChanged);
     }
 
@@ -320,14 +303,12 @@
             MamoorPakhshDS = item.MamoorPakhshDS,
             MamoorPakhshStatus = item.MamoorPakhshStatus,
             SarparastPakhshSN = item.SarparastPakhshSN,
-            VahedeTejariSN = fixedVahede?.Id ?? 0,
+            VahedeTejariSN = FixedVahedeTejariSN,
             MblPhone = item.MblPhone,
             OptimeUserName = item.OptimeUserName,
             OptimePhoneNumber = item.OptimePhoneNumber
         };
-        vahedeSearch = "مینو زاگرس";
         sarparastSearch = FindTitle(sarparasts, form.SarparastPakhshSN) ?? item.SarparastTitle;
-        showVahedeOptions = false;
         showSarparastOptions = false;
         showEditor = true;
         _ = EnsureCombosLoadedAsync();
@@ -339,9 +320,8 @@
         editorError = null;
         form.MamoorPakhshDS = form.MamoorPakhshDS.Trim();
         if (string.IsNullOrWhiteSpace(form.MamoorPakhshDS)) { editorError = "نام مأمور پخش را وارد کنید."; return; }
-        // شناسه واحد تجاری فقط از رکورد «مینو زاگرس» گرفته می‌شود و کاربر امکان تغییر آن را ندارد.
-        if (fixedVahede is null) { editorError = "واحد تجاری «مینو زاگرس» در فهرست واحدها پیدا نشد؛ امکان ثبت یا ویرایش وجود ندارد."; return; }
-        form.VahedeTejariSN = fixedVahede.Id;
+        // شناسه واحد تجاری مستقل از داده‌های قبلی و کمبوهای API همیشه ثابت است.
+        form.VahedeTejariSN = FixedVahedeTejariSN;
         if (form.SarparastPakhshSN.HasValue && sarparasts.Count > 0 && !sarparasts.Any(x => x.Id == form.SarparastPakhshSN.Value)) { editorError = "سرپرست انتخاب‌شده معتبر نیست؛ دوباره انتخاب کنید."; return; }
 
         saving = true;
@@ -403,14 +383,6 @@
     private void OnSarparastInput(ChangeEventArgs e) { sarparastSearch = e.Value?.ToString() ?? ""; form.SarparastPakhshSN = null; showSarparastOptions = true; }
     private void SelectSarparast(LookupItem item) { form.SarparastPakhshSN = item.Id; sarparastSearch = item.Title; showSarparastOptions = false; }
     private async Task CloseSarparastOptionsAsync() { await Task.Delay(180); showSarparastOptions = false; await InvokeAsync(StateHasChanged); }
-
-    private static bool IsMinooZagroos(LookupItem item)
-    {
-        var title = Normalize(item.Title).Replace(" ", "").Replace("‌", "").ToLowerInvariant();
-        return title.Contains("مینوزاگرس", StringComparison.Ordinal) ||
-               title.Contains("minoozagroos", StringComparison.Ordinal) ||
-               title.Contains("minoozagros", StringComparison.Ordinal);
-    }
 
     private static List<LookupItem> FilterLookup(IEnumerable<LookupItem> source, string term) =>
         source.Where(x => string.IsNullOrWhiteSpace(term) || Normalize(x.Title).Contains(Normalize(term), StringComparison.OrdinalIgnoreCase)).ToList();
