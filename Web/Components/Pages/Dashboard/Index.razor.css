@@ -1,1 +1,168 @@
-.dashboard-empty{min-height:calc(100vh - 138px);width:100%;}
+.dashboard-home{
+    --dashboard-accent:var(--accent);
+    --dashboard-soft:var(--surface-soft);
+    width:100%;
+    max-width:1500px;
+    margin:0 auto;
+    padding:clamp(8px,1.4vw,20px);
+    color:var(--text);
+}
+.dashboard-welcome{
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:20px;
+    min-height:132px;
+    padding:clamp(20px,3vw,34px);
+    margin-bottom:26px;
+    overflow:hidden;
+    border:1px solid color-mix(in srgb,var(--accent) 15%,var(--line));
+    border-radius:20px;
+    background:linear-gradient(115deg,color-mix(in srgb,var(--accent) 10%,var(--surface)) 0%,var(--surface) 72%);
+}
+.dashboard-welcome:after{
+    content:"";
+    position:absolute;
+    width:230px;height:230px;
+    left:7%;top:-155px;
+    border:1px solid color-mix(in srgb,var(--accent) 14%,transparent);
+    border-radius:50%;
+    box-shadow:0 0 0 24px color-mix(in srgb,var(--accent) 3%,transparent),0 0 0 50px color-mix(in srgb,var(--accent) 2%,transparent);
+    pointer-events:none;
+}
+.dashboard-eyebrow{
+    display:block;
+    margin-bottom:9px;
+    color:var(--accent);
+    font-size:10px;
+    font-weight:900;
+    letter-spacing:2.2px;
+}
+.dashboard-welcome h1{
+    margin:0 0 9px;
+    color:var(--text);
+    font-size:clamp(19px,2vw,25px);
+    font-weight:850;
+}
+.dashboard-welcome p{margin:0;color:var(--muted);font-size:13px}
+.welcome-mark{
+    z-index:1;
+    display:grid;
+    place-items:center;
+    width:70px;height:70px;
+    flex:0 0 70px;
+    border:1px solid color-mix(in srgb,var(--accent) 22%,transparent);
+    border-radius:21px;
+    background:color-mix(in srgb,var(--accent-soft) 22%,var(--surface));
+    color:var(--accent);
+}
+.welcome-mark svg{width:39px;height:39px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.dashboard-section{padding:2px 2px 18px}
+.dashboard-section-heading{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+    margin-bottom:19px;
+}
+.dashboard-section-heading>div{display:flex;flex-direction:column;gap:5px}
+.dashboard-section-heading h2{margin:0;color:var(--text);font-size:17px;font-weight:850}
+.dashboard-section-heading>div>span{color:var(--muted);font-size:11px}
+.section-indicator{
+    display:flex;align-items:center;gap:8px;
+    padding:8px 12px;
+    border:1px solid var(--line);
+    border-radius:30px;
+    color:var(--muted);
+    font-size:10px;
+    background:var(--surface);
+}
+.section-indicator i{width:7px;height:7px;border-radius:50%;background:var(--accent-soft);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent-soft) 18%,transparent)}
+.dashboard-grid{
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:18px;
+}
+.module-card{
+    position:relative;
+    display:flex;
+    min-height:190px;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:12px;
+    padding:22px 15px;
+    overflow:hidden;
+    border:1px solid var(--line);
+    border-radius:20px;
+    background:var(--surface);
+    color:var(--text);
+    text-align:center;
+    text-decoration:none;
+    box-shadow:0 5px 18px color-mix(in srgb,var(--text) 5%,transparent);
+    transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease,background .22s ease;
+}
+.module-card:before{
+    content:"";
+    position:absolute;
+    width:125px;height:125px;
+    left:-55px;bottom:-75px;
+    border-radius:50%;
+    background:color-mix(in srgb,var(--accent-soft) 12%,transparent);
+    transition:transform .25s ease;
+}
+.module-card:hover{
+    transform:translateY(-5px);
+    border-color:color-mix(in srgb,var(--accent) 48%,var(--line));
+    box-shadow:0 14px 30px color-mix(in srgb,var(--accent) 12%,transparent);
+}
+.module-card:hover:before{transform:scale(1.5)}
+.module-icon{
+    position:relative;
+    z-index:1;
+    display:grid;
+    place-items:center;
+    width:66px;height:66px;
+    border:1px solid color-mix(in srgb,var(--accent) 16%,transparent);
+    border-radius:20px;
+    background:color-mix(in srgb,var(--accent-soft) 20%,var(--surface));
+    color:var(--accent);
+    transition:transform .22s ease,background .22s ease;
+}
+.module-card:hover .module-icon{transform:translateY(-2px) scale(1.04);background:color-mix(in srgb,var(--accent-soft) 30%,var(--surface))}
+.module-icon svg{width:34px;height:34px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.module-card h3{position:relative;z-index:1;margin:0;color:var(--text);font-size:14px;font-weight:850}
+.module-card p{position:relative;z-index:1;margin:0;color:var(--muted);font-size:10px;line-height:1.8}
+.module-arrow{
+    position:absolute;
+    top:12px;left:14px;
+    color:var(--accent);
+    font-size:17px;
+    opacity:0;
+    transform:translateX(5px);
+    transition:opacity .2s,transform .2s;
+}
+a.module-card:hover .module-arrow{opacity:1;transform:translateX(0)}
+a.module-card:focus-visible{outline:3px solid color-mix(in srgb,var(--accent) 45%,transparent);outline-offset:3px}
+@media(max-width:1100px){.dashboard-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}.module-card{min-height:178px}}
+@media(max-width:760px){
+    .dashboard-home{padding:3px}
+    .dashboard-welcome{min-height:112px;padding:19px;margin-bottom:20px;border-radius:16px}
+    .welcome-mark{width:56px;height:56px;flex-basis:56px;border-radius:17px}
+    .welcome-mark svg{width:31px;height:31px}
+    .dashboard-welcome p{font-size:11px}
+    .dashboard-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .module-card{min-height:158px;padding:17px 10px;gap:9px;border-radius:16px}
+    .module-icon{width:56px;height:56px;border-radius:17px}
+    .module-icon svg{width:29px;height:29px}
+    .module-card h3{font-size:12px}
+    .module-card p{font-size:9px}
+}
+@media(max-width:390px){
+    .dashboard-welcome{padding:15px}
+    .dashboard-welcome h1{font-size:17px}
+    .welcome-mark{width:48px;height:48px;flex-basis:48px}
+    .dashboard-section-heading h2{font-size:15px}
+    .module-card{min-height:145px}
+}
