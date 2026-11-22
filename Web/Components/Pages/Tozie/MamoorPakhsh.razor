@@ -249,17 +249,25 @@
     {
         sarparastLookupMessage = null;
         vahedeLookupMessage = null;
-        using var client = await ApiClient.CreateAuthorizedClientAsync();
+        try
+        {
+            using var client = await ApiClient.CreateAuthorizedClientAsync();
 
-        // هر کمبو مستقل بارگذاری می‌شود؛ خطای سرپرست نباید مانع دریافت واحد تجاری شود.
-        var sarparastTask = ReadLookupAsync(client, SarparastEndpoint, "سرپرست");
-        var vahedeTask = ReadLookupAsync(client, VahedeEndpoint, "واحد تجاری");
-        await Task.WhenAll(sarparastTask, vahedeTask);
+            // هر کمبو مستقل بارگذاری می‌شود؛ خطای سرپرست نباید مانع دریافت واحد تجاری شود.
+            var sarparastTask = ReadLookupAsync(client, SarparastEndpoint, "سرپرست");
+            var vahedeTask = ReadLookupAsync(client, VahedeEndpoint, "واحد تجاری");
+            await Task.WhenAll(sarparastTask, vahedeTask);
 
-        sarparasts.Clear();
-        sarparasts.AddRange(await sarparastTask);
-        vahedes.Clear();
-        vahedes.AddRange(await vahedeTask);
+            sarparasts.Clear();
+            sarparasts.AddRange(await sarparastTask);
+            vahedes.Clear();
+            vahedes.AddRange(await vahedeTask);
+        }
+        catch
+        {
+            sarparasts.Clear();
+            vahedes.Clear();
+        }
 
         if (sarparasts.Count == 0) sarparastLookupMessage = "اطلاعات سرپرست پخش در دسترس نیست.";
         if (vahedes.Count == 0) vahedeLookupMessage = "اطلاعات واحد تجاری در دسترس نیست.";
