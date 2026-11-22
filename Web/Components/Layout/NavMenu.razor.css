@@ -123,3 +123,6 @@
 
 .nav-brand{min-height:46px;padding:4px 8px 12px;justify-content:center}
 .nav-brand-logo{display:block;width:min(100%,112px);height:55px;max-height:55px;object-fit:contain;flex:0 1 auto}
+
+.side-link-disabled{color:var(--muted);opacity:.78;cursor:default}
+.side-link-disabled:hover{background:transparent;border-color:transparent;color:var(--muted)}
