@@ -75,7 +75,7 @@
             <div class="mamoor-table-wrap">
                 <table class="mamoor-table">
                     <thead>
-                        <tr><th>ردیف</th><th>نام مأمور پخش</th><th>شماره موبایل</th><th>سرپرست پخش</th><th>واحد تجاری</th><th>وضعیت</th><th>عملیات</th></tr>
+                        <tr><th>ردیف</th><th>نام مأمور پخش</th><th>شماره موبایل</th><th>سرپرست پخش</th><th>وضعیت</th><th>عملیات</th></tr>
                     </thead>
                     <tbody>
                         @foreach (var item in FilteredItems)
@@ -85,7 +85,6 @@
                                 <td><strong class="mamoor-person-name">@Display(item.MamoorPakhshDS)</strong><small class="mamoor-subline">@(string.IsNullOrWhiteSpace(item.MamoorPakhshNO) ? "بدون شماره ثبت‌شده" : $"کد: {item.MamoorPakhshNO}")</small></td>
                                 <td class="mamoor-ltr">@Display(item.MblPhone)</td>
                                 <td>@Display(item.SarparastTitle)</td>
-                                <td>@Display(item.VahedeTitle)</td>
                                 <td><span class="mamoor-status @(item.MamoorPakhshStatus == 1 ? "active" : "inactive")"><i></i>@(item.MamoorPakhshStatus == 1 ? "فعال" : "غیرفعال")</span></td>
                                 <td>
                                     <div class="mamoor-row-actions">
@@ -120,19 +119,14 @@
                     <input @bind="form.MamoorPakhshDS" maxlength="150" placeholder="نام و نام خانوادگی مأمور را وارد کنید" />
                 </label>
 
-                <label class="mamoor-field lookup-field">واحد تجاری <b>*</b>
-                    <input value="@vahedeSearch" @oninput="OnVahedeInput" @onfocus="() => showVahedeOptions = true" @onblur="CloseVahedeOptionsAsync" autocomplete="off" placeholder="جستجو و انتخاب واحد تجاری" />
-                    @if (showVahedeOptions)
-                    {
-                        <div class="mamoor-options">
-                            @if (FilteredVahedes.Count == 0) { <div class="mamoor-option-empty"><span>ⓘ</span>اطلاعاتی در دسترس نیست</div> }
-                            @foreach (var option in FilteredVahedes)
-                            {
-                                <button type="button" @key="option.Id" @onmousedown:preventDefault @onclick="() => SelectVahede(option)">@option.Title</button>
-                            }
-                        </div>
-                    }
-                </label>
+                <div class="mamoor-field full">
+                    <span>واحد تجاری</span>
+                    <div class="mamoor-fixed-value" aria-readonly="true">
+                        <strong>مینو زاگرس</strong>
+                        <span>🔒</span>
+                    </div>
+                    <small>واحد تجاری برای تمام مأموران پخش به‌صورت ثابت روی مینو زاگرس تنظیم شده است.</small>
+                </div>
 
                 <label class="mamoor-field lookup-field">سرپرست پخش
                     <input value="@sarparastSearch" @oninput="OnSarparastInput" @onfocus="() => showSarparastOptions = true" @onblur="CloseSarparastOptionsAsync" autocomplete="off" placeholder="جستجو و انتخاب سرپرست" />
@@ -206,6 +200,7 @@
     private readonly List<MamoorItem> items = [];
     private readonly List<LookupItem> sarparasts = [];
     private readonly List<LookupItem> vahedes = [];
+    private LookupItem? fixedVahede;
     private MamoorForm form = new();
     private MamoorItem? pendingDelete;
     private string searchText = "", vahedeSearch = "", sarparastSearch = "";
@@ -217,8 +212,7 @@
     private List<MamoorItem> FilteredItems => items.Where(x =>
         string.IsNullOrWhiteSpace(searchText) ||
         Contains(x.MamoorPakhshDS, searchText) || Contains(x.MamoorPakhshNO, searchText) ||
-        Contains(x.MblPhone, searchText) || Contains(x.SarparastTitle, searchText) ||
-        Contains(x.VahedeTitle, searchText)).ToList();
+        Contains(x.MblPhone, searchText) || Contains(x.SarparastTitle, searchText)).ToList();
 
     private List<LookupItem> FilteredVahedes => FilterLookup(vahedes, vahedeSearch);
     private List<LookupItem> FilteredSarparasts => FilterLookup(sarparasts, sarparastSearch);
@@ -262,6 +256,7 @@
             sarparasts.AddRange(await sarparastTask);
             vahedes.Clear();
             vahedes.AddRange(await vahedeTask);
+            fixedVahede = vahedes.FirstOrDefault(IsMinooZagroos);
         }
         catch
         {
@@ -295,8 +290,8 @@
     private void OpenCreate()
     {
         isEdit = false; editingSN = 0; editorError = null;
-        form = new MamoorForm { MamoorPakhshStatus = 1 };
-        vahedeSearch = ""; sarparastSearch = "";
+        form = new MamoorForm { MamoorPakhshStatus = 1, VahedeTejariSN = fixedVahede?.Id ?? 0 };
+        vahedeSearch = "مینو زاگرس"; sarparastSearch = "";
         showVahedeOptions = false; showSarparastOptions = false;
         showEditor = true;
         _ = EnsureCombosLoadedAsync();
@@ -309,6 +304,7 @@
             try { await LoadCombosAsync(); }
             catch { /* وضعیت خالی کمبو در خود فهرست گزینه‌ها نمایش داده می‌شود. */ }
         }
+        if (fixedVahede is not null) form.VahedeTejariSN = fixedVahede.Id;
         await InvokeAsync(StateHasChanged);
     }
 
@@ -324,12 +320,12 @@
             MamoorPakhshDS = item.MamoorPakhshDS,
             MamoorPakhshStatus = item.MamoorPakhshStatus,
             SarparastPakhshSN = item.SarparastPakhshSN,
-            VahedeTejariSN = item.VahedeTejariSN ?? 0,
+            VahedeTejariSN = fixedVahede?.Id ?? 0,
             MblPhone = item.MblPhone,
             OptimeUserName = item.OptimeUserName,
             OptimePhoneNumber = item.OptimePhoneNumber
         };
-        vahedeSearch = FindTitle(vahedes, form.VahedeTejariSN) ?? item.VahedeTitle;
+        vahedeSearch = "مینو زاگرس";
         sarparastSearch = FindTitle(sarparasts, form.SarparastPakhshSN) ?? item.SarparastTitle;
         showVahedeOptions = false;
         showSarparastOptions = false;
@@ -343,11 +339,9 @@
         editorError = null;
         form.MamoorPakhshDS = form.MamoorPakhshDS.Trim();
         if (string.IsNullOrWhiteSpace(form.MamoorPakhshDS)) { editorError = "نام مأمور پخش را وارد کنید."; return; }
-        // در پاسخ GetAll، علاوه بر شناسه‌های رابطه، عنوان‌های DS نیز برمی‌گردند.
-        // هنگام ویرایش اگر سرویس کمبو در دسترس نبود، شناسه‌های موجود رکورد را حفظ می‌کنیم.
-        if (!isEdit && vahedes.Count == 0) { editorError = "اطلاعات واحد تجاری در دسترس نیست؛ امکان ثبت مأمور جدید وجود ندارد."; return; }
-        if (form.VahedeTejariSN <= 0) { editorError = "واحد تجاری را انتخاب کنید."; return; }
-        if (vahedes.Count > 0 && !vahedes.Any(x => x.Id == form.VahedeTejariSN)) { editorError = "واحد تجاری انتخاب‌شده معتبر نیست؛ دوباره انتخاب کنید."; return; }
+        // شناسه واحد تجاری فقط از رکورد «مینو زاگرس» گرفته می‌شود و کاربر امکان تغییر آن را ندارد.
+        if (fixedVahede is null) { editorError = "واحد تجاری «مینو زاگرس» در فهرست واحدها پیدا نشد؛ امکان ثبت یا ویرایش وجود ندارد."; return; }
+        form.VahedeTejariSN = fixedVahede.Id;
         if (form.SarparastPakhshSN.HasValue && sarparasts.Count > 0 && !sarparasts.Any(x => x.Id == form.SarparastPakhshSN.Value)) { editorError = "سرپرست انتخاب‌شده معتبر نیست؛ دوباره انتخاب کنید."; return; }
 
         saving = true;
@@ -406,12 +400,17 @@
     private void CloseEditor() { if (!saving) showEditor = false; }
     private void ToggleStatus() => form.MamoorPakhshStatus = form.MamoorPakhshStatus == 1 ? (byte)0 : (byte)1;
 
-    private void OnVahedeInput(ChangeEventArgs e) { vahedeSearch = e.Value?.ToString() ?? ""; form.VahedeTejariSN = 0; showVahedeOptions = true; }
     private void OnSarparastInput(ChangeEventArgs e) { sarparastSearch = e.Value?.ToString() ?? ""; form.SarparastPakhshSN = null; showSarparastOptions = true; }
-    private void SelectVahede(LookupItem item) { form.VahedeTejariSN = item.Id; vahedeSearch = item.Title; showVahedeOptions = false; }
     private void SelectSarparast(LookupItem item) { form.SarparastPakhshSN = item.Id; sarparastSearch = item.Title; showSarparastOptions = false; }
-    private async Task CloseVahedeOptionsAsync() { await Task.Delay(180); showVahedeOptions = false; await InvokeAsync(StateHasChanged); }
     private async Task CloseSarparastOptionsAsync() { await Task.Delay(180); showSarparastOptions = false; await InvokeAsync(StateHasChanged); }
+
+    private static bool IsMinooZagroos(LookupItem item)
+    {
+        var title = Normalize(item.Title).Replace(" ", "").Replace("‌", "").ToLowerInvariant();
+        return title.Contains("مینوزاگرس", StringComparison.Ordinal) ||
+               title.Contains("minoozagroos", StringComparison.Ordinal) ||
+               title.Contains("minoozagros", StringComparison.Ordinal);
+    }
 
     private static List<LookupItem> FilterLookup(IEnumerable<LookupItem> source, string term) =>
         source.Where(x => string.IsNullOrWhiteSpace(term) || Normalize(x.Title).Contains(Normalize(term), StringComparison.OrdinalIgnoreCase)).ToList();
