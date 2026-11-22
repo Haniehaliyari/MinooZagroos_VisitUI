@@ -277,3 +277,13 @@
     .mamoor-modal-header p{max-width:220px}
     .mamoor-modal-footer .mamoor-button{min-width:0;flex:1}
 }
+
+
+/* Clearer, more readable table typography */
+.mamoor-table th{font-size:13px;font-weight:850;padding:16px 14px}
+.mamoor-table td{font-size:14px;font-weight:550;padding:15px 14px}
+.mamoor-person-name{font-size:14px;font-weight:850}
+.mamoor-subline{font-size:11px}
+.mamoor-status{font-size:12px;padding:7px 11px}
+.mamoor-row-number{font-size:13px!important}
+.mamoor-table-footer{font-size:11px}
