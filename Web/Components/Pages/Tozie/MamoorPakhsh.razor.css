@@ -124,3 +124,10 @@
 .mamoor-modal-footer .mamoor-button-primary{box-shadow:0 5px 13px color-mix(in srgb,var(--accent) 20%,transparent)}
 .mamoor-modal-error{margin:15px 23px 0}
 @media(max-width:600px){.mamoor-modal-header{padding:19px}.mamoor-form-intro{margin:15px 16px 0}.mamoor-form-grid{padding:15px 16px 19px;gap:15px}.mamoor-form-section-title span{font-size:8px}.mamoor-modal-footer{padding:14px 16px 17px}.mamoor-modal-footer .mamoor-button{min-width:0}.mamoor-modal-header h2{font-size:15px}.mamoor-modal-header p{max-width:245px}}
+
+
+/* Locked business unit shown as a fixed, non-editable field */
+.mamoor-fixed-value{display:flex;align-items:center;justify-content:space-between;min-height:45px;padding:0 13px;border:1px solid color-mix(in srgb,var(--accent) 24%,var(--line));border-radius:11px;background:color-mix(in srgb,var(--accent-soft) 35%,var(--surface));color:var(--text)}
+.mamoor-fixed-value strong{font-size:12px;font-weight:850}
+.mamoor-fixed-value span{font-size:13px;opacity:.7}
+.mamoor-field>small{color:var(--muted);font-size:9px;line-height:1.8}
