@@ -108,10 +108,8 @@
             <header class="mamoor-modal-header">
                 <div class="mamoor-modal-title-icon">@(isEdit ? "✎" : "＋")</div>
                 <div class="mamoor-modal-heading-copy"><span class="mamoor-modal-eyebrow">اطلاعات پرسنلی و سازمانی</span><h2 id="mamoor-modal-title">@(isEdit ? "ویرایش مأمور پخش" : "ثبت مأمور پخش جدید")</h2><p>مشخصات مأمور را با دقت تکمیل کنید تا در فرآیند توزیع قابل استفاده باشد.</p></div>
-                <button type="button" class="mamoor-modal-close" @onclick="CloseEditor" aria-label="بستن">×</button>
             </header>
             @if (!string.IsNullOrWhiteSpace(editorError)) { <div class="mamoor-inline-error mamoor-modal-error">@editorError</div> }
-            <div class="mamoor-form-intro"><span class="mamoor-form-intro-icon">✦</span><div><strong>فرم اطلاعات مأمور</strong><small>فیلدهای ستاره‌دار برای ثبت اطلاعات الزامی هستند.</small></div><span class="mamoor-form-step">۰۱ <i>/</i> ۰۱</span></div>
             <div class="mamoor-form-grid">
                 <div class="mamoor-form-section-title full">مشخصات اصلی <span>نام مأمور و سرپرست پخش</span></div>
                 <label class="mamoor-field full">نام مأمور پخش <b>*</b>
@@ -135,14 +133,7 @@
                 <label class="mamoor-field">شماره موبایل
                     <input @bind="form.MblPhone" inputmode="tel" maxlength="20" placeholder="مثلاً ۰۹۱۲۱۲۳۴۵۶۷" />
                 </label>
-                <label class="mamoor-field">نام کاربری عملیات
-                    <input @bind="form.OptimeUserName" maxlength="100" placeholder="نام کاربری" />
-                </label>
-                <label class="mamoor-field">شماره تماس عملیات
-                    <input @bind="form.OptimePhoneNumber" inputmode="tel" maxlength="20" placeholder="شماره تماس عملیات" />
-                </label>
 
-                <div class="mamoor-form-section-title full mamoor-contact-section">اطلاعات تماس و دسترسی <span>راه‌های ارتباطی و وضعیت فعالیت</span></div>
                 <div class="mamoor-field mamoor-status-field">
                     <span>وضعیت مأمور پخش</span>
                     <button type="button" class="mamoor-switch-row" role="switch" aria-checked="@(form.MamoorPakhshStatus == 1)" @onclick="ToggleStatus">
