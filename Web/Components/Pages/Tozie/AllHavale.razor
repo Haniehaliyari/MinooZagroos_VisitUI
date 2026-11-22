@@ -48,7 +48,7 @@
             <div class="all-havale-confirm">
                 <span>آیا از @PendingActionText حواله شماره <strong>@Display(pendingFinalize.HavaleMamoorPakhshNO)</strong> مطمئن هستید؟ وضعیت حواله پس از تأیید تغییر می‌کند.</span>
                 <div class="all-havale-confirm-actions">
-                    <button type="button" class="all-havale-confirm-yes @(pendingFinalize.HavaleMamoorPakhshStatus == 8 ? "temporary" : "finalize")" @onclick="ChangeHavaleStatusAsync" disabled="@finalizingSN.HasValue">
+                    <button type="button" class="all-havale-confirm-yes @PendingActionCss" @onclick="ChangeHavaleStatusAsync" disabled="@finalizingSN.HasValue">
                         @(finalizingSN.HasValue ? "در حال ثبت..." : $"بله، {PendingActionText}")
                     </button>
                     <button type="button" class="all-havale-confirm-no" @onclick="CancelFinalize" disabled="@finalizingSN.HasValue">انصراف</button>
@@ -108,23 +108,31 @@
                                 <td>@Display(item.value.KhodrooDs)</td>
                                 <td><span class="all-havale-status @StatusCss(item.value.HavaleMamoorPakhshStatus)">@StatusText(item.value.HavaleMamoorPakhshStatus)</span></td>
                                 <td>
-                                    @if (item.value.HavaleMamoorPakhshStatus == 4)
+                                    @if (item.value.HavaleMamoorPakhshStatus == HavaleStatus.Temporary)
                                     {
                                         <button type="button"
                                                 class="all-havale-finalize"
-                                                @onclick="() => RequestStatusChange(item.value)"
+                                                @onclick="() => RequestStatusChange(item.value, HavaleStatus.Final)"
                                                 disabled="@(finalizingSN.HasValue)">
                                             قطعی کردن حواله
                                         </button>
                                     }
-                                    else if (item.value.HavaleMamoorPakhshStatus == 8)
+                                    else if (item.value.HavaleMamoorPakhshStatus == HavaleStatus.Final)
                                     {
-                                        <button type="button"
-                                                class="all-havale-temporary"
-                                                @onclick="() => RequestStatusChange(item.value)"
-                                                disabled="@(finalizingSN.HasValue)">
-                                            موقت کردن حواله
-                                        </button>
+                                        <div class="all-havale-row-actions">
+                                            <button type="button"
+                                                    class="all-havale-temporary"
+                                                    @onclick="() => RequestStatusChange(item.value, HavaleStatus.Temporary)"
+                                                    disabled="@(finalizingSN.HasValue)">
+                                                موقت کردن
+                                            </button>
+                                            <button type="button"
+                                                    class="all-havale-send"
+                                                    @onclick="() => RequestStatusChange(item.value, HavaleStatus.Sent)"
+                                                    disabled="@(finalizingSN.HasValue)">
+                                                ارسال‌شده
+                                            </button>
+                                        </div>
                                     }
                                     else
                                     {
@@ -159,6 +167,12 @@
 
 @code {
     private const int PageSize = 5;
+    private static class HavaleStatus
+    {
+        public const byte Temporary = 4;
+        public const byte Final = 8;
+        public const byte Sent = 10;
+    }
     private const string HavalesEndpoint = "api/v1/Havale/GetAllHavaleMamoorPakhsh";
     private const string FinalizeEndpoint = "api/v1/Havale/UpdateHavaleMamoorPakhshStatus";
     private readonly List<HavaleListItem> havales = [];
@@ -171,9 +185,20 @@
     private decimal? finalizingSN;
     private string? actionMessage;
     private bool actionSucceeded;
-    private string PendingActionText => pendingFinalize?.HavaleMamoorPakhshStatus == 8
-        ? "موقت کردن"
-        : "قطعی کردن";
+    private byte? pendingNewStatus;
+    private string PendingActionText => pendingNewStatus switch
+    {
+        HavaleStatus.Temporary => "موقت کردن",
+        HavaleStatus.Final => "قطعی کردن",
+        HavaleStatus.Sent => "ارسال‌شده کردن",
+        _ => "تغییر وضعیت"
+    };
+    private string PendingActionCss => pendingNewStatus switch
+    {
+        HavaleStatus.Temporary => "temporary",
+        HavaleStatus.Sent => "sent",
+        _ => "finalize"
+    };
 
     private List<HavaleListItem> FilteredHavales => filteredHavales;
     private int TotalPages => Math.Max(1, (int)Math.Ceiling(FilteredHavales.Count / (double)PageSize));
@@ -276,13 +301,20 @@
         finally { loading = false; }
     }
 
-    private void RequestStatusChange(HavaleListItem item)
+    private void RequestStatusChange(HavaleListItem item, byte targetStatus)
     {
-        if (item.HavaleMamoorPakhshStatus is not (4 or 8) || finalizingSN.HasValue)
+        var currentStatus = item.HavaleMamoorPakhshStatus;
+        var isAllowed =
+            (currentStatus == HavaleStatus.Temporary && targetStatus == HavaleStatus.Final) ||
+            (currentStatus == HavaleStatus.Final &&
+                (targetStatus == HavaleStatus.Temporary || targetStatus == HavaleStatus.Sent));
+
+        if (!isAllowed || finalizingSN.HasValue)
             return;
 
         actionMessage = null;
         pendingFinalize = item;
+        pendingNewStatus = targetStatus;
     }
 
     private void CancelFinalize()
@@ -291,14 +323,16 @@
             return;
 
         pendingFinalize = null;
+        pendingNewStatus = null;
     }
 
     private async Task ChangeHavaleStatusAsync()
     {
-        if (pendingFinalize is null || pendingFinalize.HavaleMamoorPakhshStatus is not (4 or 8))
+        if (pendingFinalize is null || !pendingNewStatus.HasValue)
             return;
 
         var havaleSN = pendingFinalize.HavaleMamoorPakhshSN;
+        var targetStatus = pendingNewStatus.Value;
         var actionText = PendingActionText;
         finalizingSN = havaleSN;
         actionMessage = null;
@@ -307,17 +341,22 @@
         {
             using var client = await ApiClient.CreateAuthorizedClientAsync();
             using var response = await client.PostAsync(
-                $"{FinalizeEndpoint}/{havaleSN.ToString(CultureInfo.InvariantCulture)}",
+                $"{FinalizeEndpoint}/{havaleSN.ToString(CultureInfo.InvariantCulture)}/{targetStatus}",
                 content: null);
 
             var json = await response.Content.ReadAsStringAsync();
             EnsureApiSuccess(response, json);
 
             actionSucceeded = true;
-            actionMessage = actionText == "قطعی کردن"
-                ? "حواله با موفقیت قطعی شد."
-                : "حواله با موفقیت به وضعیت موقت برگشت.";
+            actionMessage = targetStatus switch
+            {
+                HavaleStatus.Final => "حواله با موفقیت قطعی شد.",
+                HavaleStatus.Temporary => "حواله با موفقیت به وضعیت موقت برگشت.",
+                HavaleStatus.Sent => "حواله با موفقیت به وضعیت ارسال‌شده تغییر کرد.",
+                _ => "وضعیت حواله با موفقیت تغییر کرد."
+            };
             pendingFinalize = null;
+            pendingNewStatus = null;
 
             await LoadHavalesAsync();
         }
@@ -379,16 +418,18 @@
     private static string StatusText(byte status) =>
         status switch
         {
-            4 => "موقت",
-            8 => "قطعی",
+            HavaleStatus.Temporary => "موقت",
+            HavaleStatus.Final => "قطعی",
+            HavaleStatus.Sent => "ارسال‌شده",
             _ => $"وضعیت {status}"
         };
 
     private static string StatusCss(byte status) =>
         status switch
         {
-            4 => "temporary",
-            8 => "confirmed",
+            HavaleStatus.Temporary => "temporary",
+            HavaleStatus.Final => "confirmed",
+            HavaleStatus.Sent => "sent",
             _ => "unknown"
         };
 
