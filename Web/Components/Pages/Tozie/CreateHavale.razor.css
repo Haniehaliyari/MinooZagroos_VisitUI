@@ -115,11 +115,10 @@
 .havale-inline-icon{width:17px;height:17px;flex:0 0 17px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;vertical-align:middle}
 
 
-/* Standalone, clickable SVG refresh icons (without button containers) */
-.havale-refresh-icon{width:23px;height:23px;display:block;flex:0 0 23px;fill:none;stroke:#53657b;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
-.havale-refresh-action{cursor:pointer;transition:stroke .18s ease,transform .18s ease}
-.havale-refresh-action:hover:not(.is-disabled){stroke:#245a92;transform:rotate(24deg)}
-.havale-refresh-action:focus-visible{outline:2px solid #6b91bd;outline-offset:4px;border-radius:50%}
-.havale-refresh-action.is-disabled{cursor:wait;opacity:.55}
+/* Refresh controls and loading feedback, matching the dispatch list */
+.havale-refresh-icon{width:17px;height:17px;flex:0 0 17px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 .havale-refresh-icon.is-spinning{animation:havale-icon-spin .85s linear infinite}
+.havale-loading{gap:12px}
+.havale-loading strong{font-size:13px;font-weight:650;color:#8490a2}
+.havale-spinner{width:24px;height:24px;flex:0 0 24px;border:3px solid #e1e7ef;border-top-color:#245a92;border-radius:50%;animation:havale-icon-spin .8s linear infinite}
 @keyframes havale-icon-spin{to{transform:rotate(360deg)}}
