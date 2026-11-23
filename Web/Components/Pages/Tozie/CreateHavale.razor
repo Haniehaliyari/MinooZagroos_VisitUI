@@ -20,7 +20,7 @@
     <section class="havale-panel">
         <div class="havale-section-heading">
             <div><span class="havale-step">۱</span><div><h2>انتخاب فاکتورها</h2><p>امکان انتخاب هم‌زمان چند فاکتور وجود دارد.</p></div></div>
-            <button type="button" class="havale-button havale-button-light havale-icon-button" @onclick="RefreshFactorsAsync" disabled="@loadingFactors" title="به‌روزرسانی فهرست" aria-label="به‌روزرسانی فهرست"><svg class="havale-refresh-icon @(loadingFactors ? "is-spinning" : "")" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.6 9A7 7 0 0 1 18 6l2 6M4 12l2 6a7 7 0 0 0 12.4-3"/></svg></button>
+            <svg class="havale-refresh-icon havale-refresh-action @(loadingFactors ? "is-spinning is-disabled" : "")" viewBox="0 0 24 24" role="button" tabindex="0" @onclick="RefreshFactorsAsync" aria-label="به‌روزرسانی فهرست" aria-disabled="@loadingFactors" title="به‌روزرسانی فهرست"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.6 9A7 7 0 0 1 18 6l2 6M4 12l2 6a7 7 0 0 0 12.4-3"/></svg>
         </div>
         @if (!string.IsNullOrWhiteSpace(factorError)) { <div class="havale-alert havale-alert-error"><strong>خطای دریافت فاکتورها:</strong> @factorError</div> }
         <div class="havale-toolbar">
@@ -82,7 +82,7 @@
     <section class="havale-panel">
         <div class="havale-section-heading">
             <div><span class="havale-step">۲</span><div><h2>اطلاعات حواله</h2><p>راننده، مأمور پخش و تاریخ‌های حواله را مشخص کنید.</p></div></div>
-            <button type="button" class="havale-button havale-button-light havale-icon-button" @onclick="LoadLookupsAsync" disabled="@loadingLookups" title="بارگذاری مجدد افراد" aria-label="بارگذاری مجدد افراد"><svg class="havale-refresh-icon @(loadingLookups ? "is-spinning" : "")" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.6 9A7 7 0 0 1 18 6l2 6M4 12l2 6a7 7 0 0 0 12.4-3"/></svg></button>
+            <svg class="havale-refresh-icon havale-refresh-action @(loadingLookups ? "is-spinning is-disabled" : "")" viewBox="0 0 24 24" role="button" tabindex="0" @onclick="LoadLookupsAsync" aria-label="بارگذاری مجدد افراد" aria-disabled="@loadingLookups" title="بارگذاری مجدد افراد"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.6 9A7 7 0 0 1 18 6l2 6M4 12l2 6a7 7 0 0 0 12.4-3"/></svg>
         </div>
         @if (!string.IsNullOrWhiteSpace(driverError)) { <div class="havale-alert havale-alert-error"><strong>خطای دریافت راننده‌ها:</strong> @driverError</div> }
         @if (!string.IsNullOrWhiteSpace(agentError)) { <div class="havale-alert havale-alert-error"><strong>خطای دریافت مأموران پخش:</strong> @agentError</div> }
@@ -231,6 +231,7 @@
 
     private async Task LoadLookupsAsync()
     {
+        if (loadingLookups) return;
         loadingLookups = true; driverError = null; agentError = null;
         try
         {
@@ -407,7 +408,11 @@
         await LoadFactorsAsync();
     }
 
-    private async Task RefreshFactorsAsync() => await LoadFactorsAsync();
+    private async Task RefreshFactorsAsync()
+    {
+        if (loadingFactors) return;
+        await LoadFactorsAsync();
+    }
 
     private static string BuildFactorsRequestUrl(string? dateFrom, string? dateTo)
     {
