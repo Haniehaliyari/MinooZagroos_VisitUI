@@ -131,3 +131,8 @@ a.distribution-card:focus-visible{outline:3px solid color-mix(in srgb,var(--acce
 @media(max-width:760px){.dispatch-icon-only{min-height:145px;padding:14px 8px;gap:12px}.dispatch-icon-only .distribution-icon{width:54px;height:54px}.dispatch-icon-only .distribution-icon svg{width:31px;height:31px}}
 
 .dispatch-create-text { display: inline-flex; align-items: center; justify-content: center; padding: 0 12px; width: auto; min-width: 58px; font-size: 12px; font-weight: 800; text-decoration: none; }
+
+
+.distribution-heading h1{color:#fff}
+.distribution-heading-mark{background:color-mix(in srgb,var(--palette-4,#a0e0ef) 24%,transparent);border:1px solid rgba(255,255,255,.25);color:#fff}
+.distribution-heading-mark svg{stroke:currentColor}
