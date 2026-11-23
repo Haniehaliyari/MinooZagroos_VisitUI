@@ -567,3 +567,83 @@ button,a{-webkit-tap-highlight-color:transparent}
   .mamoor-page .mamoor-modal-footer{flex-direction:column!important;align-items:stretch!important}
   .mamoor-page .mamoor-modal-footer button{width:100%!important}
 }
+
+
+/* Complete palette propagation: headers, navigation chrome, controls, tables, dialogs and icons. */
+.app-shell.theme-ocean,.app-shell.theme-sage{
+  --theme-primary:var(--palette-1);
+  --theme-secondary:var(--palette-2);
+  --theme-accent:var(--palette-3);
+  --theme-highlight:var(--palette-4);
+  --theme-border:color-mix(in srgb,var(--palette-2) 20%,transparent);
+  --theme-soft:color-mix(in srgb,var(--palette-4) 24%,white);
+  --theme-shadow:color-mix(in srgb,var(--palette-1) 14%,transparent);
+}
+.app-shell.theme-ocean .app-topbar,.app-shell.theme-sage .app-topbar{
+  background:linear-gradient(90deg,color-mix(in srgb,var(--palette-4) 24%,white),white 62%)!important;
+  border-bottom:2px solid color-mix(in srgb,var(--palette-3) 65%,var(--palette-2))!important;
+}
+.app-shell.theme-ocean .page-back-button,.app-shell.theme-sage .page-back-button,
+.app-shell.theme-ocean .settings-button,.app-shell.theme-sage .settings-button,
+.app-shell.theme-ocean .mobile-nav-trigger,.app-shell.theme-sage .mobile-nav-trigger{
+  color:var(--palette-2)!important;border-color:var(--theme-border)!important;
+  background:var(--theme-soft)!important;
+}
+.app-shell.theme-ocean :is(.all-havale-page,.mamoor-page,.havale-page,.distribution-home,.dashboard-home) :is(button:not(.mamoor-button-danger),a:not(.module-card)){
+  accent-color:var(--palette-2);
+}
+.app-shell.theme-ocean :is(.all-havale-page,.mamoor-page,.havale-page,.distribution-home) :is(.all-havale-refresh,.mamoor-button-light,.havale-button-light,.dispatch-secondary-button){
+  color:var(--palette-2)!important;border-color:var(--theme-border)!important;background:var(--theme-soft)!important;
+}
+.app-shell.theme-sage :is(.all-havale-page,.mamoor-page,.havale-page,.distribution-home,.dashboard-home) :is(button:not(.mamoor-button-danger),a:not(.module-card)){
+  accent-color:var(--palette-2);
+}
+.app-shell.theme-sage :is(.all-havale-page,.mamoor-page,.havale-page,.distribution-home) :is(.all-havale-refresh,.mamoor-button-light,.havale-button-light,.dispatch-secondary-button){
+  color:var(--palette-2)!important;border-color:var(--theme-border)!important;background:var(--theme-soft)!important;
+}
+.app-shell.theme-ocean :is(.all-havale-page,.mamoor-page,.havale-page,.distribution-home) :is(input,select,textarea):focus,
+.app-shell.theme-sage :is(.all-havale-page,.mamoor-page,.havale-page,.distribution-home) :is(input,select,textarea):focus{
+  border-color:var(--palette-3)!important;outline:0!important;
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--palette-3) 24%,transparent)!important;
+}
+.app-shell.theme-ocean :is(.all-havale-page,.mamoor-page,.havale-page,.distribution-home) :is(.all-havale-table th,.mamoor-table th,.havale-table th),
+.app-shell.theme-sage :is(.all-havale-page,.mamoor-page,.havale-page,.distribution-home) :is(.all-havale-table th,.mamoor-table th,.havale-table th){
+  background:var(--theme-soft)!important;color:var(--palette-2)!important;
+}
+.app-shell.theme-ocean :is(.all-havale-heading,.mamoor-heading,.havale-page-heading,.distribution-heading,.dashboard-welcome),
+.app-shell.theme-sage :is(.all-havale-heading,.mamoor-heading,.havale-page-heading,.distribution-heading,.dashboard-welcome){
+  background:linear-gradient(112deg,var(--palette-1) 0%,var(--palette-2) 58%,var(--palette-3) 100%)!important;
+  color:#fff!important;border-color:color-mix(in srgb,var(--palette-3) 38%,transparent)!important;
+  box-shadow:0 13px 30px var(--theme-shadow)!important;
+}
+.app-shell.theme-ocean :is(.all-havale-heading,.mamoor-heading,.havale-page-heading,.distribution-heading,.dashboard-welcome) :is(h1,p),
+.app-shell.theme-sage :is(.all-havale-heading,.mamoor-heading,.havale-page-heading,.distribution-heading,.dashboard-welcome) :is(h1,p){color:#fff!important}
+.app-shell.theme-ocean :is(.all-havale-heading-icon,.mamoor-heading-icon,.havale-heading-icon,.distribution-heading-mark,.welcome-mark),
+.app-shell.theme-sage :is(.all-havale-heading-icon,.mamoor-heading-icon,.havale-heading-icon,.distribution-heading-mark,.welcome-mark){
+  background:color-mix(in srgb,var(--palette-4) 25%,transparent)!important;
+  border:1px solid rgba(255,255,255,.28)!important;color:#fff!important;
+}
+.app-shell.theme-ocean :is(.module-icon,.distribution-icon,.mamoor-icon-button,.all-havale-empty-icon),
+.app-shell.theme-sage :is(.module-icon,.distribution-icon,.mamoor-icon-button,.all-havale-empty-icon){
+  color:var(--palette-2)!important;background:var(--theme-soft)!important;border-color:var(--theme-border)!important;
+}
+.app-shell.theme-ocean :is(.module-card,.distribution-card,.mamoor-panel,.all-havale-panel,.havale-panel),
+.app-shell.theme-sage :is(.module-card,.distribution-card,.mamoor-panel,.all-havale-panel,.havale-panel){
+  border-color:var(--theme-border);
+}
+.app-shell.theme-ocean :is(.mamoor-button-primary,.havale-button-primary,.all-havale-page-button.active,.mamoor-page-button.active),
+.app-shell.theme-sage :is(.mamoor-button-primary,.havale-button-primary,.all-havale-page-button.active,.mamoor-page-button.active){
+  background:linear-gradient(110deg,var(--palette-2),var(--palette-3))!important;
+  border-color:var(--palette-2)!important;color:#fff!important;
+}
+.app-shell.theme-ocean :is(.side-icon,.nav-logout-button svg,.settings-button svg,.page-back-button svg,.module-icon svg,.distribution-icon svg,.mamoor-icon-button svg),
+.app-shell.theme-sage :is(.side-icon,.nav-logout-button svg,.settings-button svg,.page-back-button svg,.module-icon svg,.distribution-icon svg,.mamoor-icon-button svg){
+  stroke:currentColor;
+}
+.app-shell.theme-ocean .app-sidebar,.app-shell.theme-sage .app-sidebar{
+  border-inline-end-color:var(--theme-border)!important;
+}
+.app-shell.theme-ocean .side-link.active,.app-shell.theme-ocean .side-link:hover,
+.app-shell.theme-sage .side-link.active,.app-shell.theme-sage .side-link:hover{
+  background:var(--theme-soft)!important;color:var(--palette-2)!important;border-color:var(--theme-border)!important;
+}
