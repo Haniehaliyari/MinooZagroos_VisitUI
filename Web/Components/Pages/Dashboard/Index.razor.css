@@ -17,9 +17,11 @@
     padding:clamp(20px,3vw,34px);
     margin-bottom:26px;
     overflow:hidden;
-    border:1px solid color-mix(in srgb,var(--accent) 15%,var(--line));
+    border:1px solid color-mix(in srgb,var(--palette-3,var(--accent-soft)) 38%,transparent);
     border-radius:20px;
-    background:linear-gradient(115deg,color-mix(in srgb,var(--accent) 10%,var(--surface)) 0%,var(--surface) 72%);
+    background:linear-gradient(112deg,var(--palette-1,#1b365d) 0%,var(--palette-2,var(--accent)) 58%,var(--palette-3,var(--accent-soft)) 100%);
+    color:#fff;
+    box-shadow:0 13px 30px color-mix(in srgb,var(--palette-1,var(--text)) 18%,transparent);
 }
 .dashboard-welcome:after{
     content:"";
