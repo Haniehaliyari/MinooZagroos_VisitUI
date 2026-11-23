@@ -212,6 +212,7 @@
     private string? loadError, pageMessage, editorError, deleteError;
     private string? sarparastLookupMessage;
     private bool messageIsError, loading, showEditor, isEdit, saving, deleting, showSarparastOptions, showSuccessModal;
+    private bool initializing;
     private string successMessage = "";
     private decimal editingSN;
 
@@ -224,8 +225,11 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await Task.WhenAll(LoadAllAsync(), LoadCombosAsync());
+        initializing = true;
         if (CreateFromQuery || CreateOnOpen) OpenCreate();
+
+        await Task.WhenAll(LoadAllAsync(), LoadCombosAsync());
+        initializing = false;
     }
 
     private async Task LoadAllAsync()
@@ -287,7 +291,7 @@
         sarparastSearch = "";
         showSarparastOptions = false;
         showEditor = true;
-        _ = EnsureCombosLoadedAsync();
+        if (!initializing) _ = EnsureCombosLoadedAsync();
     }
 
     private async Task EnsureCombosLoadedAsync()
