@@ -553,3 +553,17 @@ button,a{-webkit-tap-highlight-color:transparent}
   .mamoor-heading-icon,.all-havale-heading-icon,.havale-heading-icon{width:40px!important;height:40px!important;flex-basis:40px!important}
   .mamoor-table,.all-havale-table,.havale-table{min-width:620px}
 }
+
+
+/* Correct selectors for the dispatch-agent editor and its shared success dialogs. */
+@media(max-width:760px){
+  .mamoor-page .mamoor-modal-backdrop{padding:10px!important;align-items:flex-end!important}
+  .mamoor-page .mamoor-modal,.mamoor-page .mamoor-confirm-modal{width:100%!important;max-width:620px!important;max-height:90dvh!important;overflow-y:auto!important;margin:0 auto!important;border-radius:18px 18px 12px 12px!important}
+  .mamoor-page .mamoor-modal-footer{display:flex!important;flex-wrap:wrap!important;gap:9px!important}
+}
+@media(max-width:520px){
+  .mamoor-page .mamoor-modal-backdrop{padding:6px!important}
+  .mamoor-page .mamoor-modal,.mamoor-page .mamoor-confirm-modal{max-height:92dvh!important;padding:15px!important}
+  .mamoor-page .mamoor-modal-footer{flex-direction:column!important;align-items:stretch!important}
+  .mamoor-page .mamoor-modal-footer button{width:100%!important}
+}
