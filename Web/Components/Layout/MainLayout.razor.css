@@ -308,3 +308,50 @@
 /* Icon-only back navigation */
 .page-back-button{width:38px;min-width:38px;height:38px;min-height:38px;padding:0;gap:0;font-size:0;border-radius:11px}
 .page-back-button svg{width:20px;height:20px}
+
+
+/* Mobile layout reset: one full-width content canvas and a direction-aware drawer. */
+@media(max-width:760px){
+  html,body{width:100%;min-width:320px;max-width:100%;height:100%;overflow:hidden}
+  .app-shell{display:flex!important;flex-direction:column!important;width:100%!important;height:100dvh!important;min-height:0!important;overflow:hidden!important}
+  .app-main{display:flex!important;flex:1 1 auto!important;flex-direction:column!important;width:100%!important;min-width:0!important;height:100dvh!important;min-height:0!important;overflow:hidden!important}
+  .app-topbar{position:relative!important;top:auto!important;z-index:70!important;display:flex!important;flex:0 0 54px!important;width:100%!important;height:54px!important;min-height:54px!important;padding:0 10px!important;gap:8px!important;box-sizing:border-box!important}
+  .topbar-leading,.topbar-actions{min-width:0!important;gap:7px!important}
+  .topbar-actions{margin-inline-start:auto!important}
+  .page-content{display:block!important;flex:1 1 0!important;width:auto!important;max-width:none!important;min-width:0!important;height:0!important;min-height:0!important;margin:7px!important;padding:11px!important;overflow-x:hidden!important;overflow-y:auto!important;box-sizing:border-box!important;border-radius:12px!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior:contain!important}
+  .app-sidebar,.app-shell.sidebar-collapsed .app-sidebar{
+    position:fixed!important;top:0!important;bottom:0!important;left:auto!important;right:0!important;
+    width:min(310px,88vw)!important;max-width:88vw!important;height:100dvh!important;min-height:0!important;
+    flex:0 0 auto!important;padding:16px 13px!important;margin:0!important;overflow-x:hidden!important;overflow-y:auto!important;
+    transform:translateX(105%)!important;visibility:hidden!important;z-index:100!important;
+    border:0!important;border-radius:0 0 0 18px!important;box-shadow:-18px 0 48px rgba(10,25,40,.22)!important;
+    transition:transform .24s ease,visibility .24s ease!important;
+  }
+  .app-shell .app-sidebar.sidebar-open{transform:translateX(0)!important;visibility:visible!important}
+  .app-shell[dir="ltr"] .app-sidebar,.app-shell[dir="ltr"].sidebar-collapsed .app-sidebar{left:0!important;right:auto!important;transform:translateX(-105%)!important;border-radius:0 0 18px 0!important;box-shadow:18px 0 48px rgba(10,25,40,.22)!important}
+  .app-shell[dir="ltr"] .app-sidebar.sidebar-open{transform:translateX(0)!important}
+  .sidebar-backdrop{position:fixed!important;inset:0!important;display:block!important;width:100%!important;height:100%!important;background:rgba(13,25,39,.48)!important;backdrop-filter:blur(2px);z-index:90!important}
+  .app-shell.sidebar-collapsed .app-sidebar ::deep .nav-brand,
+  .app-shell.sidebar-collapsed .app-sidebar ::deep .side-link span,
+  .app-shell.sidebar-collapsed .app-sidebar ::deep .nav-logout-button span{display:flex!important}
+  .app-shell.sidebar-collapsed .app-sidebar ::deep .side-link,
+  .app-shell.sidebar-collapsed .app-sidebar ::deep .nav-logout-button{justify-content:flex-start!important;padding:11px 12px!important}
+  .app-shell.sidebar-collapsed .app-sidebar ::deep .nav-logout-button{width:100%!important}
+  .app-shell.sidebar-collapsed .app-sidebar ::deep .nav-toggle-anchor{display:none!important}
+  .app-sidebar ::deep .nav-brand{min-height:68px!important;justify-content:center!important;margin-bottom:12px!important}
+  .app-sidebar ::deep .nav-brand-logo{width:125px!important;height:62px!important;max-height:62px!important}
+  .app-sidebar ::deep .side-navigation{gap:8px!important;padding:8px 0 14px!important}
+  .app-sidebar ::deep .side-link{min-height:48px!important;padding:11px 13px!important;border-radius:12px!important;font-size:13px!important}
+  .app-sidebar ::deep .side-icon{width:21px!important;height:21px!important;flex-basis:21px!important}
+  .app-sidebar ::deep .nav-menu-footer{padding-top:12px!important}
+  .app-sidebar ::deep .nav-logout-button{min-height:47px!important;border-radius:12px!important;font-size:13px!important}
+  .settings-popover{position:fixed!important;top:61px!important;right:8px!important;left:8px!important;width:auto!important;max-width:430px!important;max-height:calc(100dvh - 75px)!important;overflow-y:auto!important;margin-inline:auto!important;z-index:110!important}
+}
+@media(max-width:420px){
+  .app-topbar{padding-inline:8px!important}
+  .page-content{margin:5px!important;padding:9px!important}
+  .page-back-button,.settings-button,.mobile-nav-trigger{width:36px!important;min-width:36px!important;height:36px!important;min-height:36px!important;flex-basis:36px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  .app-sidebar,.app-shell .app-sidebar.sidebar-open{transition:none!important}
+}
