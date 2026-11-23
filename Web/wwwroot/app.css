@@ -722,3 +722,133 @@ button,a{-webkit-tap-highlight-color:transparent}
 .app-shell.theme-ocean .havale-submit-summary strong,.app-shell.theme-sage .havale-submit-summary strong{color:var(--palette-2)!important}
 .app-shell.theme-ocean :is(.dashboard-section,.havale-section-heading,.mamoor-toolbar,.all-havale-toolbar),
 .app-shell.theme-sage :is(.dashboard-section,.havale-section-heading,.mamoor-toolbar,.all-havale-toolbar){color:var(--text)!important}
+
+
+/* Theme-aware typography and accessible foreground contrast across the whole app. */
+.app-shell.theme-ocean,.app-shell.theme-sage{
+  color:var(--text)!important;
+}
+.app-shell.theme-ocean .page-content,.app-shell.theme-sage .page-content,
+.app-shell.theme-ocean .page-content :is(section,article,div,form,fieldset),.app-shell.theme-sage .page-content :is(section,article,div,form,fieldset){
+  --local-text:var(--text);
+}
+.app-shell.theme-ocean .page-content :is(h1,h2,h3,h4,h5,h6,strong,b,label,legend,dt),.app-shell.theme-sage .page-content :is(h1,h2,h3,h4,h5,h6,strong,b,label,legend,dt){
+  color:var(--palette-1)!important;
+}
+.app-shell.theme-ocean .page-content :is(p,small,figcaption,.muted,.text-muted,.description,.subtitle,.helper-text,.form-text),.app-shell.theme-sage .page-content :is(p,small,figcaption,.muted,.text-muted,.description,.subtitle,.helper-text,.form-text){
+  color:var(--muted)!important;
+}
+.app-shell.theme-ocean .page-content :is(span,li,td,th),.app-shell.theme-sage .page-content :is(span,li,td,th){
+  color:var(--text);
+}
+/* Preserve explicit semantic colors and white text on genuinely dark surfaces. */
+.app-shell.theme-ocean :is(.dashboard-welcome,.distribution-heading,.mamoor-heading,.all-havale-heading,.havale-page-heading),
+.app-shell.theme-sage :is(.dashboard-welcome,.distribution-heading,.mamoor-heading,.all-havale-heading,.havale-page-heading){
+  background:linear-gradient(112deg,var(--palette-1) 0%,var(--palette-2) 100%)!important;
+  color:#fff!important;
+}
+.app-shell.theme-ocean :is(.dashboard-welcome,.distribution-heading,.mamoor-heading,.all-havale-heading,.havale-page-heading) :is(h1,h2,h3,p,span,strong,small),
+.app-shell.theme-sage :is(.dashboard-welcome,.distribution-heading,.mamoor-heading,.all-havale-heading,.havale-page-heading) :is(h1,h2,h3,p,span,strong,small){
+  color:#fff!important;
+}
+.app-shell.theme-ocean .app-sidebar :is(.side-link,.brand-name,.brand-panel,.sidebar-foot,.nav-logout-button),
+.app-shell.theme-sage .app-sidebar :is(.side-link,.brand-name,.brand-panel,.sidebar-foot,.nav-logout-button){
+  color:rgba(255,255,255,.92)!important;
+}
+.app-shell.theme-ocean .app-sidebar .side-link.active,.app-shell.theme-ocean .app-sidebar .side-link:hover,
+.app-shell.theme-sage .app-sidebar .side-link.active,.app-shell.theme-sage .app-sidebar .side-link:hover{
+  color:var(--palette-1)!important;
+}
+.app-shell.theme-ocean .app-topbar,.app-shell.theme-sage .app-topbar,
+.app-shell.theme-ocean .settings-popover,.app-shell.theme-sage .settings-popover{
+  color:var(--text)!important;
+}
+.app-shell.theme-ocean .settings-popover :is(strong,b,.settings-language),.app-shell.theme-sage .settings-popover :is(strong,b,.settings-language){
+  color:var(--text)!important;
+}
+.app-shell.theme-ocean .settings-popover :is(small,.settings-label),.app-shell.theme-sage .settings-popover :is(small,.settings-label){
+  color:var(--muted)!important;
+}
+/* Panels and content surfaces use the selected foreground tokens. */
+.app-shell.theme-ocean :is(.module-card,.distribution-card,.mamoor-panel,.all-havale-panel,.havale-panel,.havale-date-filter),
+.app-shell.theme-sage :is(.module-card,.distribution-card,.mamoor-panel,.all-havale-panel,.havale-panel,.havale-date-filter){
+  color:var(--text)!important;
+  border-color:var(--line)!important;
+}
+.app-shell.theme-ocean :is(.module-card,.distribution-card,.mamoor-panel,.all-havale-panel,.havale-panel) :is(h1,h2,h3,h4,strong,b),
+.app-shell.theme-sage :is(.module-card,.distribution-card,.mamoor-panel,.all-havale-panel,.havale-panel) :is(h1,h2,h3,h4,strong,b){
+  color:var(--palette-1)!important;
+}
+.app-shell.theme-ocean :is(.module-card,.distribution-card,.mamoor-panel,.all-havale-panel,.havale-panel) :is(p,small,.description,.subtitle),
+.app-shell.theme-sage :is(.module-card,.distribution-card,.mamoor-panel,.all-havale-panel,.havale-panel) :is(p,small,.description,.subtitle){
+  color:var(--muted)!important;
+}
+/* Tables: readable body text, distinct headers, and theme-tinted hover. */
+.app-shell.theme-ocean :is(.havale-table,.mamoor-table,.all-havale-table) td,
+.app-shell.theme-sage :is(.havale-table,.mamoor-table,.all-havale-table) td{
+  color:var(--text)!important;background:var(--surface)!important;border-color:var(--line)!important;
+}
+.app-shell.theme-ocean :is(.havale-table,.mamoor-table,.all-havale-table) th,
+.app-shell.theme-sage :is(.havale-table,.mamoor-table,.all-havale-table) th{
+  color:var(--palette-1)!important;background:color-mix(in srgb,var(--palette-4) 42%,white)!important;
+}
+.app-shell.theme-ocean :is(.havale-table,.mamoor-table,.all-havale-table) tbody tr:hover td,
+.app-shell.theme-sage :is(.havale-table,.mamoor-table,.all-havale-table) tbody tr:hover td{
+  background:color-mix(in srgb,var(--palette-4) 24%,white)!important;
+}
+/* Inputs, placeholders, dropdowns and lookup lists. */
+.app-shell.theme-ocean .page-content :is(input,select,textarea),
+.app-shell.theme-sage .page-content :is(input,select,textarea){
+  color:var(--text)!important;background:var(--surface)!important;border-color:var(--line)!important;
+}
+.app-shell.theme-ocean .page-content :is(input,select,textarea)::placeholder,
+.app-shell.theme-sage .page-content :is(input,select,textarea)::placeholder{
+  color:var(--muted)!important;opacity:1;
+}
+.app-shell.theme-ocean .page-content :is(.havale-form-grid label,.havale-date-filter label,.havale-lookup-option,.havale-lookup-empty),
+.app-shell.theme-sage .page-content :is(.havale-form-grid label,.havale-date-filter label,.havale-lookup-option,.havale-lookup-empty){
+  color:var(--text)!important;
+}
+.app-shell.theme-ocean .page-content :is(.havale-date-note,.havale-pagination-summary,.havale-empty,.havale-loading strong),
+.app-shell.theme-sage .page-content :is(.havale-date-note,.havale-pagination-summary,.havale-empty,.havale-loading strong){
+  color:var(--muted)!important;
+}
+.app-shell.theme-ocean .page-content :is(.havale-lookup-options,.havale-date-filter),
+.app-shell.theme-sage .page-content :is(.havale-lookup-options,.havale-date-filter){
+  background:var(--surface-soft)!important;border-color:var(--line)!important;
+}
+.app-shell.theme-ocean .page-content :is(.havale-lookup-option:hover,.havale-page-button:hover:not(:disabled)),
+.app-shell.theme-sage .page-content :is(.havale-lookup-option:hover,.havale-page-button:hover:not(:disabled)){
+  background:color-mix(in srgb,var(--palette-4) 48%,white)!important;color:var(--palette-1)!important;
+}
+/* Primary controls stay on dark palette colors so white labels remain legible in both themes. */
+.app-shell.theme-ocean .page-content :is(.havale-button-primary,.mamoor-button-primary,.dispatch-create-button,.dispatch-all-link,.all-havale-page-button.active,.mamoor-page-button.active),
+.app-shell.theme-sage .page-content :is(.havale-button-primary,.mamoor-button-primary,.dispatch-create-button,.dispatch-all-link,.all-havale-page-button.active,.mamoor-page-button.active){
+  background:linear-gradient(110deg,var(--palette-1),var(--palette-2))!important;
+  border-color:var(--palette-2)!important;color:#fff!important;
+}
+.app-shell.theme-ocean .page-content :is(.havale-button-primary,.mamoor-button-primary,.dispatch-create-button,.dispatch-all-link,.all-havale-page-button.active,.mamoor-page-button.active) *,
+.app-shell.theme-sage .page-content :is(.havale-button-primary,.mamoor-button-primary,.dispatch-create-button,.dispatch-all-link,.all-havale-page-button.active,.mamoor-page-button.active) *{
+  color:#fff!important;
+}
+.app-shell.theme-ocean .page-content :is(.havale-button-light,.mamoor-button-light,.all-havale-refresh,.havale-selection-count,.havale-step),
+.app-shell.theme-sage .page-content :is(.havale-button-light,.mamoor-button-light,.all-havale-refresh,.havale-selection-count,.havale-step){
+  background:color-mix(in srgb,var(--palette-4) 52%,white)!important;color:var(--palette-1)!important;border-color:var(--palette-3)!important;
+}
+.app-shell.theme-ocean .page-content :is(.havale-sort-button,.havale-sort-button span,.havale-submit-summary strong,.havale-number),
+.app-shell.theme-sage .page-content :is(.havale-sort-button,.havale-sort-button span,.havale-submit-summary strong,.havale-number){
+  color:var(--palette-2)!important;
+}
+/* Modal/dialog text also follows the active theme. */
+.app-shell.theme-ocean :is(.modal,.modal-content,.khodroo-modal,.khodroo-confirm-modal,.mamoor-modal,.mamoor-confirm-modal,.all-havale-confirm),
+.app-shell.theme-sage :is(.modal,.modal-content,.khodroo-modal,.khodroo-confirm-modal,.mamoor-modal,.mamoor-confirm-modal,.all-havale-confirm){
+  color:var(--text)!important;background:var(--surface)!important;border-color:var(--line)!important;
+}
+.app-shell.theme-ocean :is(.modal,.modal-content,.khodroo-modal,.khodroo-confirm-modal,.mamoor-modal,.mamoor-confirm-modal,.all-havale-confirm) :is(h1,h2,h3,h4,strong,b,label),
+.app-shell.theme-sage :is(.modal,.modal-content,.khodroo-modal,.khodroo-confirm-modal,.mamoor-modal,.mamoor-confirm-modal,.all-havale-confirm) :is(h1,h2,h3,h4,strong,b,label){
+  color:var(--palette-1)!important;
+}
+.app-shell.theme-ocean :is(.modal,.modal-content,.khodroo-modal,.khodroo-confirm-modal,.mamoor-modal,.mamoor-confirm-modal,.all-havale-confirm) :is(p,small),
+.app-shell.theme-sage :is(.modal,.modal-content,.khodroo-modal,.khodroo-confirm-modal,.mamoor-modal,.mamoor-confirm-modal,.all-havale-confirm) :is(p,small){
+  color:var(--muted)!important;
+}
