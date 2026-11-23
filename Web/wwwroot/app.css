@@ -500,3 +500,56 @@ button,a{-webkit-tap-highlight-color:transparent}
 .app-shell.theme-ocean .all-havale-page-button.active,.app-shell.theme-sage .all-havale-page-button.active{color:#fff!important}
 .app-shell.theme-ocean .mamoor-sort-button:hover,.app-shell.theme-sage .mamoor-sort-button:hover,
 .app-shell.theme-ocean .havale-sort-button:hover,.app-shell.theme-sage .havale-sort-button:hover{color:var(--palette-2)!important}
+
+
+/* Unified icon language: crisp, rounded, consistent outline SVGs across authenticated pages. */
+.app-shell button svg,.app-shell a svg{stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.app-shell button:not(:disabled):hover>svg,.app-shell a:hover>svg{transition:transform .18s ease,color .18s ease}
+.app-shell button:not(:disabled):hover>svg{transform:scale(1.055)}
+.app-shell .settings-button svg,.app-shell .page-back-button svg,.app-shell .side-icon,.app-shell .nav-logout-button svg{stroke-width:1.85}
+.app-shell .havale-refresh-icon,.app-shell .mamoor-inline-icon,.app-shell .havale-inline-icon{stroke-width:1.9}
+
+/* Responsive finishing rules for every authenticated page and its dialogs. */
+@media(max-width:760px){
+  .page-content>*{min-width:0;max-width:100%}
+  .dashboard-home,.distribution-home,.mamoor-page,.all-havale-page,.havale-page{width:100%!important;max-width:100%!important;min-width:0!important}
+  .mamoor-page{padding:4px!important}
+  .mamoor-heading,.dashboard-welcome,.distribution-heading,.all-havale-heading,.havale-page-heading{max-width:100%;min-width:0;gap:12px}
+  .mamoor-toolbar,.mamoor-actions,.mamoor-table-toolbar{flex-wrap:wrap;min-width:0}
+  .mamoor-search,.mamoor-search-wrap{width:100%;max-width:100%;min-width:0}
+  .mamoor-table-wrap,.all-havale-table-wrap,.havale-table-wrap{width:100%;max-width:100%;overflow-x:auto!important;overflow-y:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-inline:contain}
+  .mamoor-table,.all-havale-table,.havale-table{width:max-content;min-width:680px}
+  .mamoor-modal-backdrop,.mamoor-confirm-backdrop{padding:10px!important;align-items:flex-end!important}
+  .mamoor-modal,.mamoor-confirm-modal{width:100%!important;max-width:620px!important;max-height:90dvh!important;overflow-y:auto!important;margin:0 auto!important;border-radius:18px 18px 12px 12px!important}
+  .mamoor-modal-form,.mamoor-form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .mamoor-modal-actions,.mamoor-modal-footer{flex-wrap:wrap}
+  .mamoor-modal-actions>*{flex:1 1 auto}
+  .all-havale-toolbar-actions,.mamoor-toolbar-actions{flex-wrap:wrap;gap:8px}
+  .havale-section-heading{align-items:center;flex-wrap:wrap}
+  .havale-date-filter{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:520px){
+  .mamoor-page{padding:2px!important}
+  .mamoor-heading,.all-havale-heading,.havale-page-heading,.dashboard-welcome{padding:14px!important}
+  .mamoor-heading h1,.all-havale-heading h1,.havale-page-heading h1{font-size:18px!important;line-height:1.6}
+  .mamoor-heading p,.all-havale-heading p,.havale-page-heading p{font-size:10px!important}
+  .mamoor-panel,.all-havale-panel,.havale-panel{padding:11px!important}
+  .mamoor-toolbar,.mamoor-toolbar-actions{align-items:stretch;flex-direction:column}
+  .mamoor-form-grid,.mamoor-modal-form,.mamoor-form-grid,.havale-form-grid,.havale-date-filter{grid-template-columns:1fr!important}
+  .mamoor-modal-actions,.mamoor-modal-footer{flex-direction:column;align-items:stretch}
+  .mamoor-modal-actions button,.mamoor-modal-footer button{width:100%}
+  .mamoor-modal-backdrop,.mamoor-confirm-backdrop{padding:6px!important}
+  .mamoor-modal,.mamoor-confirm-modal{max-height:92dvh!important;padding:15px!important}
+  .havale-date-filter-actions{grid-column:auto!important;flex-direction:column;align-items:stretch}
+  .havale-date-filter-actions .havale-button{width:100%}
+  .havale-submit-row{align-items:stretch;flex-direction:column}
+  .havale-submit-row .havale-button{width:100%}
+  .all-havale-confirm{align-items:stretch;flex-direction:column}
+  .all-havale-confirm-actions{width:100%;flex-wrap:wrap}
+  .all-havale-confirm-actions>*{flex:1 1 120px}
+}
+@media(max-width:360px){
+  .page-content{padding:7px!important}
+  .mamoor-heading-icon,.all-havale-heading-icon,.havale-heading-icon{width:40px!important;height:40px!important;flex-basis:40px!important}
+  .mamoor-table,.all-havale-table,.havale-table{min-width:620px}
+}
