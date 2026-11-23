@@ -193,9 +193,6 @@
     [SupplyParameterFromQuery(Name = "create")]
     public bool CreateFromQuery { get; set; }
 
-    [Parameter]
-    public bool CreateOnOpen { get; set; }
-
     private const string AllEndpoint = "api/v1/MamoorPakhsh/GetAllMamoorPakhsh";
     private const string ByIdEndpoint = "api/v1/MamoorPakhsh/GetMamoorPakhshByID";
     private const string CreateEndpoint = "api/v1/MamoorPakhsh/CreateMamoorPakhsh";
@@ -212,7 +209,6 @@
     private string? loadError, pageMessage, editorError, deleteError;
     private string? sarparastLookupMessage;
     private bool messageIsError, loading, showEditor, isEdit, saving, deleting, showSarparastOptions, showSuccessModal;
-    private bool initializing;
     private string successMessage = "";
     private decimal editingSN;
 
@@ -225,11 +221,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        initializing = true;
-        if (CreateFromQuery || CreateOnOpen) OpenCreate();
-
         await Task.WhenAll(LoadAllAsync(), LoadCombosAsync());
-        initializing = false;
+        if (CreateFromQuery) OpenCreate();
     }
 
     private async Task LoadAllAsync()
@@ -291,7 +284,7 @@
         sarparastSearch = "";
         showSarparastOptions = false;
         showEditor = true;
-        if (!initializing) _ = EnsureCombosLoadedAsync();
+        _ = EnsureCombosLoadedAsync();
     }
 
     private async Task EnsureCombosLoadedAsync()
