@@ -403,9 +403,10 @@
             using var response = await client.PostAsync(url, content: null);
             var json = await response.Content.ReadAsStringAsync();
             EnsureSuccess(response, json, "حذف مأمور پخش");
+            var deletedMamoorName = pendingDelete.MamoorPakhshDS;
             pendingDelete = null;
-            pageMessage = "مأمور پخش با موفقیت حذف شد."; messageIsError = false;
-            await LoadAllAsync();
+            successMessage = $"مأمور پخش «{deletedMamoorName}» با موفقیت حذف گردید.";
+            showSuccessModal = true;
         }
         catch (Exception ex) { deleteError = DescribeError("حذف مأمور پخش", ex); }
         finally { deleting = false; }
