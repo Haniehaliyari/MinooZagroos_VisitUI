@@ -20,7 +20,7 @@
     <section class="havale-panel">
         <div class="havale-section-heading">
             <div><span class="havale-step">۱</span><div><h2>انتخاب فاکتورها</h2><p>امکان انتخاب هم‌زمان چند فاکتور وجود دارد.</p></div></div>
-            <button type="button" class="havale-button havale-button-light" @onclick="RefreshFactorsAsync" disabled="@loadingFactors" title="به‌روزرسانی فهرست"><svg class="havale-refresh-icon @(loadingFactors ? "is-spinning" : "")" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.6 9A7 7 0 0 1 18 6l2 6M4 12l2 6a7 7 0 0 0 12.4-3"/></svg> @(loadingFactors ? "در حال دریافت..." : "دریافت اطلاعات")</button>
+            <button type="button" class="havale-button havale-button-light" @onclick="RefreshFactorsAsync" disabled="@loadingFactors" title="به‌روزرسانی فهرست"><svg class="havale-refresh-icon @(loadingFactors ? "is-spinning" : "")" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.6 9A7 7 0 0 1 18 6l2 6M4 12l2 6a7 7 0 0 0 12.4-3"/></svg></button>
         </div>
         @if (!string.IsNullOrWhiteSpace(factorError)) { <div class="havale-alert havale-alert-error"><strong>خطای دریافت فاکتورها:</strong> @factorError</div> }
         <div class="havale-toolbar">
