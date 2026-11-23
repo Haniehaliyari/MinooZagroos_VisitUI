@@ -312,21 +312,38 @@
         await Task.Yield();
         try
         {
-            var payload = new {
-                MamoorPakhshSN = isEdit ? editingSN : 0m,
-                MamoorPakhshDS = form.MamoorPakhshDS,
-                MamoorPakhshNO = isEdit ? items.FirstOrDefault(x => x.MamoorPakhshSN == editingSN)?.MamoorPakhshNO : null,
-                MamoorPakhshStatus = form.MamoorPakhshStatus,
-                SarparastPakhshSN = form.SarparastPakhshSN,
-                VahedeTejariSN = form.VahedeTejariSN,
-                TafsiliSN = (decimal?)null,
-                TafsiliSN1 = (decimal?)null,
-                PayeSN = (decimal?)null,
-                UnqStr = (string?)null,
-                MblPhone = NullIfEmpty(form.MblPhone),
-                OptimeUserName = NullIfEmpty(form.OptimeUserName),
-                OptimePhoneNumber = NullIfEmpty(form.OptimePhoneNumber)
-            };
+            object payload;
+
+            if (isEdit)
+            {
+                // ویرایش: اطلاعات موردنیاز endpoint ویرایش مثل قبل ارسال می‌شود.
+                payload = new
+                {
+                    MamoorPakhshSN = editingSN,
+                    MamoorPakhshDS = form.MamoorPakhshDS,
+                    MamoorPakhshNO = items.FirstOrDefault(x => x.MamoorPakhshSN == editingSN)?.MamoorPakhshNO,
+                    MamoorPakhshStatus = form.MamoorPakhshStatus,
+                    SarparastPakhshSN = form.SarparastPakhshSN,
+                    VahedeTejariSN = FixedVahedeTejariSN,
+                    TafsiliSN = (decimal?)null,
+                    TafsiliSN1 = (decimal?)null,
+                    PayeSN = (decimal?)null,
+                    UnqStr = (string?)null,
+                    MblPhone = NullIfEmpty(form.MblPhone),
+                    OptimeUserName = NullIfEmpty(form.OptimeUserName),
+                    OptimePhoneNumber = NullIfEmpty(form.OptimePhoneNumber)
+                };
+            }
+            else
+            {
+                // ایجاد: فیلدهای سیستمی را سرویس بک‌اند تکمیل می‌کند.
+                payload = new
+                {
+                    MamoorPakhshDS = form.MamoorPakhshDS,
+                    MamoorPakhshStatus = form.MamoorPakhshStatus,
+                    SarparastPakhshSN = form.SarparastPakhshSN
+                };
+            }
             using var client = await ApiClient.CreateAuthorizedClientAsync();
             using var response = await client.PostAsJsonAsync(isEdit ? UpdateEndpoint : CreateEndpoint, payload);
             var json = await response.Content.ReadAsStringAsync();
