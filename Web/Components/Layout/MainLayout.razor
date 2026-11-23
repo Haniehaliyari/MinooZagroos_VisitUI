@@ -4,7 +4,7 @@
 @inject IJSRuntime JS
 @inject NavigationManager Navigation
 
-<div class="app-shell theme-@(selectedTheme) @(sidebarCollapsed ? "sidebar-collapsed" : "")" dir="@(english ? "ltr" : "rtl")">
+<div class="app-shell theme-@(selectedTheme) @(sidebarCollapsed ? "sidebar-collapsed" : "")" style="@ThemeVariables" dir="@(english ? "ltr" : "rtl")">
     @if (sidebarOpen)
     {
         <button class="sidebar-backdrop" @onclick="CloseSidebar" aria-label="Close navigation"></button>
@@ -76,6 +76,11 @@
     private bool sidebarOpen;
     private bool sidebarCollapsed;
     private bool settingsOpen;
+
+    // Inline design tokens ensure every isolated component receives the active palette.
+    private string ThemeVariables => selectedTheme == "sage"
+        ? "--palette-1:#202734;--palette-2:#36415A;--palette-3:#B7D894;--palette-4:#E0F8C7;--surface:#ffffff;--surface-soft:#f4f9ed;--text:#202734;--muted:#687487;--line:rgba(32,39,52,.16);--accent:#36415A;--accent-soft:#B7D894;--sidebar-a:#202734;--sidebar-b:#36415A;"
+        : "--palette-1:#1B365D;--palette-2:#005A9C;--palette-3:#60C1E5;--palette-4:#A0E0EF;--surface:#ffffff;--surface-soft:#f2f9fc;--text:#1B365D;--muted:#64788d;--line:rgba(27,54,93,.16);--accent:#005A9C;--accent-soft:#60C1E5;--sidebar-a:#1B365D;--sidebar-b:#005A9C;";
 
     protected override async Task OnInitializedAsync()
     {
