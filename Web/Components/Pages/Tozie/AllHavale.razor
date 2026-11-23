@@ -146,7 +146,7 @@
             </div>
 
             <nav class="all-havale-pagination" aria-label="صفحه‌بندی حواله‌ها" dir="rtl">
-                <button type="button" class="all-havale-page-arrow" @onclick="NextPage" disabled="@(currentPage >= TotalPages)" aria-label="صفحه بعد">‹</button>
+                <button type="button" class="all-havale-page-arrow" @onclick="NextPage" disabled="@(currentPage >= TotalPages)" aria-label="صفحه بعد"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
                 @foreach (var pageNumber in VisiblePages)
                 {
                     <button @key="pageNumber" type="button"
@@ -159,7 +159,7 @@
                     <span class="all-havale-ellipsis">…</span>
                     <button type="button" class="all-havale-page-button" @onclick="() => GoToPage(TotalPages)">@TotalPages</button>
                 }
-                <button type="button" class="all-havale-page-arrow" @onclick="PreviousPage" disabled="@(currentPage <= 1)" aria-label="صفحه قبل">›</button>
+                <button type="button" class="all-havale-page-arrow" @onclick="PreviousPage" disabled="@(currentPage <= 1)" aria-label="صفحه قبل"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
             </nav>
         }
     </section>
