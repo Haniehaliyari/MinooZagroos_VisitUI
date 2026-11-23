@@ -76,7 +76,13 @@
             <div class="mamoor-table-wrap">
                 <table class="mamoor-table">
                     <thead>
-                        <tr><th>ردیف</th><th>نام مأمور پخش</th><th>سرپرست پخش</th><th>وضعیت</th><th>عملیات</th></tr>
+                        <tr>
+                            <th>ردیف</th>
+                            <th><button type="button" class="mamoor-sort-button" @onclick="() => ToggleMamoorSort(nameof(MamoorItem.MamoorPakhshDS))">نام مأمور پخش <span>@MamoorSortIndicator(nameof(MamoorItem.MamoorPakhshDS))</span></button></th>
+                            <th><button type="button" class="mamoor-sort-button" @onclick="() => ToggleMamoorSort(nameof(MamoorItem.SarparastTitle))">سرپرست پخش <span>@MamoorSortIndicator(nameof(MamoorItem.SarparastTitle))</span></button></th>
+                            <th><button type="button" class="mamoor-sort-button" @onclick="() => ToggleMamoorSort(nameof(MamoorItem.MamoorPakhshStatus))">وضعیت <span>@MamoorSortIndicator(nameof(MamoorItem.MamoorPakhshStatus))</span></button></th>
+                            <th>عملیات</th>
+                        </tr>
                     </thead>
                     <tbody>
                         @foreach (var item in FilteredItems)
@@ -212,10 +218,34 @@
     private string successMessage = "";
     private decimal editingSN;
 
-    private List<MamoorItem> FilteredItems => items.Where(x =>
-        string.IsNullOrWhiteSpace(searchText) ||
-        Contains(x.MamoorPakhshDS, searchText) || Contains(x.MamoorPakhshNO, searchText) ||
-        Contains(x.SarparastTitle, searchText)).ToList();
+    private string mamoorSortColumn = nameof(MamoorItem.MamoorPakhshDS);
+    private bool mamoorSortAscending = true;
+
+    private List<MamoorItem> FilteredItems
+    {
+        get
+        {
+            var filtered = items.Where(x =>
+                string.IsNullOrWhiteSpace(searchText) ||
+                Contains(x.MamoorPakhshDS, searchText) || Contains(x.MamoorPakhshNO, searchText) ||
+                Contains(x.SarparastTitle, searchText));
+
+            return mamoorSortColumn switch
+            {
+                nameof(MamoorItem.SarparastTitle) => (mamoorSortAscending ? filtered.OrderBy(x => x.SarparastTitle) : filtered.OrderByDescending(x => x.SarparastTitle)).ToList(),
+                nameof(MamoorItem.MamoorPakhshStatus) => (mamoorSortAscending ? filtered.OrderBy(x => x.MamoorPakhshStatus) : filtered.OrderByDescending(x => x.MamoorPakhshStatus)).ToList(),
+                _ => (mamoorSortAscending ? filtered.OrderBy(x => x.MamoorPakhshDS) : filtered.OrderByDescending(x => x.MamoorPakhshDS)).ToList()
+            };
+        }
+    }
+
+    private void ToggleMamoorSort(string column)
+    {
+        if (mamoorSortColumn == column) mamoorSortAscending = !mamoorSortAscending;
+        else { mamoorSortColumn = column; mamoorSortAscending = true; }
+    }
+
+    private string MamoorSortIndicator(string column) => mamoorSortColumn != column ? "↕" : mamoorSortAscending ? "↑" : "↓";
 
     private List<LookupItem> FilteredSarparasts => FilterLookup(sarparasts, sarparastSearch);
 
