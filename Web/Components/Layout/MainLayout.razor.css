@@ -341,3 +341,39 @@
   .page-back-button,.settings-button,.mobile-nav-trigger{width:36px!important;min-width:36px!important;height:36px!important;min-height:36px!important;flex-basis:36px!important}
 }
 @media(prefers-reduced-motion:reduce){.app-sidebar,.app-shell .app-sidebar.sidebar-open{transition:none!important}}
+
+
+/* Keep the navigation sidebar on the RIGHT on desktop and on responsive screens,
+   regardless of the selected interface language. */
+@media(min-width:761px){
+  .app-shell{flex-direction:row!important}
+  .app-shell[dir="ltr"] .app-sidebar{order:2!important}
+  .app-shell[dir="ltr"] .app-main{order:1!important}
+  .app-shell[dir="rtl"] .app-sidebar{order:0!important}
+  .app-shell[dir="rtl"] .app-main{order:0!important}
+  .app-shell .app-sidebar{align-self:stretch}
+}
+@media(max-width:760px){
+  .app-shell .app-sidebar,
+  .app-shell.sidebar-collapsed .app-sidebar{
+    right:0!important;left:auto!important;
+    transform:translateX(105%)!important;
+    border-radius:0 0 0 18px!important;
+    box-shadow:-16px 0 42px rgba(12,30,48,.2)!important;
+  }
+  .app-shell .app-sidebar.sidebar-open,
+  .app-shell.sidebar-collapsed .app-sidebar.sidebar-open{
+    right:0!important;left:auto!important;transform:translateX(0)!important;
+  }
+  .app-shell[dir="ltr"] .app-sidebar,
+  .app-shell[dir="ltr"].sidebar-collapsed .app-sidebar{
+    right:0!important;left:auto!important;
+    transform:translateX(105%)!important;
+    border-radius:0 0 0 18px!important;
+    box-shadow:-16px 0 42px rgba(12,30,48,.2)!important;
+  }
+  .app-shell[dir="ltr"] .app-sidebar.sidebar-open,
+  .app-shell[dir="ltr"].sidebar-collapsed .app-sidebar.sidebar-open{
+    right:0!important;left:auto!important;transform:translateX(0)!important;
+  }
+}
