@@ -50,7 +50,13 @@
                 <span>صفحه @currentFactorPage از @TotalFactorPages</span>
             </div>
             <div class="havale-table-wrap"><table class="havale-table">
-                <thead><tr><th><input type="checkbox" checked="@AllCurrentPageSelected" @onchange="ToggleCurrentPageFactors" aria-label="انتخاب همه فاکتورهای این صفحه" /></th><th>شماره فاکتور</th><th>شرح فاکتور</th><th>تاریخ صدور</th><th>مبلغ کل</th></tr></thead>
+                <thead><tr>
+                    <th><input type="checkbox" checked="@AllCurrentPageSelected" @onchange="ToggleCurrentPageFactors" aria-label="انتخاب همه فاکتورهای این صفحه" /></th>
+                    <th><button type="button" class="havale-sort-button" @onclick="() => ToggleFactorSort(nameof(foFactorByDateDTO.FactorNo))">شماره فاکتور <span>@FactorSortIndicator(nameof(foFactorByDateDTO.FactorNo))</span></button></th>
+                    <th><button type="button" class="havale-sort-button" @onclick="() => ToggleFactorSort(nameof(foFactorByDateDTO.FactorDs))">شرح فاکتور <span>@FactorSortIndicator(nameof(foFactorByDateDTO.FactorDs))</span></button></th>
+                    <th><button type="button" class="havale-sort-button" @onclick="() => ToggleFactorSort(nameof(foFactorByDateDTO.SodoorDate))">تاریخ صدور <span>@FactorSortIndicator(nameof(foFactorByDateDTO.SodoorDate))</span></button></th>
+                    <th><button type="button" class="havale-sort-button" @onclick="() => ToggleFactorSort(nameof(foFactorByDateDTO.MablaghKol))">مبلغ کل <span>@FactorSortIndicator(nameof(foFactorByDateDTO.MablaghKol))</span></button></th>
+                </tr></thead>
                 <tbody>@foreach (var factor in CurrentPageFactors) { <tr>
                     <td><input type="checkbox" checked="@selectedFactorSNs.Contains(factor.FactorSN)" @onchange="args => ToggleFactor(factor.FactorSN, args)" /></td>
                     <td class="havale-number">@factor.FactorNo</td><td>@(string.IsNullOrWhiteSpace(factor.FactorDs) ? "—" : factor.FactorDs)</td>
@@ -154,6 +160,8 @@
     private readonly List<LookupItem> agents = [];
     private readonly HashSet<decimal> selectedFactorSNs = [];
     private string searchText = "";
+    private string factorSortColumn = nameof(foFactorByDateDTO.FactorNo);
+    private bool factorSortAscending = true;
     private string factorDateFromText = "";
     private string factorDateToText = "";
     private string? factorDateFilterError;
@@ -170,7 +178,20 @@
 
     private bool HasAppliedFactorDateFilter => !string.IsNullOrWhiteSpace(appliedFactorDateFrom) || !string.IsNullOrWhiteSpace(appliedFactorDateTo);
     private int SelectedCount => selectedFactorSNs.Count;
-    private List<foFactorByDateDTO> FilteredFactors => filteredFactors;
+    private List<foFactorByDateDTO> FilteredFactors => factorSortColumn switch
+    {
+        nameof(foFactorByDateDTO.FactorDs) => factorSortAscending ? filteredFactors.OrderBy(x => x.FactorDs).ToList() : filteredFactors.OrderByDescending(x => x.FactorDs).ToList(),
+        nameof(foFactorByDateDTO.SodoorDate) => factorSortAscending ? filteredFactors.OrderBy(x => x.SodoorDate).ToList() : filteredFactors.OrderByDescending(x => x.SodoorDate).ToList(),
+        nameof(foFactorByDateDTO.MablaghKol) => factorSortAscending ? filteredFactors.OrderBy(x => x.MablaghKol).ToList() : filteredFactors.OrderByDescending(x => x.MablaghKol).ToList(),
+        _ => factorSortAscending ? filteredFactors.OrderBy(x => x.FactorNo).ToList() : filteredFactors.OrderByDescending(x => x.FactorNo).ToList()
+    };
+    private void ToggleFactorSort(string column)
+    {
+        if (factorSortColumn == column) factorSortAscending = !factorSortAscending;
+        else { factorSortColumn = column; factorSortAscending = true; }
+        currentFactorPage = 1;
+    }
+    private string FactorSortIndicator(string column) => factorSortColumn != column ? "↕" : factorSortAscending ? "↑" : "↓";
     private int TotalFactorPages => Math.Max(1, (int)Math.Ceiling(FilteredFactors.Count / (double)FactorPageSize));
     private IEnumerable<int> VisibleFactorPages => TotalFactorPages <= 4
         ? Enumerable.Range(1, TotalFactorPages)
