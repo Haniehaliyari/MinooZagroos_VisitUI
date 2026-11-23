@@ -298,3 +298,108 @@
   .mamoor-modal-header{border-radius:18px 18px 0 0;}
   .mamoor-modal-footer{border-radius:0 0 18px 18px;}
 }
+
+
+/* Readable typography and a colorful hero header for the dispatch staff page */
+.mamoor-heading{
+    position:relative;
+    isolation:isolate;
+    overflow:hidden;
+    min-height:148px;
+    margin-bottom:25px;
+    padding:25px 30px;
+    border:1px solid rgba(255,255,255,.18);
+    border-radius:23px;
+    background:
+        radial-gradient(circle at 12% 115%,rgba(76,201,190,.34),transparent 34%),
+        radial-gradient(circle at 88% -20%,rgba(255,255,255,.19),transparent 30%),
+        linear-gradient(115deg,#263b72 0%,#365b9b 52%,#187f83 100%);
+    box-shadow:0 14px 32px rgba(34,73,126,.2);
+}
+.mamoor-heading:before,
+.mamoor-heading:after{
+    content:"";
+    position:absolute;
+    z-index:-1;
+    border:1px solid rgba(255,255,255,.13);
+    border-radius:50%;
+    pointer-events:none;
+}
+.mamoor-heading:before{
+    width:210px;height:210px;left:8%;top:-145px;
+    box-shadow:0 0 0 22px rgba(255,255,255,.035),0 0 0 46px rgba(255,255,255,.025);
+}
+.mamoor-heading:after{
+    width:125px;height:125px;right:23%;bottom:-100px;
+    box-shadow:0 0 0 18px rgba(255,255,255,.035);
+}
+.mamoor-heading>div:first-child{position:relative;z-index:1}
+.mamoor-eyebrow{
+    display:inline-flex;
+    align-items:center;
+    margin:0 0 10px;
+    padding:6px 12px;
+    border:1px solid rgba(255,255,255,.24);
+    border-radius:30px;
+    background:rgba(255,255,255,.13);
+    color:#e7fbff;
+    font-size:12px;
+    font-weight:800;
+    letter-spacing:.2px;
+}
+.mamoor-heading h1{
+    margin:0 0 9px;
+    color:#fff;
+    font-size:29px;
+    font-weight:900;
+    line-height:1.55;
+    letter-spacing:-.5px;
+}
+.mamoor-heading p{
+    margin:0;
+    color:rgba(255,255,255,.86);
+    font-size:14px;
+    line-height:1.9;
+}
+.mamoor-heading-icon{
+    position:relative;
+    z-index:1;
+    width:66px;height:66px;flex:0 0 66px;
+    border:1px solid rgba(255,255,255,.28);
+    border-radius:20px;
+    background:rgba(255,255,255,.15);
+    color:#fff;
+    box-shadow:0 8px 22px rgba(9,25,55,.16),inset 0 1px 0 rgba(255,255,255,.15);
+    backdrop-filter:blur(8px);
+}
+.mamoor-heading-icon svg{width:33px;height:33px;stroke-width:1.8}
+
+/* Larger and clearer text across the list and its controls */
+.mamoor-search{height:48px;font-size:14px}
+.mamoor-search::placeholder{font-size:13px}
+.mamoor-count{font-size:13px;font-weight:750;padding:9px 14px}
+.mamoor-button{min-height:43px;font-size:13px;padding:0 16px}
+.mamoor-table th{font-size:14px;padding:17px 15px}
+.mamoor-table td{font-size:15px;padding:16px 15px;line-height:1.7}
+.mamoor-person-name{font-size:15px}
+.mamoor-subline{font-size:12px}
+.mamoor-status{font-size:13px;padding:7px 12px}
+.mamoor-row-number{font-size:14px!important}
+.mamoor-table-footer{font-size:12px}
+.mamoor-empty{font-size:14px}
+.mamoor-empty strong{font-size:16px}
+@media(max-width:760px){
+    .mamoor-heading{min-height:125px;padding:20px;border-radius:19px}
+    .mamoor-heading h1{font-size:24px}
+    .mamoor-heading p{font-size:13px}
+    .mamoor-heading-icon{width:54px;height:54px;flex-basis:54px}
+}
+@media(max-width:520px){
+    .mamoor-heading{gap:12px;padding:17px}
+    .mamoor-heading h1{font-size:21px}
+    .mamoor-heading p{font-size:12px}
+    .mamoor-heading-icon{width:46px;height:46px;flex-basis:46px;border-radius:14px}
+    .mamoor-heading-icon svg{width:25px;height:25px}
+    .mamoor-table th{font-size:13px}
+    .mamoor-table td{font-size:14px}
+}
