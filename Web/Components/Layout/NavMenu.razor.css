@@ -133,3 +133,11 @@
 .side-icon,.nav-logout-button svg,.nav-toggle-button svg{stroke-width:1.85;stroke-linecap:round;stroke-linejoin:round;transition:transform .18s ease,color .18s ease}
 .side-link:hover .side-icon,.nav-logout-button:hover svg,.nav-toggle-button:hover svg{transform:scale(1.08)}
 @media(max-width:760px){.side-link{min-height:47px;padding:11px 12px}.nav-logout-button{min-height:46px}.side-icon{width:20px;height:20px;flex-basis:20px}}
+
+
+/* Sidebar collapse handle: attach to the OUTER RIGHT edge of the navigation. */
+.nav-toggle-anchor{left:-18px!important;right:auto!important}
+.nav-toggle-button{border-radius:9px 0 0 9px!important}
+@media(max-width:760px){
+  .nav-toggle-anchor{display:none!important}
+}
