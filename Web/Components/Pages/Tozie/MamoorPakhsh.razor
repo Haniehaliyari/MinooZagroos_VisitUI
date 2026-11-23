@@ -35,7 +35,7 @@
         <div class="mamoor-toolbar">
             <div class="mamoor-search-wrap">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg>
-                <input class="mamoor-search" placeholder="جستجو بر اساس نام، موبایل یا سرپرست..." @bind="searchText" @bind:event="oninput" />
+                <input class="mamoor-search" placeholder="جستجو بر اساس نام یا سرپرست..." @bind="searchText" @bind:event="oninput" />
             </div>
             <div class="mamoor-toolbar-actions">
                 <span class="mamoor-count">@FilteredItems.Count مأمور</span>
@@ -129,9 +129,6 @@
                     }
                 </label>
 
-                <label class="mamoor-field">شماره موبایل
-                    <input @bind="form.MblPhone" @bind:event="oninput" inputmode="tel" maxlength="20" placeholder="مثلاً ۰۹۱۲۱۲۳۴۵۶۷" />
-                </label>
 
                 <div class="mamoor-field mamoor-status-field">
                     <span>وضعیت مأمور پخش</span>
@@ -190,7 +187,7 @@
     private List<MamoorItem> FilteredItems => items.Where(x =>
         string.IsNullOrWhiteSpace(searchText) ||
         Contains(x.MamoorPakhshDS, searchText) || Contains(x.MamoorPakhshNO, searchText) ||
-        Contains(x.MblPhone, searchText) || Contains(x.SarparastTitle, searchText)).ToList();
+        Contains(x.SarparastTitle, searchText)).ToList();
 
     private List<LookupItem> FilteredSarparasts => FilterLookup(sarparasts, sarparastSearch);
 
