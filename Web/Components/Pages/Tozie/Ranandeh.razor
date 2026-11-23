@@ -75,7 +75,7 @@ else{<div class="mamoor-table-wrap"><table class="mamoor-table"><thead><tr><th>�
     var details=new List<string>();foreach(var p in errors.EnumerateObject()){
      var messages=p.Value.ValueKind==JsonValueKind.Array?p.Value.EnumerateArray().Where(x=>x.ValueKind==JsonValueKind.String).Select(x=>x.GetString()).Where(x=>!string.IsNullOrWhiteSpace(x)).ToList():p.Value.ValueKind==JsonValueKind.String?new List<string>{p.Value.GetString()!}:new List<string>();
      foreach(var message in messages)details.Add($"{p.Name}: {message}");
-    }if(details.Count>0)return "اطلاعات ارسالی معتبر نیست:\\n"+string.Join("\\n",details);
+    }if(details.Count>0)return "اطلاعات ارسالی معتبر نیست:\n"+string.Join("\n",details);
    }
    foreach(var key in new[]{"message","errMsg","errorMessage","detail","title","error"})if(Get(root,key,out var v)&&v.ValueKind==JsonValueKind.String&&!string.IsNullOrWhiteSpace(v.GetString()))return v.GetString()!;
   }catch{}
