@@ -193,6 +193,9 @@
     [SupplyParameterFromQuery(Name = "create")]
     public bool CreateFromQuery { get; set; }
 
+    [Parameter]
+    public bool CreateOnOpen { get; set; }
+
     private const string AllEndpoint = "api/v1/MamoorPakhsh/GetAllMamoorPakhsh";
     private const string ByIdEndpoint = "api/v1/MamoorPakhsh/GetMamoorPakhshByID";
     private const string CreateEndpoint = "api/v1/MamoorPakhsh/CreateMamoorPakhsh";
@@ -222,7 +225,7 @@
     protected override async Task OnInitializedAsync()
     {
         await Task.WhenAll(LoadAllAsync(), LoadCombosAsync());
-        if (CreateFromQuery) OpenCreate();
+        if (CreateFromQuery || CreateOnOpen) OpenCreate();
     }
 
     private async Task LoadAllAsync()
