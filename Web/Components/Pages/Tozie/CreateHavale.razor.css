@@ -122,3 +122,11 @@
 .havale-loading strong{font-size:13px;font-weight:650;color:#8490a2}
 .havale-spinner{width:24px;height:24px;flex:0 0 24px;border:3px solid #e1e7ef;border-top-color:#245a92;border-radius:50%;animation:havale-icon-spin .8s linear infinite}
 @keyframes havale-icon-spin{to{transform:rotate(360deg)}}
+
+
+/* Icon-only refresh actions with a clear touch target. */
+.havale-refresh-button{width:43px!important;min-width:43px!important;height:43px!important;min-height:43px!important;padding:0!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;border-radius:12px!important}
+.havale-refresh-button .havale-refresh-icon{width:20px;height:20px;flex:0 0 20px;stroke-width:1.9;transition:transform .2s ease,color .2s ease}
+.havale-refresh-button:hover:not(:disabled) .havale-refresh-icon{transform:rotate(-18deg)}
+.havale-refresh-button:focus-visible{outline:3px solid rgba(0,90,156,.22);outline-offset:2px}
+@media(max-width:520px){.havale-refresh-button{width:42px!important;min-width:42px!important;height:42px!important;align-self:flex-start}}
