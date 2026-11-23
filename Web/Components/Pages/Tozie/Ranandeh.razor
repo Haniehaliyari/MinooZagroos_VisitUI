@@ -29,19 +29,59 @@ else{<div class="mamoor-table-wrap"><table class="mamoor-table"><thead><tr><th>�
  private readonly List<Driver> items=[]; private DriverForm form=new(); private Driver? pendingDelete; private string searchText="",sortColumn=nameof(Driver.RanandehDS),successText=""; private bool ascending=true,loading,editor,editing,saving,success; private string? loadError,error; private decimal editId;
  private List<Driver> Filtered { get {var q=items.Where(x=>string.IsNullOrWhiteSpace(searchText)||Contains(x.RanandehDS,searchText)||Contains(x.RanandehNO,searchText));return sortColumn switch{nameof(Driver.RanandehNO)=>(ascending?q.OrderBy(x=>x.RanandehNO):q.OrderByDescending(x=>x.RanandehNO)).ToList(),nameof(Driver.RanandehStatus)=>(ascending?q.OrderBy(x=>x.RanandehStatus):q.OrderByDescending(x=>x.RanandehStatus)).ToList(),_=>(ascending?q.OrderBy(x=>x.RanandehDS):q.OrderByDescending(x=>x.RanandehDS)).ToList()};}}
  protected override Task OnInitializedAsync()=>LoadAllAsync();
- private async Task LoadAllAsync(){loading=true;loadError=null;try{using var c=await ApiClient.CreateAuthorizedClientAsync();using var r=await c.GetAsync(All);var j=await r.Content.ReadAsStringAsync();Check(r,j);items.Clear();items.AddRange(Unwrap(j).Select(Read).Where(x=>x.RanandehSN!=0));}catch(Exception e){loadError=e.Message;}finally{loading=false;}}
+ private async Task LoadAllAsync(){loading=true;loadError=null;try{using var c=await ApiClient.CreateAuthorizedClientAsync();using var r=await c.GetAsync(All);var j=await r.Content.ReadAsStringAsync();Check(r,j,"دریافت فهرست رانندگان");items.Clear();items.AddRange(ReadArray(ExtractPayload(j)).Select(Read).Where(x=>x.RanandehSN!=0));}catch(Exception e){loadError=DescribeError("دریافت فهرست رانندگان",e);}finally{loading=false;}}
  private void Sort(string c){if(sortColumn==c)ascending=!ascending;else{sortColumn=c;ascending=true;}} private string Mark(string c)=>sortColumn!=c?"↕":ascending?"↑":"↓";
  private void OpenCreate(){editing=false;editId=0;form=new(){RanandehStatus=1};error=null;editor=true;} private void Edit(Driver x){editing=true;editId=x.RanandehSN;form=new(){RanandehDS=x.RanandehDS,RanandehNO=x.RanandehNO,RanandehStatus=x.RanandehStatus};error=null;editor=true;} private void Close(){if(!saving)editor=false;}
- private async Task Save(){error=null;form.RanandehDS=(form.RanandehDS??"").Trim();form.RanandehNO=string.IsNullOrWhiteSpace(form.RanandehNO)?null:form.RanandehNO.Trim();if(string.IsNullOrWhiteSpace(form.RanandehDS)){error="نام راننده را وارد کنید.";return;}saving=true;try{object dto=editing?new{RanandehSN=editId,RanandehDS=form.RanandehDS,RanandehNO=form.RanandehNO,RanandehStatus=form.RanandehStatus}:new{RanandehDS=form.RanandehDS,RanandehNO=form.RanandehNO,RanandehStatus=form.RanandehStatus};using var c=await ApiClient.CreateAuthorizedClientAsync();using var r=await c.PostAsJsonAsync(editing?UpdateUrl:CreateUrl,dto);var j=await r.Content.ReadAsStringAsync();Check(r,j);editor=false;successText=editing?$"راننده «{form.RanandehDS}» ویرایش شد.":"راننده جدید با موفقیت ثبت شد.";success=true;}catch(Exception e){error=e.Message;}finally{saving=false;}}
- private async Task Delete(){if(pendingDelete is null)return;saving=true;error=null;try{using var c=await ApiClient.CreateAuthorizedClientAsync();var id=Uri.EscapeDataString(pendingDelete.RanandehSN.ToString(CultureInfo.InvariantCulture));using var r=await c.PostAsync($"{DeleteUrl}/{id}",null);var j=await r.Content.ReadAsStringAsync();Check(r,j);successText=$"راننده «{pendingDelete.RanandehDS}» با موفقیت حذف شد.";pendingDelete=null;success=true;}catch(Exception e){error=e.Message;}finally{saving=false;}}
+ private async Task Save(){error=null;form.RanandehDS=(form.RanandehDS??"").Trim();form.RanandehNO=string.IsNullOrWhiteSpace(form.RanandehNO)?null:form.RanandehNO.Trim();if(string.IsNullOrWhiteSpace(form.RanandehDS)){error="نام راننده را وارد کنید.";return;}saving=true;try{object dto=editing?new{RanandehSN=editId,RanandehDS=form.RanandehDS,RanandehNO=form.RanandehNO,RanandehStatus=form.RanandehStatus}:new{RanandehDS=form.RanandehDS,RanandehNO=form.RanandehNO,RanandehStatus=form.RanandehStatus};using var c=await ApiClient.CreateAuthorizedClientAsync();using var r=await c.PostAsJsonAsync(editing?UpdateUrl:CreateUrl,dto);var j=await r.Content.ReadAsStringAsync();Check(r,j,editing?"ویرایش راننده":"ثبت راننده");editor=false;successText=editing?$"راننده «{form.RanandehDS}» ویرایش شد.":"راننده جدید با موفقیت ثبت شد.";success=true;}catch(Exception e){error=e.Message;}finally{saving=false;}}
+ private async Task Delete(){if(pendingDelete is null)return;saving=true;error=null;try{using var c=await ApiClient.CreateAuthorizedClientAsync();var id=Uri.EscapeDataString(pendingDelete.RanandehSN.ToString(CultureInfo.InvariantCulture));using var r=await c.PostAsync($"{DeleteUrl}/{id}",null);var j=await r.Content.ReadAsStringAsync();Check(r,j,"حذف راننده");successText=$"راننده «{pendingDelete.RanandehDS}» با موفقیت حذف شد.";pendingDelete=null;success=true;}catch(Exception e){error=e.Message;}finally{saving=false;}}
  private async Task Reload(){success=false;searchText="";await LoadAllAsync();}
- private static Driver Read(JsonElement x)=>new(){RanandehSN=Num(x,"RanandehSN"),RanandehDS=Str(x,"RanandehDS"),RanandehNO=Str(x,"RanandehNO"),RanandehStatus=(byte)Math.Clamp(Num(x,"RanandehStatus"),0,255)};
- private static List<JsonElement> Unwrap(string j){using var d=JsonDocument.Parse(j);var x=d.RootElement.Clone();for(int i=0;i<8&&x.ValueKind==JsonValueKind.Object;i++){JsonElement n=default;bool found=false;foreach(var k in new[]{"data","result","items","list","records","results"})if(Get(x,k,out n)){found=true;break;}if(!found)break;x=n;}return x.ValueKind==JsonValueKind.Array?x.EnumerateArray().Select(v=>v.Clone()).ToList():x.ValueKind==JsonValueKind.Object?new(){x}:new();}
+ private static Driver Read(JsonElement x)=>new(){RanandehSN=ReadDecimal(x,"RanandehSN","Id","SN"),RanandehDS=ReadString(x,"RanandehDS","Name","DS"),RanandehNO=ReadString(x,"RanandehNO","Code","NO"),RanandehStatus=(byte)Math.Clamp(ReadDecimal(x,"RanandehStatus","Status"),0,255)};
+ private static JsonElement ExtractPayload(string json){using var doc=JsonDocument.Parse(json);return FindCollection(doc.RootElement.Clone(),0);}
+ private static JsonElement FindCollection(JsonElement value,int depth){
+  if(value.ValueKind==JsonValueKind.Array)return value;
+  if(depth>7||value.ValueKind!=JsonValueKind.Object)return value;
+  foreach(var key in new[]{"data","result","items","list","records","results","ranandehList"})
+   if(Get(value,key,out var nested)){var found=FindCollection(nested,depth+1);if(found.ValueKind==JsonValueKind.Array||found.ValueKind==JsonValueKind.Object)return found;}
+  foreach(var property in value.EnumerateObject()){var found=FindCollection(property.Value,depth+1);if(found.ValueKind==JsonValueKind.Array)return found;}
+  return value;
+ }
+ private static List<JsonElement> ReadArray(JsonElement value)=>value.ValueKind==JsonValueKind.Array?value.EnumerateArray().Select(x=>x.Clone()).ToList():value.ValueKind==JsonValueKind.Object?new(){value.Clone()}:new();
+ private static decimal ReadDecimal(JsonElement x,params string[] keys){
+  foreach(var key in keys)if(Get(x,key,out var v)){
+   if(v.ValueKind==JsonValueKind.Number&&v.TryGetDecimal(out var n))return n;
+   if(v.ValueKind==JsonValueKind.String&&decimal.TryParse(Normalize(v.GetString()),NumberStyles.Any,CultureInfo.InvariantCulture,out n))return n;
+  }return 0;
+ }
+ private static string ReadString(JsonElement x,params string[] keys){
+  foreach(var key in keys)if(Get(x,key,out var v)){if(v.ValueKind==JsonValueKind.String)return v.GetString()??"";if(v.ValueKind==JsonValueKind.Number)return v.ToString();}
+  return "";
+ }
+ private static string? Normalize(string? value)=>value?.Replace('۰','0').Replace('۱','1').Replace('۲','2').Replace('۳','3').Replace('۴','4').Replace('۵','5').Replace('۶','6').Replace('۷','7').Replace('۸','8').Replace('۹','9').Replace('٠','0').Replace('١','1').Replace('٢','2').Replace('٣','3').Replace('٤','4').Replace('٥','5').Replace('٦','6').Replace('٧','7').Replace('٨','8').Replace('٩','9');
  private static bool Get(JsonElement x,string k,out JsonElement v){if(x.ValueKind==JsonValueKind.Object)foreach(var p in x.EnumerateObject())if(p.Name.Equals(k,StringComparison.OrdinalIgnoreCase)){v=p.Value;return true;}v=default;return false;}
- private static decimal Num(JsonElement x,string k)=>Get(x,k,out var v)?v.ValueKind==JsonValueKind.Number?v.GetDecimal():decimal.TryParse(v.ToString().Replace('۰','0').Replace('۱','1').Replace('۲','2').Replace('۳','3').Replace('۴','4').Replace('۵','5').Replace('۶','6').Replace('۷','7').Replace('۸','8').Replace('۹','9'),NumberStyles.Any,CultureInfo.InvariantCulture,out var n)?n:0:0;
- private static string Str(JsonElement x,string k)=>Get(x,k,out var v)?v.ValueKind==JsonValueKind.Null?"":v.ToString():"";
- private static bool Contains(string? a,string b)=>(a??"").Contains(b,StringComparison.OrdinalIgnoreCase); private static string Show(string? x)=>string.IsNullOrWhiteSpace(x)?"—":x;
- private static void Check(HttpResponseMessage r,string j){if(!r.IsSuccessStatusCode)throw new InvalidOperationException(j);if(string.IsNullOrWhiteSpace(j))return;using var d=JsonDocument.Parse(j);if(Get(d.RootElement,"success",out var s)&&s.ValueKind==JsonValueKind.False)throw new InvalidOperationException(Get(d.RootElement,"message",out var m)?m.ToString():"عملیات ناموفق بود.");}
+ private static bool Contains(string? a,string b)=>(a??"").Contains(b,StringComparison.OrdinalIgnoreCase);
+ private static string Show(string? x)=>string.IsNullOrWhiteSpace(x)?"—":x;
+ private static void Check(HttpResponseMessage r,string j,string operation){
+  if(!r.IsSuccessStatusCode)throw new InvalidOperationException(ReadError(j,r));
+  if(string.IsNullOrWhiteSpace(j))return;
+  using var d=JsonDocument.Parse(j);var root=d.RootElement;
+  if(Get(root,"statusCode",out var status)&&status.ValueKind==JsonValueKind.Number&&status.GetInt32()>=400)throw new InvalidOperationException(ReadError(j,r));
+  if(Get(root,"success",out var success)&&success.ValueKind==JsonValueKind.False)throw new InvalidOperationException(ReadError(j,r));
+  if(Get(root,"isSuccess",out var isSuccess)&&isSuccess.ValueKind==JsonValueKind.False)throw new InvalidOperationException(ReadError(j,r));
+  if(Get(root,"errMsg",out var err)&&err.ValueKind==JsonValueKind.String&&!string.IsNullOrWhiteSpace(err.GetString()))throw new InvalidOperationException(err.GetString()!);
+ }
+ private static string ReadError(string j,HttpResponseMessage r){
+  try{using var d=JsonDocument.Parse(j);var root=d.RootElement;
+   if(Get(root,"errors",out var errors)&&errors.ValueKind==JsonValueKind.Object){
+    var details=new List<string>();foreach(var p in errors.EnumerateObject()){
+     var messages=p.Value.ValueKind==JsonValueKind.Array?p.Value.EnumerateArray().Where(x=>x.ValueKind==JsonValueKind.String).Select(x=>x.GetString()).Where(x=>!string.IsNullOrWhiteSpace(x)).ToList():p.Value.ValueKind==JsonValueKind.String?new List<string>{p.Value.GetString()!}:new List<string>();
+     foreach(var message in messages)details.Add($"{p.Name}: {message}");
+    }if(details.Count>0)return "اطلاعات ارسالی معتبر نیست:\\n"+string.Join("\\n",details);
+   }
+   foreach(var key in new[]{"message","errMsg","errorMessage","detail","title","error"})if(Get(root,key,out var v)&&v.ValueKind==JsonValueKind.String&&!string.IsNullOrWhiteSpace(v.GetString()))return v.GetString()!;
+  }catch{}
+  return string.IsNullOrWhiteSpace(j)?$"خطای HTTP {(int)r.StatusCode} ({r.ReasonPhrase})":j;
+ }
+ private static string DescribeError(string operation,Exception ex)=>ex is InvalidOperationException&&!string.IsNullOrWhiteSpace(ex.Message)?ex.Message:ex is UnauthorizedAccessException?"نشست کاربری معتبر نیست؛ دوباره وارد سامانه شوید.":ex is HttpRequestException?$"ارتباط با سرور هنگام {operation} برقرار نشد.":ex is OperationCanceledException?$"زمان انتظار برای {operation} به پایان رسید.":string.IsNullOrWhiteSpace(ex.Message)?$"در {operation} خطایی رخ داد.":ex.Message;
  private sealed class Driver{public decimal RanandehSN{get;set;}public string RanandehDS{get;set;}="";public string RanandehNO{get;set;}="";public byte RanandehStatus{get;set;}}
  private sealed class DriverForm{public string RanandehDS{get;set;}="";public string? RanandehNO{get;set;}public byte RanandehStatus{get;set;}=1;}
 }
