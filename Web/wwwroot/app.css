@@ -440,3 +440,63 @@ button,a{-webkit-tap-highlight-color:transparent}
  .app-shell.theme-ocean .all-havale-heading,.app-shell.theme-sage .all-havale-heading,
  .app-shell.theme-ocean .havale-page-heading,.app-shell.theme-sage .havale-page-heading{padding:20px!important;margin-bottom:16px!important;border-radius:15px!important}
 }
+
+
+/* Extend the selected four-color palette to the remaining authenticated pages. */
+.app-shell.theme-ocean .mamoor-heading,.app-shell.theme-sage .mamoor-heading,
+.app-shell.theme-ocean .dashboard-welcome,.app-shell.theme-sage .dashboard-welcome,
+.app-shell.theme-ocean .distribution-heading,.app-shell.theme-sage .distribution-heading{
+ background:linear-gradient(115deg,var(--palette-1) 0%,var(--palette-2) 58%,var(--palette-3) 100%)!important;
+ color:#fff!important;border-color:color-mix(in srgb,var(--palette-3) 30%,transparent)!important;
+ box-shadow:0 12px 28px color-mix(in srgb,var(--palette-1) 18%,transparent)!important;
+}
+.app-shell.theme-ocean .mamoor-heading h1,.app-shell.theme-sage .mamoor-heading h1,
+.app-shell.theme-ocean .dashboard-welcome h1,.app-shell.theme-sage .dashboard-welcome h1,
+.app-shell.theme-ocean .distribution-heading h1,.app-shell.theme-sage .distribution-heading h1,
+.app-shell.theme-ocean .mamoor-heading p,.app-shell.theme-sage .mamoor-heading p,
+.app-shell.theme-ocean .dashboard-welcome p,.app-shell.theme-sage .dashboard-welcome p{color:#fff!important}
+.app-shell.theme-ocean .mamoor-heading-icon,.app-shell.theme-sage .mamoor-heading-icon,
+.app-shell.theme-ocean .welcome-mark,.app-shell.theme-sage .welcome-mark,
+.app-shell.theme-ocean .distribution-heading-mark,.app-shell.theme-sage .distribution-heading-mark{
+ background:color-mix(in srgb,var(--palette-4) 24%,transparent)!important;
+ color:#fff!important;border-color:rgba(255,255,255,.24)!important;
+}
+.app-shell.theme-ocean .dashboard-section-heading h2,.app-shell.theme-sage .dashboard-section-heading h2,
+.app-shell.theme-ocean .mamoor-section-heading h2,.app-shell.theme-sage .mamoor-section-heading h2{color:var(--palette-1)!important}
+.app-shell.theme-ocean .module-icon,.app-shell.theme-sage .module-icon,
+.app-shell.theme-ocean .distribution-icon,.app-shell.theme-sage .distribution-icon{
+ background:color-mix(in srgb,var(--palette-4) 35%,white)!important;
+ color:var(--palette-2)!important;border-color:color-mix(in srgb,var(--palette-3) 30%,white)!important;
+}
+.app-shell.theme-ocean .module-card:hover,.app-shell.theme-sage .module-card:hover,
+.app-shell.theme-ocean .distribution-card:hover,.app-shell.theme-sage .distribution-card:hover{
+ border-color:var(--palette-3)!important;box-shadow:0 10px 24px color-mix(in srgb,var(--palette-2) 12%,transparent)!important;
+}
+.app-shell.theme-ocean .mamoor-button-primary,.app-shell.theme-sage .mamoor-button-primary,
+.app-shell.theme-ocean .dispatch-all-link,.app-shell.theme-sage .dispatch-all-link,
+.app-shell.theme-ocean .dispatch-create-button,.app-shell.theme-sage .dispatch-create-button{
+ background:linear-gradient(110deg,var(--palette-2),var(--palette-3))!important;border-color:var(--palette-2)!important;color:#fff!important;
+}
+.app-shell.theme-ocean .mamoor-pagination-button.active,.app-shell.theme-sage .mamoor-pagination-button.active,
+.app-shell.theme-ocean .mamoor-page-button.active,.app-shell.theme-sage .mamoor-page-button.active{
+ background:var(--palette-2)!important;border-color:var(--palette-2)!important;color:#fff!important;
+}
+.app-shell.theme-ocean .mamoor-table th,.app-shell.theme-sage .mamoor-table th,
+.app-shell.theme-ocean .all-havale-table th,.app-shell.theme-sage .all-havale-table th{
+ background:color-mix(in srgb,var(--palette-4) 22%,white)!important;
+}
+.app-shell.theme-ocean .mamoor-inline-icon,.app-shell.theme-sage .mamoor-inline-icon,
+.app-shell.theme-ocean .side-icon,.app-shell.theme-sage .side-icon,
+.app-shell.theme-ocean .settings-button svg,.app-shell.theme-sage .settings-button svg,
+.app-shell.theme-ocean .page-back-button svg,.app-shell.theme-sage .page-back-button svg{color:inherit}
+.app-shell.theme-ocean .app-sidebar,.app-shell.theme-sage .app-sidebar{
+ background:linear-gradient(180deg,color-mix(in srgb,var(--palette-4) 12%,white),white 42%)!important;
+}
+.app-shell.theme-ocean .side-link.active,.app-shell.theme-ocean .side-link:hover,
+.app-shell.theme-sage .side-link.active,.app-shell.theme-sage .side-link:hover{
+ background:color-mix(in srgb,var(--palette-4) 28%,white)!important;color:var(--palette-2)!important;border-color:color-mix(in srgb,var(--palette-3) 35%,white)!important;
+}
+.app-shell.theme-ocean .mamoor-button-primary,.app-shell.theme-sage .mamoor-button-primary,
+.app-shell.theme-ocean .all-havale-page-button.active,.app-shell.theme-sage .all-havale-page-button.active{color:#fff!important}
+.app-shell.theme-ocean .mamoor-sort-button:hover,.app-shell.theme-sage .mamoor-sort-button:hover,
+.app-shell.theme-ocean .havale-sort-button:hover,.app-shell.theme-sage .havale-sort-button:hover{color:var(--palette-2)!important}
