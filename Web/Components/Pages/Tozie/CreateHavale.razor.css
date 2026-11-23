@@ -93,3 +93,17 @@
 .havale-lookup-option:hover{background:#edf4fb;color:#245a92}
 .havale-lookup-empty{padding:14px 10px;color:#8994a4;text-align:center;font-size:12px}
 .havale-lookup-field small{font-weight:400}
+
+
+/* Accessible sortable table headings */
+.havale-sort-button{
+    display:inline-flex;align-items:center;gap:7px;padding:5px 7px;
+    border:0;border-radius:8px;background:transparent;color:inherit;
+    font:inherit;font-weight:800;cursor:pointer;white-space:nowrap;
+    transition:background .18s ease,color .18s ease;
+}
+.havale-sort-button:hover,.havale-sort-button:focus-visible{
+    background:color-mix(in srgb,var(--accent,#2875a8) 12%,transparent);
+    color:var(--accent,#2875a8);outline:none;
+}
+.havale-sort-button span{font-size:15px;font-weight:900;color:var(--accent,#2875a8);min-width:12px}
