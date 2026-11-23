@@ -647,3 +647,78 @@ button,a{-webkit-tap-highlight-color:transparent}
 .app-shell.theme-sage .side-link.active,.app-shell.theme-sage .side-link:hover{
   background:var(--theme-soft)!important;color:var(--palette-2)!important;border-color:var(--theme-border)!important;
 }
+
+
+/* Hard override layer: palette tokens are injected inline on .app-shell by MainLayout.razor. */
+.app-shell.theme-ocean .app-main,.app-shell.theme-sage .app-main{background:var(--surface-soft)!important;color:var(--text)!important}
+.app-shell.theme-ocean .app-topbar,.app-shell.theme-sage .app-topbar{
+ background:linear-gradient(100deg,var(--palette-4) 0%,var(--surface) 76%)!important;
+ border-bottom:3px solid var(--palette-3)!important;
+ box-shadow:0 4px 18px color-mix(in srgb,var(--palette-1) 10%,transparent)!important;
+}
+.app-shell.theme-ocean .page-content,.app-shell.theme-sage .page-content{
+ background:var(--surface-soft)!important;color:var(--text)!important;
+}
+.app-shell.theme-ocean .app-sidebar,.app-shell.theme-sage .app-sidebar{
+ background:linear-gradient(165deg,var(--palette-1),var(--palette-2))!important;color:#fff!important;
+}
+.app-shell.theme-ocean .side-link,.app-shell.theme-sage .side-link{color:var(--palette-1)!important}
+.app-shell.theme-ocean .side-link.active,.app-shell.theme-ocean .side-link:hover,
+.app-shell.theme-sage .side-link.active,.app-shell.theme-sage .side-link:hover{
+ background:var(--palette-4)!important;color:var(--palette-1)!important;border-color:var(--palette-3)!important;
+}
+.app-shell.theme-ocean .settings-button,.app-shell.theme-ocean .page-back-button,.app-shell.theme-ocean .mobile-nav-trigger,
+.app-shell.theme-sage .settings-button,.app-shell.theme-sage .page-back-button,.app-shell.theme-sage .mobile-nav-trigger{
+ background:color-mix(in srgb,var(--palette-4) 45%,white)!important;color:var(--palette-2)!important;border-color:var(--palette-3)!important;
+}
+.app-shell.theme-ocean .settings-button:hover,.app-shell.theme-ocean .page-back-button:hover,
+.app-shell.theme-sage .settings-button:hover,.app-shell.theme-sage .page-back-button:hover{
+ background:var(--palette-4)!important;color:var(--palette-1)!important;
+}
+.app-shell.theme-ocean :is(.dashboard-welcome,.distribution-heading,.mamoor-heading,.all-havale-heading,.havale-page-heading),
+.app-shell.theme-sage :is(.dashboard-welcome,.distribution-heading,.mamoor-heading,.all-havale-heading,.havale-page-heading){
+ background:linear-gradient(112deg,var(--palette-1) 0%,var(--palette-2) 58%,var(--palette-3) 100%)!important;
+ border:1px solid color-mix(in srgb,var(--palette-4) 55%,transparent)!important;
+ color:#fff!important;box-shadow:0 13px 30px color-mix(in srgb,var(--palette-1) 22%,transparent)!important;
+}
+.app-shell.theme-ocean :is(.dashboard-welcome,.distribution-heading,.mamoor-heading,.all-havale-heading,.havale-page-heading) :is(h1,h2,p,.dashboard-eyebrow,.havale-eyebrow,.all-havale-eyebrow),
+.app-shell.theme-sage :is(.dashboard-welcome,.distribution-heading,.mamoor-heading,.all-havale-heading,.havale-page-heading) :is(h1,h2,p,.dashboard-eyebrow,.havale-eyebrow,.all-havale-eyebrow){color:#fff!important}
+.app-shell.theme-ocean :is(.welcome-mark,.distribution-heading-mark,.mamoor-heading-icon,.all-havale-heading-icon,.havale-heading-icon),
+.app-shell.theme-sage :is(.welcome-mark,.distribution-heading-mark,.mamoor-heading-icon,.all-havale-heading-icon,.havale-heading-icon){
+ background:color-mix(in srgb,var(--palette-4) 30%,transparent)!important;color:#fff!important;border-color:rgba(255,255,255,.4)!important;
+}
+.app-shell.theme-ocean :is(.module-card,.distribution-card,.mamoor-panel,.all-havale-panel,.havale-panel),
+.app-shell.theme-sage :is(.module-card,.distribution-card,.mamoor-panel,.all-havale-panel,.havale-panel){
+ background:var(--surface)!important;border-color:var(--line)!important;color:var(--text)!important;
+ box-shadow:0 5px 20px color-mix(in srgb,var(--palette-1) 8%,transparent)!important;
+}
+.app-shell.theme-ocean :is(.module-card h2,.distribution-card h2,.dashboard-section-heading h2,.mamoor-section-heading h2),
+.app-shell.theme-sage :is(.module-card h2,.distribution-card h2,.dashboard-section-heading h2,.mamoor-section-heading h2){color:var(--palette-1)!important}
+.app-shell.theme-ocean :is(.module-icon,.distribution-icon,.mamoor-icon-button),
+.app-shell.theme-sage :is(.module-icon,.distribution-icon,.mamoor-icon-button){
+ background:color-mix(in srgb,var(--palette-4) 55%,white)!important;color:var(--palette-2)!important;border-color:var(--palette-3)!important;
+}
+.app-shell.theme-ocean :is(.havale-button-primary,.mamoor-button-primary,.dispatch-create-button,.dispatch-all-link,.all-havale-page-button.active,.mamoor-page-button.active),
+.app-shell.theme-sage :is(.havale-button-primary,.mamoor-button-primary,.dispatch-create-button,.dispatch-all-link,.all-havale-page-button.active,.mamoor-page-button.active){
+ background:linear-gradient(110deg,var(--palette-2),var(--palette-3))!important;border-color:var(--palette-2)!important;color:#fff!important;
+}
+.app-shell.theme-ocean :is(.havale-button-light,.mamoor-button-light,.all-havale-refresh,.havale-selection-count),
+.app-shell.theme-sage :is(.havale-button-light,.mamoor-button-light,.all-havale-refresh,.havale-selection-count){
+ background:color-mix(in srgb,var(--palette-4) 48%,white)!important;color:var(--palette-2)!important;border-color:var(--palette-3)!important;
+}
+.app-shell.theme-ocean :is(.havale-table th,.mamoor-table th,.all-havale-table th),
+.app-shell.theme-sage :is(.havale-table th,.mamoor-table th,.all-havale-table th){
+ background:color-mix(in srgb,var(--palette-4) 42%,white)!important;color:var(--palette-2)!important;
+}
+.app-shell.theme-ocean :is(.havale-search,.havale-form-grid input,.havale-form-grid select,.mamoor-page input,.mamoor-page select,.all-havale-page input),
+.app-shell.theme-sage :is(.havale-search,.havale-form-grid input,.havale-form-grid select,.mamoor-page input,.mamoor-page select,.all-havale-page input){
+ border-color:var(--line)!important;background:var(--surface)!important;color:var(--text)!important;
+}
+.app-shell.theme-ocean :is(.havale-search,.havale-form-grid input,.havale-form-grid select,.mamoor-page input,.mamoor-page select,.all-havale-page input):focus,
+.app-shell.theme-sage :is(.havale-search,.havale-form-grid input,.havale-form-grid select,.mamoor-page input,.mamoor-page select,.all-havale-page input):focus{
+ border-color:var(--palette-3)!important;box-shadow:0 0 0 3px color-mix(in srgb,var(--palette-3) 30%,transparent)!important;
+}
+.app-shell.theme-ocean .havale-step,.app-shell.theme-sage .havale-step{background:var(--palette-4)!important;color:var(--palette-1)!important}
+.app-shell.theme-ocean .havale-submit-summary strong,.app-shell.theme-sage .havale-submit-summary strong{color:var(--palette-2)!important}
+.app-shell.theme-ocean :is(.dashboard-section,.havale-section-heading,.mamoor-toolbar,.all-havale-toolbar),
+.app-shell.theme-sage :is(.dashboard-section,.havale-section-heading,.mamoor-toolbar,.all-havale-toolbar){color:var(--text)!important}
