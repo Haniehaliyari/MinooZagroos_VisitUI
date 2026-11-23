@@ -47,16 +47,54 @@
             <div class="dispatch-card-heading">
                 <span class="distribution-icon"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="18" cy="15" r="8"/><path d="M3 42c1-10 6-15 15-15s14 5 15 15M34 13h11M39.5 7.5v11M34 31h11M34 38h11"/></svg></span>
                 <h2>مأمور پخش</h2>
-                <a class="dispatch-create-button" href="/tozie/mamoor-pakhsh?create=true" title="ایجاد مأمور پخش" aria-label="ایجاد مأمور پخش">
+                <button type="button" class="dispatch-create-button" @onclick="OpenMamoorCreate" title="ایجاد مأمور پخش" aria-label="ایجاد مأمور پخش">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
-                </a>
+                </button>
             </div>
             <div class="dispatch-card-divider"></div>
-            <a class="dispatch-all-link" href="/tozie/mamoor-pakhsh">
+            <button type="button" class="dispatch-all-link" @onclick="OpenMamoorList">
                 <span class="dispatch-all-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h13v16H7zM4 7v14h13M10 9h7M10 13h7M10 17h5"/></svg></span>
                 <span>مشاهده مأموران پخش</span>
                 <svg class="dispatch-link-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
-            </a>
+            </button>
         </section>
     </section>
+
+    @if (showMamoorSection)
+    {
+        <section class="distribution-mamoor-inline" aria-label="فهرست مأموران پخش">
+            <Web.Components.Pages.Tozie.MamoorPakhsh @key="mamoorComponentKey" CreateOnOpen="@createMamoorOnOpen" />
+        </section>
+    }
 </div>
+
+@code {
+    private bool showMamoorSection;
+    private bool createMamoorOnOpen;
+    private int mamoorComponentKey;
+
+    private void OpenMamoorCreate()
+    {
+        createMamoorOnOpen = true;
+        showMamoorSection = true;
+        mamoorComponentKey++;
+    }
+
+    private void OpenMamoorList()
+    {
+        createMamoorOnOpen = false;
+        showMamoorSection = true;
+        mamoorComponentKey++;
+    }
+}
+
+<style>
+    .distribution-mamoor-inline {
+        margin-top: 28px;
+        width: 100%;
+    }
+
+    .distribution-mamoor-inline .mamoor-page {
+        margin-top: 0;
+    }
+</style>
