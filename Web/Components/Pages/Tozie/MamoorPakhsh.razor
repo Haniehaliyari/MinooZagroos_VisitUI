@@ -8,6 +8,7 @@
 @using Web.Components.Layout
 @using MyProject.Services.Api
 @inject BackendApiClient ApiClient
+@inject NavigationManager NavigationManager
 
 <PageTitle>مدیریت مأموران پخش | مینو زاگرس</PageTitle>
 
@@ -146,6 +147,20 @@
     </div>
 }
 
+@if (showSuccessModal)
+{
+    <div class="mamoor-modal-backdrop success-backdrop">
+        <section class="mamoor-confirm-modal success-modal" role="dialog" aria-modal="true" aria-labelledby="mamoor-success-title" dir="rtl">
+            <div class="mamoor-success-icon">✓</div>
+            <h2 id="mamoor-success-title">عملیات با موفقیت انجام شد</h2>
+            <p>@successMessage</p>
+            <div class="mamoor-modal-footer">
+                <button type="button" class="mamoor-button mamoor-button-primary" @onclick="ConfirmSuccessAndReload">تأیید</button>
+            </div>
+        </section>
+    </div>
+}
+
 @if (pendingDelete is not null)
 {
     <div class="mamoor-modal-backdrop" @onclick="CancelDelete">
@@ -161,6 +176,18 @@
         </section>
     </div>
 }
+
+<style>
+    .success-backdrop { z-index: 1200; }
+    .success-modal { text-align: center; }
+    .success-modal h2 { margin: 12px 0 8px; }
+    .success-modal p { line-height: 1.9; margin: 0 0 18px; }
+    .success-modal .mamoor-modal-footer { justify-content: center; }
+    .mamoor-success-icon {
+        display: grid; place-items: center; width: 58px; height: 58px; margin: 0 auto;
+        border-radius: 50%; background: #e7f7ed; color: #16834a; font-size: 30px; font-weight: 700;
+    }
+</style>
 
 @code {
     [SupplyParameterFromQuery(Name = "create")]
@@ -181,7 +208,8 @@
     private string searchText = "", sarparastSearch = "";
     private string? loadError, pageMessage, editorError, deleteError;
     private string? sarparastLookupMessage;
-    private bool messageIsError, loading, showEditor, isEdit, saving, deleting, showSarparastOptions;
+    private bool messageIsError, loading, showEditor, isEdit, saving, deleting, showSarparastOptions, showSuccessModal;
+    private string successMessage = "";
     private decimal editingSN;
 
     private List<MamoorItem> FilteredItems => items.Where(x =>
@@ -346,12 +374,19 @@
             var json = await response.Content.ReadAsStringAsync();
             EnsureSuccess(response, json, isEdit ? "ویرایش مأمور پخش" : "ثبت مأمور پخش");
             showEditor = false;
-            pageMessage = isEdit ? "اطلاعات مأمور پخش با موفقیت به‌روزرسانی شد." : "مأمور پخش با موفقیت ثبت شد.";
-            messageIsError = false;
-            await LoadAllAsync();
+            successMessage = isEdit
+                ? $"مأمور پخش «{form.MamoorPakhshDS}» با موفقیت ویرایش شد."
+                : "مأمور پخش جدید با موفقیت افزوده شد.";
+            showSuccessModal = true;
         }
         catch (Exception ex) { editorError = DescribeError(isEdit ? "ویرایش مأمور پخش" : "ثبت مأمور پخش", ex); }
         finally { saving = false; }
+    }
+
+    private void ConfirmSuccessAndReload()
+    {
+        showSuccessModal = false;
+        NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
     }
 
     private void AskDelete(MamoorItem item) { pendingDelete = item; deleteError = null; }
