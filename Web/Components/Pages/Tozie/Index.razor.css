@@ -14,10 +14,10 @@
     width:min(100%,520px);
     margin:0 auto 26px;
     padding:7px 58px;
-    border:1px solid color-mix(in srgb,var(--accent) 35%,var(--line));
-    border-radius:12px;
-    background:linear-gradient(110deg,color-mix(in srgb,var(--accent) 9%,var(--surface)),var(--surface));
-    box-shadow:0 4px 14px color-mix(in srgb,var(--accent) 8%,transparent);
+    border:1px solid color-mix(in srgb,var(--palette-3,var(--accent-soft)) 38%,transparent);
+    border-radius:16px;
+    background:linear-gradient(112deg,var(--palette-1,#1b365d) 0%,var(--palette-2,var(--accent)) 58%,var(--palette-3,var(--accent-soft)) 100%);
+    box-shadow:0 12px 28px color-mix(in srgb,var(--palette-1,var(--text)) 18%,transparent);
 }
 .distribution-heading h1{margin:0;color:var(--text);font-size:17px;font-weight:850}
 .distribution-heading-mark{
