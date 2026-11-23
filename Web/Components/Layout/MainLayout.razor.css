@@ -434,3 +434,49 @@
         padding:16px!important;
     }
 }
+
+
+/* Global responsive content: never hide information on narrow screens.
+   Wide tables, filters and toolbars remain reachable through horizontal scrolling. */
+@media(max-width:760px){
+  .page-content{
+    overflow-x:auto!important;
+    overflow-y:auto!important;
+    overscroll-behavior-x:contain;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-gutter:stable;
+  }
+  .page-content table{
+    display:block!important;
+    width:max-content!important;
+    min-width:100%!important;
+    max-width:100%!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    white-space:normal;
+    -webkit-overflow-scrolling:touch;
+  }
+  .page-content [class*="table-wrap"],
+  .page-content [class*="table-container"],
+  .page-content [class*="table-responsive"],
+  .page-content [class*="grid-wrap"],
+  .page-content [class*="list-wrap"]{
+    max-width:100%!important;
+    overflow-x:auto!important;
+    overflow-y:visible;
+    -webkit-overflow-scrolling:touch;
+  }
+  .page-content [class*="toolbar"],
+  .page-content [class*="filter-row"],
+  .page-content [class*="action-row"],
+  .page-content [class*="header-actions"]{
+    max-width:100%;
+    overflow-x:auto;
+    flex-wrap:nowrap;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:thin;
+  }
+}
+@media(min-width:761px){
+  .page-content{overflow-x:visible}
+}
