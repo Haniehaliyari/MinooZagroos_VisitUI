@@ -383,10 +383,12 @@
         finally { saving = false; }
     }
 
-    private void ConfirmSuccessAndReload()
+    private async Task ConfirmSuccessAndReload()
     {
         showSuccessModal = false;
-        NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
+        successMessage = "";
+        searchText = "";
+        await LoadAllAsync();
     }
 
     private void AskDelete(MamoorItem item) { pendingDelete = item; deleteError = null; }
@@ -405,7 +407,7 @@
             EnsureSuccess(response, json, "حذف مأمور پخش");
             var deletedMamoorName = pendingDelete.MamoorPakhshDS;
             pendingDelete = null;
-            successMessage = $"مأمور پخش «{deletedMamoorName}» با موفقیت حذف گردید.";
+            successMessage = $"مأمور پخش «{deletedMamoorName}» با موفقیت حذف شد.";
             showSuccessModal = true;
         }
         catch (Exception ex) { deleteError = DescribeError("حذف مأمور پخش", ex); }
