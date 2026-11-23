@@ -1,9 +1,12 @@
 .havale-page{max-width:1280px;margin:0 auto;padding:30px 34px 48px;color:var(--text-primary,#202b3c)}
-.havale-page-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px}
-.havale-eyebrow{font-size:12px;color:#64748b;margin-bottom:8px}
-.havale-page-heading h1{font-size:25px;font-weight:800;margin:0 0 8px}
+.havale-page-heading{position:relative;isolation:isolate;overflow:hidden;display:flex;align-items:center;justify-content:space-between;gap:20px;margin:0 0 26px;padding:25px 28px;border:1px solid color-mix(in srgb,var(--palette-3,var(--accent-soft)) 38%,transparent);border-radius:18px;background:linear-gradient(112deg,var(--palette-1,#1b365d) 0%,var(--palette-2,var(--accent)) 58%,var(--palette-3,var(--accent-soft)) 100%);color:#fff;box-shadow:0 13px 30px color-mix(in srgb,var(--palette-1,var(--text)) 18%,transparent)}
+.havale-page-heading:after{content:"";position:absolute;z-index:-1;width:250px;height:250px;left:-70px;top:-145px;border:1px solid rgba(255,255,255,.16);border-radius:50%;box-shadow:0 0 0 28px rgba(255,255,255,.045),0 0 0 58px rgba(255,255,255,.025);pointer-events:none}
+.havale-eyebrow{font-size:12px;color:var(--palette-4,#a0e0ef);margin-bottom:8px;font-weight:750}
+.havale-page-heading h1{font-size:25px;font-weight:800;margin:0 0 8px;color:#fff}
 .havale-page-heading p,.havale-section-heading p{margin:0;color:#8490a2;font-size:13px}
-.havale-heading-icon{width:52px;height:52px;border-radius:16px;background:#eaf1fb;color:#245a92;display:grid;place-items:center;font-size:27px}
+.havale-page-heading p{color:rgba(255,255,255,.84)}
+.havale-heading-icon{position:relative;z-index:1;width:58px;height:58px;flex:0 0 58px;border:1px solid rgba(255,255,255,.25);border-radius:17px;background:color-mix(in srgb,var(--palette-4,#a0e0ef) 24%,transparent);color:#fff;display:grid;place-items:center;font-size:27px}
+.havale-heading-icon svg{width:29px;height:29px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .havale-panel{background:var(--surface,#fff);border:1px solid var(--border,#e7ebf1);border-radius:16px;padding:22px;margin-bottom:18px;box-shadow:0 5px 20px rgba(25,45,75,.035)}
 .havale-section-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
 .havale-section-heading>div{display:flex;align-items:center;gap:12px}
