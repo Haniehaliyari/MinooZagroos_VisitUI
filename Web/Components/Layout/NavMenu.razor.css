@@ -126,3 +126,10 @@
 
 .side-link-disabled{color:var(--muted);opacity:.78;cursor:default}
 .side-link-disabled:hover{background:transparent;border-color:transparent;color:var(--muted)}
+
+
+/* Consistent modern line icons and comfortable mobile navigation targets. */
+.side-link,.nav-logout-button,.nav-toggle-button{min-height:44px}
+.side-icon,.nav-logout-button svg,.nav-toggle-button svg{stroke-width:1.85;stroke-linecap:round;stroke-linejoin:round;transition:transform .18s ease,color .18s ease}
+.side-link:hover .side-icon,.nav-logout-button:hover svg,.nav-toggle-button:hover svg{transform:scale(1.08)}
+@media(max-width:760px){.side-link{min-height:47px;padding:11px 12px}.nav-logout-button{min-height:46px}.side-icon{width:20px;height:20px;flex-basis:20px}}
