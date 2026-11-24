@@ -480,3 +480,32 @@
 @media(min-width:761px){
   .page-content{overflow-x:visible}
 }
+
+
+
+/* Application-wide dark appearance */
+.app-shell.theme-dark{color-scheme:dark}
+.app-shell.theme-dark .app-topbar{background:var(--surface);border-color:var(--line)}
+.app-shell.theme-dark .page-content{color:var(--text)}
+.app-shell.theme-dark .settings-button,.app-shell.theme-dark .settings-heading>button{background:var(--surface-soft);color:var(--text);border-color:var(--line)}
+.app-shell.theme-dark .settings-popover,.app-shell.theme-dark .mamoor-panel,.app-shell.theme-dark .all-havale-panel,.app-shell.theme-dark .mamoor-modal,.app-shell.theme-dark .mamoor-confirm-modal{background:var(--surface);color:var(--text);border-color:var(--line)}
+.app-shell.theme-dark .mamoor-table th,.app-shell.theme-dark .all-havale-table th{background:#243447!important;color:#c5d2e0!important;border-color:var(--line)!important}
+.app-shell.theme-dark .mamoor-table td,.app-shell.theme-dark .all-havale-table td{background:var(--surface)!important;color:#e2eaf3!important;border-color:var(--line)!important}
+.app-shell.theme-dark .mamoor-table tbody tr:hover td,.app-shell.theme-dark .all-havale-table tbody tr:hover td{background:#223246!important}
+.app-shell.theme-dark .mamoor-search,.app-shell.theme-dark .all-havale-search,.app-shell.theme-dark .mamoor-field input,.app-shell.theme-dark .mamoor-field select,.app-shell.theme-dark .mamoor-field textarea{background:#111d2a!important;color:#edf4fb!important;border-color:#3b4d60!important}
+.app-shell.theme-dark .mamoor-search::placeholder,.app-shell.theme-dark .all-havale-search::placeholder{color:#91a3b6}
+.app-shell.theme-dark .mamoor-sort-button,.app-shell.theme-dark .mamoor-person-name,.app-shell.theme-dark .mamoor-modal-heading-copy h2,.app-shell.theme-dark .mamoor-modal-heading-copy p{color:#edf4fb}
+.app-shell.theme-dark .mamoor-subline,.app-shell.theme-dark .mamoor-table-footer,.app-shell.theme-dark .mamoor-field,.app-shell.theme-dark .mamoor-field small{color:#aab8c8}
+.app-shell.theme-dark .mamoor-button-light,.app-shell.theme-dark .mamoor-row-action,.app-shell.theme-dark .all-havale-refresh,.app-shell.theme-dark .all-havale-page-button,.app-shell.theme-dark .all-havale-page-arrow{background:#223246!important;color:#dce8f4!important;border-color:#3b4d60!important}
+.app-shell.theme-dark .all-havale-count{background:#263b52;color:#c8e7f6}
+.app-shell.theme-dark .mamoor-empty{color:#b6c4d2}
+.app-shell.theme-dark .mamoor-empty strong,.app-shell.theme-dark .all-havale-empty strong{color:#edf4fb}
+.app-shell.theme-dark .mamoor-empty-icon,.app-shell.theme-dark .all-havale-empty-icon{background:#26384b;color:#a9d9f0}
+.app-shell.theme-dark .mamoor-modal-backdrop{background:rgba(1,7,14,.72)}
+.app-shell.theme-dark .mamoor-modal-header,.app-shell.theme-dark .mamoor-modal-footer{border-color:var(--line)}
+.app-shell.theme-dark .settings-divider{background:var(--line)}
+.app-shell.theme-dark .theme-option{background:#1e2d3d;color:#edf4fb;border-color:#3b4d60}
+.app-shell.theme-dark .settings-appearance{width:100%;display:flex;align-items:center;gap:10px;padding:12px 2px;border:0;background:none;color:var(--text);font:inherit;font-size:12px;text-align:start;cursor:pointer}
+.app-shell.theme-dark .settings-appearance svg{width:18px;height:18px;color:var(--accent)}
+.app-shell.theme-light .settings-appearance{width:100%;display:flex;align-items:center;gap:10px;padding:12px 2px;border:0;background:none;color:var(--text);font:inherit;font-size:12px;text-align:start;cursor:pointer}
+.app-shell.theme-light .settings-appearance svg{width:18px;height:18px;color:var(--accent)}
