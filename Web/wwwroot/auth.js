@@ -1,15 +1,22 @@
 window.authCookie = {
     getTheme: () => {
+        // One-time reset after the appearance-switch update: start in light mode,
+        // then preserve the user's own choice on subsequent visits.
+        const initialized = localStorage.getItem("minoo-theme-v2-initialized");
+        if (initialized !== "1") {
+            localStorage.setItem("minoo-theme", "light");
+            localStorage.setItem("minoo-theme-v2-initialized", "1");
+        }
+
         const saved = localStorage.getItem("minoo-theme");
-        const theme = saved === "light" || saved === "dark"
-            ? saved
-            : (window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+        const theme = saved === "dark" ? "dark" : "light";
         document.documentElement.dataset.theme = theme;
         return theme === "dark";
     },
     setTheme: (theme) => {
-        const normalized = theme === "light" ? "light" : "dark";
+        const normalized = theme === "dark" ? "dark" : "light";
         localStorage.setItem("minoo-theme", normalized);
+        localStorage.setItem("minoo-theme-v2-initialized", "1");
         document.documentElement.dataset.theme = normalized;
     },
     login: async (username, password) => {
