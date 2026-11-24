@@ -1,58 +1,37 @@
 <div class="nav-brand">
     <img class="nav-brand-logo" src="/images/logo-minoozagros.png" alt="لوگوی مینو زاگرس" />
 </div>
-
 <div class="nav-toggle-anchor">
-    <button class="nav-toggle-button" @onclick="OnToggleSidebar" aria-label="@(English ? "Toggle navigation" : "باز و بسته کردن منو")" title="@(English ? "Toggle navigation" : "باز و بسته کردن منو")">
+    <button class="nav-toggle-button" @onclick="OnToggleSidebar" aria-label="باز و بسته کردن منو" title="باز و بسته کردن منو">
         <svg viewBox="0 0 24 24" aria-hidden="true">
-            @if (SidebarCollapsed)
-            {
-                <path d="m15 5-7 7 7 7" />
-            }
-            else
-            {
-                <path d="m9 5 7 7-7 7" />
-            }
+            @if (SidebarCollapsed) { <path d="m15 5-7 7 7 7" /> }
+            else { <path d="m9 5 7 7-7 7" /> }
         </svg>
     </button>
 </div>
-
-<nav class="side-navigation" aria-label="Main navigation">
+<nav class="side-navigation" aria-label="منوی اصلی">
     <NavLink href="/dashboard" Match="NavLinkMatch.All" class="side-link" @onclick="OnNavigate">
-        <svg class="side-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z" /></svg>
-        <span>@(English ? "Dashboard" : "داشبورد")</span>
+        <svg class="side-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z" /></svg><span>داشبورد</span>
     </NavLink>
-
     <NavLink href="/tozie" class="side-link" @onclick="OnNavigate">
-        <svg class="side-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 5h12v12H2zM14 9h4l4 4v4h-8z"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="19" r="2"/></svg>
-        <span>@(English ? "Distribution" : "توزیع")</span>
+        <svg class="side-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 5h12v12H2zM14 9h4l4 4v4h-8z"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="19" r="2"/></svg><span>توزیع</span>
     </NavLink>
-
     <div class="side-link side-link-disabled" aria-disabled="true">
-        <svg class="side-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9h18l-2 12H5zM2 9l3-6h14l3 6M9 9l2-6m4 6-2-6"/></svg>
-        <span>@(English ? "Sales" : "فروش")</span>
+        <svg class="side-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9h18l-2 12H5zM2 9l3-6h14l3 6M9 9l2-6m4 6-2-6"/></svg><span>فروش</span>
     </div>
-
     <div class="side-link side-link-disabled" aria-disabled="true">
-        <svg class="side-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 10 5-10 5L2 7zM2 7v10l10 5 10-5V7M12 12v10"/></svg>
-        <span>@(English ? "Inventory" : "انبار")</span>
+        <svg class="side-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 10 5-10 5L2 7zM2 7v10l10 5 10-5V7M12 12v10"/></svg><span>انبار</span>
     </div>
-
     <div class="side-link side-link-disabled" aria-disabled="true">
-        <svg class="side-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 7h8M8 11h3m3 0h2m-8 4h3m3 0h2m-8 4h3"/></svg>
-        <span>@(English ? "Accounting & Finance" : "حسابداری و مالی")</span>
+        <svg class="side-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 7h8M8 11h3m3 0h2m-8 4h3m3 0h2m-8 4h3"/></svg><span>حسابداری و مالی</span>
     </div>
 </nav>
-
 <div class="nav-menu-footer">
     <button class="nav-logout-button" @onclick="OnLogout">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5M16 16l5-4-5-4M21 12H9" /></svg>
-        <span>@(English ? "Sign out" : "خروج")</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5M16 16l5-4-5-4M21 12H9" /></svg><span>خروج</span>
     </button>
 </div>
-
 @code {
-    [Parameter] public bool English { get; set; }
     [Parameter] public bool SidebarCollapsed { get; set; }
     [Parameter] public EventCallback OnNavigate { get; set; }
     [Parameter] public EventCallback OnToggleSidebar { get; set; }
