@@ -230,3 +230,33 @@ a.module-card:focus-visible{outline:3px solid color-mix(in srgb,var(--accent) 45
 @media(prefers-reduced-motion:reduce){
     .dashboard-welcome h1,.welcome-mark,.welcome-mark:before,.welcome-mark:after,.welcome-mark svg{animation:none!important}
 }
+
+
+/* Premium RTL typography entrance: copy glides in from the right */
+.dashboard-welcome>div:first-child{
+    position:relative;
+    z-index:1;
+}
+.dashboard-eyebrow{
+    animation:dashboard-eyebrow-enter .85s cubic-bezier(.2,.75,.25,1) both;
+    text-shadow:0 0 16px rgba(190,235,255,.28);
+}
+.dashboard-welcome h1{
+    animation:
+        dashboard-title-enter 1.15s cubic-bezier(.16,1,.3,1) .12s both,
+        dashboard-title-shimmer 7s ease-in-out 1.25s infinite;
+    transform-origin:right center;
+    text-shadow:0 3px 22px rgba(190,235,255,.12);
+}
+@keyframes dashboard-eyebrow-enter{
+    from{opacity:0;transform:translateX(34px);filter:blur(5px)}
+    to{opacity:1;transform:translateX(0);filter:blur(0)}
+}
+@keyframes dashboard-title-enter{
+    0%{opacity:0;transform:translateX(76px) scale(.985);filter:blur(9px)}
+    72%{opacity:1;transform:translateX(-4px) scale(1.005);filter:blur(0)}
+    100%{opacity:1;transform:translateX(0) scale(1);filter:blur(0)}
+}
+@media(prefers-reduced-motion:reduce){
+    .dashboard-eyebrow,.dashboard-welcome h1{animation:none!important;filter:none!important;transform:none!important}
+}
