@@ -4,66 +4,74 @@
 @inject IJSRuntime JS
 @inject NavigationManager Navigation
 
-<div class="app-shell theme-@(selectedTheme) @(sidebarCollapsed ? "sidebar-collapsed" : "")" style="@ThemeVariables" dir="@(english ? "ltr" : "rtl")">
+<div class="app-shell theme-@(selectedTheme) @(isDark ? "theme-dark" : "theme-light") @(sidebarCollapsed ? "sidebar-collapsed" : "")" style="@ThemeVariables" dir="rtl">
     @if (sidebarOpen)
     {
-        <button class="sidebar-backdrop" @onclick="CloseSidebar" aria-label="Close navigation"></button>
+        <button class="sidebar-backdrop" @onclick="CloseSidebar" aria-label="بستن منو"></button>
     }
     <aside class="app-sidebar @(sidebarOpen ? "sidebar-open" : "") @(sidebarCollapsed ? "sidebar-collapsed" : "")">
-        <NavMenu English="english" SidebarCollapsed="sidebarCollapsed" OnNavigate="CloseSidebar" OnToggleSidebar="ToggleSidebar" OnLogout="Logout" />
+        <NavMenu SidebarCollapsed="sidebarCollapsed" OnNavigate="CloseSidebar" OnToggleSidebar="ToggleSidebar" OnLogout="Logout" />
     </aside>
-
     <main class="app-main">
         <header class="app-topbar">
             @if (settingsOpen)
             {
-                <button class="settings-backdrop" @onclick="CloseSettings" aria-label="@(english ? "Close settings" : "بستن تنظیمات")"></button>
+                <button class="settings-backdrop" @onclick="CloseSettings" aria-label="بستن تنظیمات"></button>
             }
             <div class="topbar-leading">
-                <button class="page-back-button" @onclick="GoBack" title="@(english ? "Go back" : "بازگشت به صفحه قبل")" aria-label="@(english ? "Go back" : "بازگشت به صفحه قبل")">
+                <button class="page-back-button" @onclick="GoBack" title="بازگشت به صفحه قبل" aria-label="بازگشت به صفحه قبل">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6M9 12h12" /></svg>
                 </button>
                 <div class="settings-wrap">
-                    <button class="settings-button" @onclick="ToggleSettings" aria-label="@(english ? "General settings" : "تنظیمات عمومی")" aria-expanded="@settingsOpen">
+                    <button class="settings-button" @onclick="ToggleSettings" aria-label="تنظیمات عمومی" aria-expanded="@settingsOpen">
                         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.4" /><path d="M5.5 20c.5-3.5 3-5.5 6.5-5.5s6 2 6.5 5.5" /></svg>
                     </button>
                     @if (settingsOpen)
                     {
                         <section class="settings-popover">
                             <div class="settings-heading">
-                                <div><strong>@(english ? "General settings" : "تنظیمات عمومی")</strong><small>@(english ? "Personalize your workspace" : "شخصی‌سازی فضای کاری")</small></div>
-                                <button @onclick="ToggleSettings" aria-label="Close settings"><svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18" /></svg></button>
+                                <div><strong>تنظیمات عمومی</strong><small>شخصی‌سازی فضای کاری</small></div>
+                                <button @onclick="ToggleSettings" aria-label="بستن تنظیمات"><svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18" /></svg></button>
                             </div>
-                            <span class="settings-label">@(english ? "COLOR THEMES" : "انتخاب تم رنگی")</span>
+                            <span class="settings-label">انتخاب تم رنگی</span>
                             <div class="theme-list">
                                 <button class="theme-option @(selectedTheme == "ocean" ? "selected" : "")" @onclick='() => SetTheme("ocean")'>
                                     <span class="palette-preview ocean"><i></i><i></i><i></i><i></i></span>
-                                    <span><b>@(english ? "Ocean blue" : "آبی اقیانوسی")</b><small>#1B365D · #005A9C · #60C1E5 · #A0E0EF</small></span>
+                                    <span><b>آبی اقیانوسی</b><small>#1B365D · #005A9C · #60C1E5 · #A0E0EF</small></span>
                                     @if (selectedTheme == "ocean") { <svg class="theme-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6" /></svg> }
                                 </button>
                                 <button class="theme-option @(selectedTheme == "sage" ? "selected" : "")" @onclick='() => SetTheme("sage")'>
                                     <span class="palette-preview sage"><i></i><i></i><i></i><i></i></span>
-                                    <span><b>@(english ? "Sage & graphite" : "سبز مریم‌گلی و خاکستری")</b><small>#202734 · #36415A · #B7D894 · #E0F8C7</small></span>
+                                    <span><b>سبز مریم‌گلی و خاکستری</b><small>#202734 · #36415A · #B7D894 · #E0F8C7</small></span>
                                     @if (selectedTheme == "sage") { <svg class="theme-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6" /></svg> }
                                 </button>
                             </div>
                             <div class="settings-divider"></div>
-                            <button class="settings-language" @onclick="ToggleLanguage"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3a14 14 0 0 1 0 18" /></svg>@(english ? "Switch to Persian" : "تغییر زبان به انگلیسی")</button>
-                            <button class="settings-logout" @onclick="Logout"><svg viewBox="0 0 24 24"><path d="M10 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5M16 16l5-4-5-4M21 12H9" /></svg>@(english ? "Sign out" : "خروج از حساب کاربری")</button>
+                            <button class="settings-appearance" @onclick="ToggleAppearance">
+                                @if (isDark)
+                                {
+                                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg>
+                                    <span>فعال‌کردن حالت روشن</span>
+                                }
+                                else
+                                {
+                                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 15.2A8.5 8.5 0 0 1 8.8 3.5 8.7 8.7 0 1 0 20.5 15.2Z"/></svg>
+                                    <span>فعال‌کردن حالت تاریک</span>
+                                }
+                            </button>
+                            <button class="settings-logout" @onclick="Logout"><svg viewBox="0 0 24 24"><path d="M10 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5M16 16l5-4-5-4M21 12H9" /></svg>خروج از حساب کاربری</button>
                         </section>
                     }
                 </div>
             </div>
             <div class="topbar-actions">
                 <div class="user-pill">
-                    <button class="mobile-nav-trigger" @onclick="ToggleSidebar" aria-label="@(english ? "Open navigation" : "باز کردن منو")"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6.5h16M4 12h16M4 17.5h16" /></svg></button>
+                    <button class="mobile-nav-trigger" @onclick="ToggleSidebar" aria-label="باز کردن منو"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6.5h16M4 12h16M4 17.5h16" /></svg></button>
                 </div>
             </div>
         </header>
-        <CascadingValue Value="english">
-            <CascadingValue Value="selectedTheme">
-                <section class="page-content">@Body</section>
-            </CascadingValue>
+        <CascadingValue Value="selectedTheme">
+            <section class="page-content">@Body</section>
         </CascadingValue>
     </main>
 </div>
@@ -72,15 +80,18 @@
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationStateTask { get; set; }
     private string username = "کاربر";
     private string selectedTheme = "ocean";
-    private bool english;
+    private bool isDark;
     private bool sidebarOpen;
     private bool sidebarCollapsed;
     private bool settingsOpen;
 
-    // Inline design tokens ensure every isolated component receives the active palette.
-    private string ThemeVariables => selectedTheme == "sage"
-        ? "--palette-1:#202734;--palette-2:#36415A;--palette-3:#B7D894;--palette-4:#E0F8C7;--surface:#ffffff;--surface-soft:#f4f9ed;--text:#202734;--muted:#687487;--line:rgba(32,39,52,.16);--accent:#36415A;--accent-soft:#B7D894;--sidebar-a:#202734;--sidebar-b:#36415A;"
-        : "--palette-1:#1B365D;--palette-2:#005A9C;--palette-3:#60C1E5;--palette-4:#A0E0EF;--surface:#ffffff;--surface-soft:#f2f9fc;--text:#1B365D;--muted:#64788d;--line:rgba(27,54,93,.16);--accent:#005A9C;--accent-soft:#60C1E5;--sidebar-a:#1B365D;--sidebar-b:#005A9C;";
+    private string ThemeVariables => isDark
+        ? (selectedTheme == "sage"
+            ? "--palette-1:#202734;--palette-2:#36415A;--palette-3:#B7D894;--palette-4:#E0F8C7;--surface:#1b2532;--surface-soft:#121b26;--text:#edf3e8;--muted:#aab5a2;--line:rgba(224,248,199,.16);--accent:#b7d894;--accent-soft:#536b43;--sidebar-a:#111923;--sidebar-b:#293a32;"
+            : "--palette-1:#1B365D;--palette-2:#005A9C;--palette-3:#60C1E5;--palette-4:#A0E0EF;--surface:#172536;--surface-soft:#101b29;--text:#eaf2fa;--muted:#a6b8ca;--line:rgba(160,224,239,.16);--accent:#75c9ee;--accent-soft:#27658a;--sidebar-a:#101b2a;--sidebar-b:#164a70;")
+        : (selectedTheme == "sage"
+            ? "--palette-1:#202734;--palette-2:#36415A;--palette-3:#B7D894;--palette-4:#E0F8C7;--surface:#ffffff;--surface-soft:#f4f9ed;--text:#202734;--muted:#687487;--line:rgba(32,39,52,.16);--accent:#36415A;--accent-soft:#B7D894;--sidebar-a:#202734;--sidebar-b:#36415A;"
+            : "--palette-1:#1B365D;--palette-2:#005A9C;--palette-3:#60C1E5;--palette-4:#A0E0EF;--surface:#ffffff;--surface-soft:#f2f9fc;--text:#1B365D;--muted:#64788d;--line:rgba(27,54,93,.16);--accent:#005A9C;--accent-soft:#60C1E5;--sidebar-a:#1B365D;--sidebar-b:#005A9C;");
 
     protected override async Task OnInitializedAsync()
     {
@@ -96,17 +107,17 @@
         if (!firstRender) return;
         try
         {
-            english = await JS.InvokeAsync<bool>("minooUi.getLanguage");
+            isDark = await JS.InvokeAsync<bool>("authCookie.getTheme");
             selectedTheme = await JS.InvokeAsync<string>("minooUi.getColorTheme");
             StateHasChanged();
         }
         catch (JSException) { }
     }
 
-    private async Task ToggleLanguage()
+    private async Task ToggleAppearance()
     {
-        english = !english;
-        await JS.InvokeVoidAsync("minooUi.setLanguage", english ? "en" : "fa");
+        isDark = !isDark;
+        await JS.InvokeVoidAsync("authCookie.setTheme", isDark ? "dark" : "light");
         settingsOpen = false;
     }
 
@@ -116,30 +127,18 @@
         await JS.InvokeVoidAsync("minooUi.setColorTheme", theme);
     }
 
-    private async Task GoBack()
-    {
-        await JS.InvokeVoidAsync("history.back");
-    }
-
+    private async Task GoBack() => await JS.InvokeVoidAsync("history.back");
     private void ToggleSettings() => settingsOpen = !settingsOpen;
     private void CloseSettings() => settingsOpen = false;
+
     private void ToggleSidebar()
     {
-        if (sidebarOpen)
-        {
-            sidebarOpen = false;
-            sidebarCollapsed = false;
-            return;
-        }
-
+        if (sidebarOpen) { sidebarOpen = false; sidebarCollapsed = false; return; }
         sidebarCollapsed = !sidebarCollapsed;
         sidebarOpen = true;
     }
-    private void CloseSidebar()
-    {
-        sidebarOpen = false;
-        sidebarCollapsed = false;
-    }
+
+    private void CloseSidebar() { sidebarOpen = false; sidebarCollapsed = false; }
 
     private async Task Logout()
     {
