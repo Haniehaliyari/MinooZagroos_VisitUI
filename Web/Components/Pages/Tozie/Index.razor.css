@@ -194,3 +194,110 @@ a.distribution-card:focus-visible{outline:3px solid color-mix(in srgb,var(--acce
     .distribution-heading h1,.distribution-heading-mark,.distribution-heading-mark:before,
     .distribution-heading-mark:after,.distribution-heading-mark svg{animation:none!important}
 }
+
+
+/* Premium motion system for the distribution landing page */
+.distribution-heading{
+    overflow:hidden;
+    animation:distribution-heading-enter .9s cubic-bezier(.16,1,.3,1) both;
+}
+.distribution-heading:after{
+    content:"";
+    position:absolute;
+    z-index:0;
+    top:-75%;
+    left:-38%;
+    width:28%;
+    height:250%;
+    transform:rotate(22deg);
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.16),transparent);
+    pointer-events:none;
+    animation:distribution-banner-sweep 8s ease-in-out 1.1s infinite;
+}
+.distribution-heading h1{
+    position:relative;
+    z-index:1;
+    animation:
+        distribution-heading-text-enter 1.05s cubic-bezier(.16,1,.3,1) .12s both,
+        distribution-title-shimmer 7s ease-in-out 1.2s infinite;
+    text-shadow:0 3px 18px rgba(190,235,255,.16);
+}
+.distribution-heading-mark{z-index:1}
+.distribution-grid>.distribution-card{
+    animation:distribution-card-enter .75s cubic-bezier(.2,.75,.25,1) both;
+}
+.distribution-grid>.distribution-card:nth-child(1){animation-delay:.12s}
+.distribution-grid>.distribution-card:nth-child(2){animation-delay:.2s}
+.distribution-grid>.distribution-card:nth-child(3){animation-delay:.28s}
+.distribution-grid>.distribution-card:nth-child(4){animation-delay:.36s}
+.distribution-card .dispatch-card-heading h2{
+    transition:color .25s ease,letter-spacing .25s ease;
+}
+.distribution-card:hover .dispatch-card-heading h2{
+    color:var(--accent);
+    letter-spacing:.15px;
+}
+.distribution-card .distribution-icon{
+    position:relative;
+    overflow:visible;
+    transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s ease,background .3s ease;
+}
+.distribution-card:hover .distribution-icon{
+    transform:translateY(-3px) scale(1.045);
+    box-shadow:0 9px 22px color-mix(in srgb,var(--accent) 18%,transparent);
+}
+.distribution-card .distribution-icon svg{
+    transform-origin:center;
+    transition:transform .3s ease,filter .3s ease;
+}
+.distribution-card:hover .distribution-icon svg{
+    transform:scale(1.06);
+    filter:drop-shadow(0 2px 5px color-mix(in srgb,var(--accent) 24%,transparent));
+}
+.dispatch-all-link{
+    transition:transform .22s ease,border-color .22s ease,color .22s ease,background .22s ease,box-shadow .22s ease;
+}
+.dispatch-all-link:hover{
+    transform:translateX(-3px);
+    box-shadow:0 5px 14px color-mix(in srgb,var(--accent) 10%,transparent);
+}
+.dispatch-all-link:hover .dispatch-all-icon{
+    transform:scale(1.06);
+}
+.dispatch-all-icon{transition:transform .22s ease}
+.dispatch-create-button{
+    position:relative;
+    overflow:hidden;
+}
+.dispatch-create-button:after{
+    content:"";
+    position:absolute;
+    inset:-50%;
+    background:linear-gradient(110deg,transparent 38%,rgba(255,255,255,.3) 50%,transparent 62%);
+    transform:translateX(-125%) rotate(12deg);
+    transition:transform .55s ease;
+}
+.dispatch-create-button:hover:after{transform:translateX(125%) rotate(12deg)}
+@keyframes distribution-heading-enter{
+    from{opacity:0;transform:translateY(-12px) scale(.985);filter:blur(5px)}
+    to{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
+}
+@keyframes distribution-heading-text-enter{
+    0%{opacity:0;transform:translateX(64px);filter:blur(8px)}
+    78%{opacity:1;transform:translateX(-3px);filter:blur(0)}
+    100%{opacity:1;transform:translateX(0);filter:blur(0)}
+}
+@keyframes distribution-banner-sweep{
+    0%,18%{left:-38%;opacity:0}
+    28%{opacity:1}
+    58%,100%{left:125%;opacity:0}
+}
+@keyframes distribution-card-enter{
+    from{opacity:0;transform:translateY(24px) scale(.975);filter:blur(5px)}
+    to{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
+}
+@media(prefers-reduced-motion:reduce){
+    .distribution-heading,.distribution-heading:after,.distribution-heading h1,
+    .distribution-grid>.distribution-card{animation:none!important;filter:none!important;transform:none!important}
+    .distribution-card,.distribution-card *,.dispatch-all-link,.dispatch-all-icon{transition:none!important}
+}
