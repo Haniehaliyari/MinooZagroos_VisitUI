@@ -483,3 +483,42 @@
     stroke-linejoin:round;
 }
 .mamoor-row-action span{line-height:1}
+
+
+/* Unified table alignment: centered headers and cells */
+.mamoor-table th,.mamoor-table td,
+.all-havale-table th,.all-havale-table td,
+.havale-table th,.havale-table td{
+    text-align:center!important;
+    vertical-align:middle;
+}
+.mamoor-table th .mamoor-sort-button,
+.havale-table th .havale-sort-button{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+}
+.mamoor-table .mamoor-row-actions,
+.all-havale-table .all-havale-row-actions{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    margin-inline:auto;
+}
+.mamoor-table td .mamoor-status,
+.all-havale-table td .all-havale-status{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+}
+.mamoor-table td .mamoor-row-number,
+.all-havale-table td .all-havale-row-number{
+    text-align:center;
+}
+@media(max-width:700px){
+    .mamoor-table th,.mamoor-table td,
+    .all-havale-table th,.all-havale-table td,
+    .havale-table th,.havale-table td{ text-align:center!important; }
+}
