@@ -46,7 +46,12 @@
                         <td>@Display(item.Model)</td><td>@Display(item.Rang)</td>
                         <td>@Display(FindTitle(noeMalekiat, item.NoeMalekiatSN))</td>
                         <td><span class="mamoor-status @(item.KhodrooStatus == 1 ? "active" : "inactive")"><i></i>@(item.KhodrooStatus == 1 ? "فعال" : "غیرفعال")</span></td>
-                        <td><div class="mamoor-row-actions"><button type="button" class="mamoor-row-action edit" @onclick="() => OpenEdit(item)">ویرایش</button><button type="button" class="mamoor-row-action delete" @onclick="() => AskDelete(item)">حذف</button></div></td>
+                        <td>
+                            <div class="mamoor-row-actions">
+                                <button type="button" class="mamoor-row-action edit" @onclick="() => OpenEdit(item)">ویرایش</button>
+                                <button type="button" class="mamoor-row-action delete" @onclick="() => AskDelete(item)">حذف</button>
+                            </div>
+                        </td>
                     </tr>
                 }
                 </tbody>
@@ -342,11 +347,14 @@
     {
         if (pendingDelete is null) return;
         deleting = true; deleteError = null;
+        await InvokeAsync(StateHasChanged);
+        await Task.Yield();
         try
         {
             using var client = await ApiClient.CreateAuthorizedClientAsync();
             var id = Uri.EscapeDataString(pendingDelete.KhodrooSN.ToString(CultureInfo.InvariantCulture));
-            using var response = await client.PostAsync($"{DeleteEndpoint}/{id}", null);
+            var url = $"{DeleteEndpoint}?KhodrooSN={id}";
+            using var response = await client.PostAsync(url, content: null);
             var json = await response.Content.ReadAsStringAsync();
             EnsureSuccess(response, json, "حذف خودرو");
             var name = pendingDelete.KhodrooDS; pendingDelete = null;
