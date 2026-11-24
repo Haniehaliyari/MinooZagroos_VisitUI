@@ -177,3 +177,56 @@ a.module-card:focus-visible{outline:3px solid color-mix(in srgb,var(--accent) 45
 .dashboard-welcome h1,.dashboard-welcome p{color:#fff}
 .dashboard-eyebrow{color:var(--palette-4,#a0e0ef)}
 .welcome-mark{background:color-mix(in srgb,var(--palette-4,#a0e0ef) 24%,transparent);border-color:rgba(255,255,255,.26);color:#fff}
+
+/* Subtle premium motion for the welcome banner */
+.dashboard-welcome{isolation:isolate}
+.dashboard-welcome h1{
+    display:inline-block;
+    background:linear-gradient(100deg,#fff 0%,#fff 36%,#c9f2ff 50%,#fff 64%,#fff 100%);
+    background-size:220% 100%;
+    background-position:100% 50%;
+    background-clip:text;
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    animation:dashboard-title-shimmer 7s ease-in-out infinite;
+}
+.welcome-mark{
+    position:relative;
+    animation:welcome-icon-float 4.8s ease-in-out infinite;
+    box-shadow:0 10px 28px rgba(5,25,50,.14),inset 0 1px 0 rgba(255,255,255,.2);
+}
+.welcome-mark:before,.welcome-mark:after{
+    content:"";
+    position:absolute;
+    inset:-7px;
+    border:1px solid rgba(255,255,255,.24);
+    border-radius:25px;
+    pointer-events:none;
+    animation:welcome-icon-orbit 5.5s ease-in-out infinite;
+}
+.welcome-mark:after{
+    inset:-13px;
+    border-color:rgba(255,255,255,.12);
+    border-radius:29px;
+    animation-delay:-2.75s;
+}
+.welcome-mark svg{animation:welcome-house-glow 4.8s ease-in-out infinite}
+@keyframes dashboard-title-shimmer{
+    0%,18%{background-position:100% 50%}
+    72%,100%{background-position:0% 50%}
+}
+@keyframes welcome-icon-float{
+    0%,100%{transform:translateY(0) rotate(0)}
+    50%{transform:translateY(-7px) rotate(2deg)}
+}
+@keyframes welcome-icon-orbit{
+    0%,100%{transform:scale(.96);opacity:.35}
+    50%{transform:scale(1.06);opacity:.8}
+}
+@keyframes welcome-house-glow{
+    0%,100%{filter:drop-shadow(0 0 0 rgba(255,255,255,0))}
+    50%{filter:drop-shadow(0 0 7px rgba(255,255,255,.38))}
+}
+@media(prefers-reduced-motion:reduce){
+    .dashboard-welcome h1,.welcome-mark,.welcome-mark:before,.welcome-mark:after,.welcome-mark svg{animation:none!important}
+}
