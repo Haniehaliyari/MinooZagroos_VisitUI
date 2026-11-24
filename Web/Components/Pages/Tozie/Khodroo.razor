@@ -278,18 +278,30 @@
         saving = true; await InvokeAsync(StateHasChanged); await Task.Yield();
         try
         {
-            object payload = new
-            {
-                KhodrooSN = isEdit ? editingSN : (decimal?)null,
-                KhodrooDS = form.KhodrooDS,
-                PelakNO = form.PelakNO,
-                NoeKhodrooSN = form.NoeKhodrooSN,
-                KhodrooStatus = form.KhodrooStatus,
-                RanandehSN = form.RanandehSN,
-                Model = NullIfEmpty(form.Model),
-                Rang = NullIfEmpty(form.Rang),
-                NoeMalekiatSN = form.NoeMalekiatSN
-            };
+            object payload = isEdit
+                ? new
+                {
+                    KhodrooSN = editingSN,
+                    KhodrooDS = form.KhodrooDS,
+                    PelakNO = form.PelakNO,
+                    NoeKhodrooSN = form.NoeKhodrooSN,
+                    KhodrooStatus = form.KhodrooStatus,
+                    RanandehSN = form.RanandehSN,
+                    Model = NullIfEmpty(form.Model),
+                    Rang = NullIfEmpty(form.Rang),
+                    NoeMalekiatSN = form.NoeMalekiatSN
+                }
+                : new
+                {
+                    KhodrooDS = form.KhodrooDS,
+                    PelakNO = form.PelakNO,
+                    NoeKhodrooSN = form.NoeKhodrooSN,
+                    KhodrooStatus = form.KhodrooStatus,
+                    RanandehSN = form.RanandehSN,
+                    Model = NullIfEmpty(form.Model),
+                    Rang = NullIfEmpty(form.Rang),
+                    NoeMalekiatSN = form.NoeMalekiatSN
+                };
             using var client = await ApiClient.CreateAuthorizedClientAsync();
             using var response = await client.PostAsJsonAsync(isEdit ? UpdateEndpoint : CreateEndpoint, payload);
             var json = await response.Content.ReadAsStringAsync();
