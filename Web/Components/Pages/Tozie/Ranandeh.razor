@@ -38,8 +38,85 @@ else{<div class="mamoor-table-wrap"><table class="mamoor-table"><thead><tr><th>�
  private async Task LoadAllAsync(){loading=true;loadError=null;try{using var c=await ApiClient.CreateAuthorizedClientAsync();using var r=await c.GetAsync(All);var j=await r.Content.ReadAsStringAsync();Check(r,j,"دریافت فهرست رانندگان");items.Clear();items.AddRange(ReadArray(ExtractPayload(j)).Select(Read).Where(x=>x.RanandehSN!=0));}catch(Exception e){loadError=DescribeError("دریافت فهرست رانندگان",e);}finally{loading=false;}}
  private void Sort(string c){if(sortColumn==c)ascending=!ascending;else{sortColumn=c;ascending=true;}} private string Mark(string c)=>sortColumn!=c?"↕":ascending?"↑":"↓";
  private void OpenCreate(){editing=false;editId=0;form=new(){RanandehStatus=1};error=null;editor=true;} private void Edit(Driver x){editing=true;editId=x.RanandehSN;form=new(){RanandehDS=x.RanandehDS,RanandehStatus=x.RanandehStatus};error=null;editor=true;} private void Close(){if(!saving)editor=false;}
- private async Task Save(){error=null;form.RanandehDS=(form.RanandehDS??"").Trim();if(string.IsNullOrWhiteSpace(form.RanandehDS)){error="نام راننده را وارد کنید.";return;}saving=true;try{object dto=editing?new{RanandehSN=editId,RanandehDS=form.RanandehDS,RanandehStatus=form.RanandehStatus}:new{RanandehDS=form.RanandehDS,RanandehStatus=form.RanandehStatus};using var c=await ApiClient.CreateAuthorizedClientAsync();using var r=await c.PostAsJsonAsync(editing?UpdateUrl:CreateUrl,dto);var j=await r.Content.ReadAsStringAsync();Check(r,j,editing?"ویرایش راننده":"ثبت راننده");editor=false;successText=editing?$"راننده «{form.RanandehDS}» ویرایش شد.":"راننده جدید با موفقیت ثبت شد.";success=true;}catch(Exception e){error=e.Message;}finally{saving=false;}}
- private async Task Delete(){if(pendingDelete is null)return;saving=true;error=null;try{using var c=await ApiClient.CreateAuthorizedClientAsync();var id=Uri.EscapeDataString(pendingDelete.RanandehSN.ToString(CultureInfo.InvariantCulture));using var r=await c.PostAsync($"{DeleteUrl}/{id}",null);var j=await r.Content.ReadAsStringAsync();Check(r,j,"حذف راننده");successText=$"راننده «{pendingDelete.RanandehDS}» با موفقیت حذف شد.";pendingDelete=null;success=true;}catch(Exception e){error=e.Message;}finally{saving=false;}}
+ private async Task Save()
+ {
+     error = null;
+     form.RanandehDS = (form.RanandehDS ?? "").Trim();
+     if (string.IsNullOrWhiteSpace(form.RanandehDS))
+     {
+         error = "نام راننده را وارد کنید.";
+         return;
+     }
+
+     saving = true;
+     await InvokeAsync(StateHasChanged);
+     await Task.Yield();
+     try
+     {
+         object payload = editing
+             ? new
+             {
+                 RanandehSN = editId,
+                 RanandehDS = form.RanandehDS,
+                 RanandehStatus = form.RanandehStatus
+             }
+             : new
+             {
+                 RanandehDS = form.RanandehDS,
+                 RanandehStatus = form.RanandehStatus
+             };
+
+         using var client = await ApiClient.CreateAuthorizedClientAsync();
+         using var response = await client.PostAsJsonAsync(editing ? UpdateUrl : CreateUrl, payload);
+         var json = await response.Content.ReadAsStringAsync();
+         Check(response, json, editing ? "ویرایش راننده" : "ثبت راننده");
+
+         editor = false;
+         successText = editing
+             ? $"راننده «{form.RanandehDS}» با موفقیت ویرایش شد."
+             : "راننده جدید با موفقیت ثبت شد.";
+         success = true;
+     }
+     catch (Exception ex)
+     {
+         error = DescribeError(editing ? "ویرایش راننده" : "ثبت راننده", ex);
+     }
+     finally
+     {
+         saving = false;
+     }
+ }
+ private async Task Delete()
+ {
+     if (pendingDelete is null) return;
+
+     saving = true;
+     error = null;
+     await InvokeAsync(StateHasChanged);
+     await Task.Yield();
+     try
+     {
+         using var client = await ApiClient.CreateAuthorizedClientAsync();
+         var id = Uri.EscapeDataString(pendingDelete.RanandehSN.ToString(CultureInfo.InvariantCulture));
+         var url = $"{DeleteUrl}?RanandehSN={id}";
+         using var response = await client.PostAsync(url, content: null);
+         var json = await response.Content.ReadAsStringAsync();
+         Check(response, json, "حذف راننده");
+
+         var deletedName = pendingDelete.RanandehDS;
+         pendingDelete = null;
+         successText = $"راننده «{deletedName}» با موفقیت حذف شد.";
+         success = true;
+     }
+     catch (Exception ex)
+     {
+         error = DescribeError("حذف راننده", ex);
+     }
+     finally
+     {
+         saving = false;
+     }
+ }
  private async Task Reload(){success=false;searchText="";await LoadAllAsync();}
  private static Driver Read(JsonElement x)=>new(){RanandehSN=ReadDecimal(x,"RanandehSN","Id","SN"),RanandehDS=ReadString(x,"RanandehDS","Name","DS"),RanandehNO=ReadString(x,"RanandehNO","Code","NO"),RanandehStatus=(byte)Math.Clamp(ReadDecimal(x,"RanandehStatus","Status"),0,255)};
  private static JsonElement ExtractPayload(string json){using var doc=JsonDocument.Parse(json);return FindCollection(doc.RootElement.Clone(),0);}
