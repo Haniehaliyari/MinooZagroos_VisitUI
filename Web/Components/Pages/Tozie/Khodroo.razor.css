@@ -577,3 +577,61 @@
     width:26px!important;
     height:26px!important;
 }
+
+
+/* Vehicle page typography: compact and consistent with driver/dispatch forms */
+.mamoor-heading h1{
+    font-size:22px;
+    font-weight:850;
+    line-height:1.6;
+    letter-spacing:0;
+}
+.mamoor-eyebrow{
+    font-size:11px;
+    font-weight:800;
+}
+.mamoor-modal-header h2{
+    font-size:16px;
+    font-weight:850;
+    line-height:1.6;
+}
+.mamoor-modal-header p{
+    font-size:11px;
+    line-height:1.85;
+}
+.mamoor-modal-eyebrow{
+    font-size:10px;
+    font-weight:800;
+}
+.mamoor-field{
+    font-size:11px;
+    font-weight:750;
+}
+.mamoor-field input,
+.mamoor-fixed-combo{
+    font-size:12px;
+    font-weight:450;
+}
+.mamoor-field input::placeholder{
+    font-size:10px;
+}
+.mamoor-options button,
+.mamoor-option-empty{
+    font-size:11px;
+}
+.mamoor-switch-row strong{font-size:11px}
+.mamoor-switch-row small{font-size:9px}
+.mamoor-modal-footer .mamoor-button{
+    font-size:12px;
+    font-weight:800;
+}
+.mamoor-confirm-modal h2{font-size:17px}
+.mamoor-confirm-modal p{font-size:12px;line-height:1.9}
+@media(max-width:760px){
+    .mamoor-heading h1{font-size:20px}
+    .mamoor-modal-header h2{font-size:15px}
+}
+@media(max-width:520px){
+    .mamoor-heading h1{font-size:18px}
+    .mamoor-modal-header p{font-size:10px}
+}
