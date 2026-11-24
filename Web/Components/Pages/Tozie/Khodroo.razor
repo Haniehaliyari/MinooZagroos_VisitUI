@@ -33,7 +33,18 @@
         else
         {
             <div class="mamoor-table-wrap"><table class="mamoor-table">
-                <thead><tr><th>ردیف</th><th>نام خودرو</th><th>پلاک</th><th>نوع خودرو</th><th>راننده</th><th>مدل</th><th>رنگ</th><th>نوع مالکیت</th><th>وضعیت</th><th>عملیات</th></tr></thead>
+                <thead><tr>
+                    <th>ردیف</th>
+                    <th><button class="mamoor-sort-button" @onclick='() => SortBy("name")'>نام خودرو <span>@SortMark("name")</span></button></th>
+                    <th><button class="mamoor-sort-button" @onclick='() => SortBy("plate")'>پلاک <span>@SortMark("plate")</span></button></th>
+                    <th><button class="mamoor-sort-button" @onclick='() => SortBy("type")'>نوع خودرو <span>@SortMark("type")</span></button></th>
+                    <th><button class="mamoor-sort-button" @onclick='() => SortBy("driver")'>راننده <span>@SortMark("driver")</span></button></th>
+                    <th><button class="mamoor-sort-button" @onclick='() => SortBy("model")'>مدل <span>@SortMark("model")</span></button></th>
+                    <th><button class="mamoor-sort-button" @onclick='() => SortBy("color")'>رنگ <span>@SortMark("color")</span></button></th>
+                    <th><button class="mamoor-sort-button" @onclick='() => SortBy("ownership")'>نوع مالکیت <span>@SortMark("ownership")</span></button></th>
+                    <th><button class="mamoor-sort-button" @onclick='() => SortBy("status")'>وضعیت <span>@SortMark("status")</span></button></th>
+                    <th>عملیات</th>
+                </tr></thead>
                 <tbody>
                 @foreach (var item in FilteredItems)
                 {
@@ -157,15 +168,42 @@
     private string successMessage = "";
     private bool loading, showEditor, isEdit, saving, deleting, showSuccessModal;
     private bool showNoeKhodrooOptions, showNoeMalekiatOptions, showDriverOptions;
-    private decimal editingSN;
+    private decimal editingSN;\n    private string sortColumn = "name";\n    private bool sortAscending = true;
 
-    private List<VehicleItem> FilteredItems => items.Where(x =>
-        string.IsNullOrWhiteSpace(searchText) || Contains(x.KhodrooDS, searchText) || Contains(x.PelakNO, searchText) ||
-        Contains(x.Model, searchText) || Contains(x.Rang, searchText) ||
-        Contains(FindTitle(noeKhodroos, x.NoeKhodrooSN), searchText) ||
-        Contains(FindTitle(drivers, x.RanandehSN), searchText) ||
-        Contains(FindTitle(noeMalekiat, x.NoeMalekiatSN), searchText))
-        .OrderBy(x => x.KhodrooDS).ToList();
+    private List<VehicleItem> FilteredItems
+    {
+        get
+        {
+            var query = items.Where(x =>
+                string.IsNullOrWhiteSpace(searchText) || Contains(x.KhodrooDS, searchText) || Contains(x.PelakNO, searchText) ||
+                Contains(x.Model, searchText) || Contains(x.Rang, searchText) ||
+                Contains(FindTitle(noeKhodroos, x.NoeKhodrooSN), searchText) ||
+                Contains(FindTitle(drivers, x.RanandehSN), searchText) ||
+                Contains(FindTitle(noeMalekiat, x.NoeMalekiatSN), searchText));
+
+            IOrderedEnumerable<VehicleItem> ordered = sortColumn switch
+            {
+                "plate" => sortAscending ? query.OrderBy(x => x.PelakNO) : query.OrderByDescending(x => x.PelakNO),
+                "type" => sortAscending ? query.OrderBy(x => FindTitle(noeKhodroos, x.NoeKhodrooSN)) : query.OrderByDescending(x => FindTitle(noeKhodroos, x.NoeKhodrooSN)),
+                "driver" => sortAscending ? query.OrderBy(x => FindTitle(drivers, x.RanandehSN)) : query.OrderByDescending(x => FindTitle(drivers, x.RanandehSN)),
+                "model" => sortAscending ? query.OrderBy(x => x.Model) : query.OrderByDescending(x => x.Model),
+                "color" => sortAscending ? query.OrderBy(x => x.Rang) : query.OrderByDescending(x => x.Rang),
+                "ownership" => sortAscending ? query.OrderBy(x => FindTitle(noeMalekiat, x.NoeMalekiatSN)) : query.OrderByDescending(x => FindTitle(noeMalekiat, x.NoeMalekiatSN)),
+                "status" => sortAscending ? query.OrderBy(x => x.KhodrooStatus) : query.OrderByDescending(x => x.KhodrooStatus),
+                _ => sortAscending ? query.OrderBy(x => x.KhodrooDS) : query.OrderByDescending(x => x.KhodrooDS)
+            };
+            return ordered.ThenBy(x => x.KhodrooSN).ToList();
+        }
+    }
+
+    private void SortBy(string column)
+    {
+        if (sortColumn == column) sortAscending = !sortAscending;
+        else { sortColumn = column; sortAscending = true; }
+    }
+
+    private string SortMark(string column) =>
+        sortColumn != column ? "↕" : sortAscending ? "↑" : "↓";
 
     private List<LookupItem> FilteredNoeKhodroos => FilterLookup(noeKhodroos, noeKhodrooSearch);
     private List<LookupItem> FilteredNoeMalekiats => FilterLookup(noeMalekiat, noeMalekiatSearch);
