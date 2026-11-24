@@ -454,3 +454,8 @@
 .mamoor-row-action:hover{transform:translateY(-1px);background:var(--surface-soft)}
 .mamoor-row-action.edit{color:var(--accent);border-color:color-mix(in srgb,var(--accent) 30%,var(--line))}
 .mamoor-row-action.delete{color:#c43d3d;border-color:rgba(196,61,61,.24)}
+
+/* Compact icon-only SVG actions, matching the vehicle list */
+.mamoor-row-actions{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:nowrap}
+.mamoor-row-action{width:36px;min-width:36px;height:36px;min-height:36px;padding:0;border-radius:9px}
+.mamoor-row-action svg{display:block;width:17px;height:17px;flex:0 0 17px}
