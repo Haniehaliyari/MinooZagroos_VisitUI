@@ -185,30 +185,52 @@
 
     private async Task LoadCombosAsync()
     {
+        // هر کمبو مستقل بارگذاری می‌شود؛ خطای یک endpoint نباید مانع نمایش دو کمبوی دیگر شود.
         try
         {
             using var client = await ApiClient.CreateAuthorizedClientAsync();
-            var results = await Task.WhenAll(
-                ReadLookupAsync(client, NoeKhodrooEndpoint, "نوع خودرو", new[] { "NoeKhodrooSN" }, new[] { "NoeKhodrooDS" }),
-                ReadLookupAsync(client, NoeMalekiatEndpoint, "نوع مالکیت", new[] { "NoeMalekiatSN" }, new[] { "NoeMalekiatDS" }),
-                ReadLookupAsync(client, DriverEndpoint, "راننده", new[] { "RanandehSN" }, new[] { "RanandehDS" }));
-            noeKhodroos.Clear(); noeKhodroos.AddRange(results[0]);
-            noeMalekiat.Clear(); noeMalekiat.AddRange(results[1]);
-            drivers.Clear(); drivers.AddRange(results[2]);
+            await LoadOneLookupAsync(client, NoeKhodrooEndpoint, "نوع خودرو",
+                noeKhodroos, new[] { "NoeKhodrooSN", "NoeKhodrooId" },
+                new[] { "NoeKhodrooDS", "NoeKhodrooName", "NoeKhodrooTitle" });
+            await LoadOneLookupAsync(client, DriverEndpoint, "راننده",
+                drivers, new[] { "RanandehSN", "RanandehId" },
+                new[] { "RanandehDS", "RanandehName", "RanandehTitle" });
+            await LoadOneLookupAsync(client, NoeMalekiatEndpoint, "نوع مالکیت",
+                noeMalekiat, new[] { "NoeMalekiatSN", "NoeMalekiatId" },
+                new[] { "NoeMalekiatDS", "NoeMalekiatName", "NoeMalekiatTitle" });
         }
-        catch (Exception ex) { loadError ??= DescribeError("دریافت اطلاعات کمبوها", ex); }
+        catch (Exception ex)
+        {
+            loadError = DescribeError("دریافت اطلاعات کمبوها", ex);
+        }
     }
 
-    private async Task<List<LookupItem>> ReadLookupAsync(HttpClient client, string endpoint, string name, string[] idKeys, string[] titleKeys)
+    private async Task LoadOneLookupAsync(HttpClient client, string endpoint, string name,
+        List<LookupItem> destination, string[] idKeys, string[] titleKeys)
     {
-        using var response = await client.GetAsync(endpoint);
-        var json = await response.Content.ReadAsStringAsync();
-        EnsureSuccess(response, json, $"دریافت {name}");
-        return ReadArray(ExtractPayload(json)).Select(x => new LookupItem
+        try
         {
-            Id = ReadDecimal(x, new[] { "Id", "SN" }.Concat(idKeys).ToArray()),
-            Title = ReadString(x, new[] { "Title", "Name", "DS" }.Concat(titleKeys).ToArray())
-        }).Where(x => x.Id != 0 && !string.IsNullOrWhiteSpace(x.Title)).ToList();
+            using var response = await client.GetAsync(endpoint);
+            var json = await response.Content.ReadAsStringAsync();
+            EnsureSuccess(response, json, $"دریافت {name}");
+            var rows = ReadArray(ExtractPayload(json));
+            var parsed = rows.Select(x => new LookupItem
+            {
+                Id = ReadDecimal(x, new[] { "Id", "SN" }.Concat(idKeys).ToArray()),
+                Title = ReadString(x, new[] { "Title", "Name", "DS" }.Concat(titleKeys).ToArray())
+            }).Where(x => x.Id != 0 && !string.IsNullOrWhiteSpace(x.Title)).ToList();
+
+            destination.Clear();
+            destination.AddRange(parsed);
+            if (parsed.Count == 0)
+                loadError = (loadError is null ? "" : loadError + " ") +
+                    $"پاسخ سرویس «{name}» دریافت شد، اما فیلد شناسه یا عنوان قابل تشخیص نبود.";
+        }
+        catch (Exception ex)
+        {
+            loadError = (loadError is null ? "" : loadError + " ") +
+                $"کمبوی «{name}»: {DescribeError("دریافت " + name, ex)}";
+        }
     }
 
     private void OpenCreate()
