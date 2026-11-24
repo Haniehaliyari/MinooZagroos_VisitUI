@@ -852,3 +852,28 @@ button,a{-webkit-tap-highlight-color:transparent}
 .app-shell.theme-sage :is(.modal,.modal-content,.khodroo-modal,.khodroo-confirm-modal,.mamoor-modal,.mamoor-confirm-modal,.all-havale-confirm) :is(p,small){
   color:var(--muted)!important;
 }
+
+
+
+/* Shared dark-mode tokens for pages and controls across the whole application */
+.app-shell.theme-dark .page-content{color:var(--text)!important}
+.app-shell.theme-dark .page-content :is(.ant-card,.card,.panel,.content-card,.form-card,.table-card,.content-panel,.filter-panel,.modal-content,.modal-dialog){background:var(--surface)!important;color:var(--text)!important;border-color:var(--line)!important}
+.app-shell.theme-dark .page-content :is(input:not([type=checkbox]):not([type=radio]),select,textarea,.ant-input,.ant-select-selector){background:#111d2a!important;color:#edf4fb!important;border-color:#3b4d60!important}
+.app-shell.theme-dark .page-content :is(input,textarea)::placeholder{color:#91a3b6!important}
+.app-shell.theme-dark .page-content table th{background:#243447!important;color:#c5d2e0!important;border-color:var(--line)!important}
+.app-shell.theme-dark .page-content table td{background:var(--surface)!important;color:#e2eaf3!important;border-color:var(--line)!important}
+.app-shell.theme-dark .page-content table tbody tr:hover td{background:#223246!important}
+.app-shell.theme-dark .page-content :is(.ant-card-head,.ant-card-body,.ant-modal-content,.ant-drawer-content){background:var(--surface)!important;color:var(--text)!important;border-color:var(--line)!important}
+.app-shell.theme-dark .page-content :is(.ant-card-head-title,.ant-form-item-label>label,.ant-empty-description,.ant-table-cell){color:var(--text)!important}
+.app-shell.theme-dark .page-content :is(.havale-page,.havale-section-heading h2,.havale-number){color:var(--text)!important}
+.app-shell.theme-dark .page-content .havale-panel{background:var(--surface)!important;border-color:var(--line)!important}
+.app-shell.theme-dark .page-content .havale-table th{background:#243447!important;color:#c5d2e0!important}
+.app-shell.theme-dark .page-content .havale-table td{background:var(--surface)!important;color:#e2eaf3!important;border-color:var(--line)!important}
+.app-shell.theme-dark .page-content .havale-table tbody tr:hover td{background:#223246!important}
+.app-shell.theme-dark .page-content :is(.havale-search,.havale-form-grid input,.havale-form-grid select,.havale-date-filter input){background:#111d2a!important;color:#edf4fb!important;border-color:#3b4d60!important}
+.app-shell.theme-dark .page-content :is(.havale-date-filter,.havale-empty){background:#1b2a3a!important;color:#c4d0dc!important;border-color:#3b4d60!important}
+.app-shell.theme-dark .page-content :is(.havale-section-heading p,.havale-form-grid label,.havale-date-filter label){color:#aab8c8!important}
+.app-shell.theme-dark .page-content :is(.distribution-card,.dispatch-all-link){background:var(--surface)!important;color:var(--text)!important;border-color:var(--line)!important}
+.app-shell.theme-dark .page-content :is(.distribution-card h2,.dispatch-all-link){color:var(--text)!important}
+.app-shell.theme-dark .page-content :is(.distribution-card p){color:var(--muted)!important}
+.app-shell.theme-dark .page-content :is(.ant-table,.ant-table-container,.ant-table-content,.ant-table-thead>tr>th,.ant-table-tbody>tr>td){background:var(--surface)!important;color:var(--text)!important;border-color:var(--line)!important}
