@@ -461,3 +461,25 @@
 .mamoor-table td{vertical-align:middle}
 .mamoor-ltr{direction:ltr;text-align:center;font-variant-numeric:tabular-nums}
 .mamoor-field.lookup-field{position:relative}
+
+
+/* SVG action icons */
+.mamoor-row-action{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    min-height:34px;
+    white-space:nowrap;
+}
+.mamoor-row-action svg{
+    width:15px;
+    height:15px;
+    flex:0 0 15px;
+    fill:none;
+    stroke:currentColor;
+    stroke-width:1.8;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+}
+.mamoor-row-action span{line-height:1}
