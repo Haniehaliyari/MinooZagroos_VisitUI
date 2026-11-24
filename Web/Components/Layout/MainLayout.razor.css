@@ -532,3 +532,56 @@
 .settings-appearance:hover{background:var(--accent-soft)!important;border-color:var(--accent)!important;transform:translateY(-1px)}
 .settings-appearance .appearance-icon{display:block!important;width:17px!important;height:17px!important;max-width:17px!important;max-height:17px!important;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 @media(max-width:760px){.settings-appearance{width:32px!important;height:32px!important;min-width:32px!important;min-height:32px!important}.settings-appearance .appearance-icon{width:16px!important;height:16px!important}}
+
+
+/* Final fix: render the appearance switch as a real, compact icon button. */
+.settings-popover .settings-appearance,
+.app-shell.theme-dark .settings-popover .settings-appearance,
+.app-shell.theme-light .settings-popover .settings-appearance{
+    -webkit-appearance:none!important;
+    appearance:none!important;
+    box-sizing:border-box!important;
+    display:inline-grid!important;
+    place-items:center!important;
+    flex:0 0 36px!important;
+    width:36px!important;
+    min-width:36px!important;
+    max-width:36px!important;
+    height:36px!important;
+    min-height:36px!important;
+    max-height:36px!important;
+    padding:0!important;
+    margin:0!important;
+    border:1px solid var(--line)!important;
+    border-radius:10px!important;
+    background:var(--surface-soft)!important;
+    color:var(--accent)!important;
+    font-size:0!important;
+    line-height:0!important;
+    text-align:center!important;
+    vertical-align:middle!important;
+    cursor:pointer!important;
+}
+.settings-popover .settings-appearance:hover{
+    background:var(--accent-soft)!important;
+    border-color:var(--accent)!important;
+}
+.settings-popover .settings-appearance .appearance-icon{
+    display:block!important;
+    width:19px!important;
+    min-width:19px!important;
+    max-width:19px!important;
+    height:19px!important;
+    min-height:19px!important;
+    max-height:19px!important;
+    margin:0!important;
+    padding:0!important;
+    fill:none!important;
+    stroke:currentColor!important;
+    stroke-width:1.9!important;
+    stroke-linecap:round!important;
+    stroke-linejoin:round!important;
+    overflow:visible!important;
+    visibility:visible!important;
+    opacity:1!important;
+}
