@@ -454,3 +454,42 @@
 .mamoor-row-action:hover{transform:translateY(-1px);background:var(--surface-soft)}
 .mamoor-row-action.edit{color:var(--accent);border-color:color-mix(in srgb,var(--accent) 30%,var(--line))}
 .mamoor-row-action.delete{color:#c43d3d;border-color:rgba(196,61,61,.24)}
+
+
+/* Unified table alignment: centered headers and cells */
+.mamoor-table th,.mamoor-table td,
+.all-havale-table th,.all-havale-table td,
+.havale-table th,.havale-table td{
+    text-align:center!important;
+    vertical-align:middle;
+}
+.mamoor-table th .mamoor-sort-button,
+.havale-table th .havale-sort-button{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+}
+.mamoor-table .mamoor-row-actions,
+.all-havale-table .all-havale-row-actions{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    margin-inline:auto;
+}
+.mamoor-table td .mamoor-status,
+.all-havale-table td .all-havale-status{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+}
+.mamoor-table td .mamoor-row-number,
+.all-havale-table td .all-havale-row-number{
+    text-align:center;
+}
+@media(max-width:700px){
+    .mamoor-table th,.mamoor-table td,
+    .all-havale-table th,.all-havale-table td,
+    .havale-table th,.havale-table td{ text-align:center!important; }
+}
