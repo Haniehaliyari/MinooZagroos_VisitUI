@@ -904,3 +904,28 @@ button,a{-webkit-tap-highlight-color:transparent}
     justify-content: center !important;
     align-items: center !important;
 }
+
+
+/* Restrained application-wide polish: soft entrance and responsive icon feedback */
+.app-shell .page-content :is(.ant-card,.card,.content-card,.form-card,.table-card){
+    animation:app-surface-enter .55s cubic-bezier(.2,.75,.25,1) both;
+}
+.app-shell .page-content :is(.ant-card,.card,.content-card,.form-card,.table-card):nth-child(2){animation-delay:.05s}
+.app-shell .page-content :is(.ant-card,.card,.content-card,.form-card,.table-card):nth-child(3){animation-delay:.1s}
+.app-shell .page-content :is(button,.ant-btn,[role="button"]) svg{
+    transition:transform .22s ease,filter .22s ease;
+}
+.app-shell .page-content :is(button,.ant-btn,[role="button"]):hover svg{
+    filter:drop-shadow(0 1px 3px currentColor);
+}
+.app-shell .page-content :is(button,.ant-btn,[role="button"]):active svg{
+    transform:scale(.94);
+}
+@keyframes app-surface-enter{
+    from{opacity:0;transform:translateY(10px)}
+    to{opacity:1;transform:translateY(0)}
+}
+@media(prefers-reduced-motion:reduce){
+    .app-shell .page-content :is(.ant-card,.card,.content-card,.form-card,.table-card){animation:none!important}
+    .app-shell .page-content :is(button,.ant-btn,[role="button"]) svg{transition:none!important}
+}
