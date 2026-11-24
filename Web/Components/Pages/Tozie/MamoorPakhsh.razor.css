@@ -493,3 +493,27 @@
     .all-havale-table th,.all-havale-table td,
     .havale-table th,.havale-table td{ text-align:center!important; }
 }
+
+/* SVG-only action buttons matching the driver page */
+.mamoor-row-action{
+    width:36px!important;
+    min-width:36px!important;
+    height:36px!important;
+    padding:0!important;
+    display:inline-flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    border-radius:9px!important;
+    font-size:0!important;
+    line-height:1!important;
+}
+.mamoor-row-action svg{
+    display:block;
+    width:17px;
+    height:17px;
+    fill:none;
+    stroke:currentColor;
+    stroke-width:1.8;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+}
