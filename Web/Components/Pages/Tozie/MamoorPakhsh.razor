@@ -19,9 +19,13 @@
             <h1>مدیریت مأموران پخش</h1>
 @*             <p>اطلاعات مأموران پخش را مشاهده، جستجو و مدیریت کنید.</p>
  *@        </div>
-        <div class="mamoor-heading-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM20 8v6m-3-3h6"/></svg>
-        </div>
+<div class="hero-3d-art" aria-hidden="true">
+    <span class="hero-orbit hero-orbit-one"></span>
+    <span class="hero-orbit hero-orbit-two"></span>
+    <span class="hero-core"><i></i><b></b></span>
+    <span class="hero-spark hero-spark-one"></span>
+    <span class="hero-spark hero-spark-two"></span>
+</div>
     </header>
 
     @if (!string.IsNullOrWhiteSpace(pageMessage))
@@ -94,8 +98,8 @@
                                 <td><span class="mamoor-status @(item.MamoorPakhshStatus == 1 ? "active" : "inactive")"><i></i>@(item.MamoorPakhshStatus == 1 ? "فعال" : "غیرفعال")</span></td>
                                 <td>
                                     <div class="mamoor-row-actions">
-                                        <button type="button" class="mamoor-icon-button edit" title="ویرایش" aria-label="ویرایش @item.MamoorPakhshDS" @onclick="() => OpenEditAsync(item)"><svg viewBox="0 0 24 24"><path d="m14 5 5 5M4 20l4.2-.8L19 8.4a2.1 2.1 0 0 0-3-3L5.2 16.2 4 20Z"/></svg></button>
-                                        <button type="button" class="mamoor-icon-button delete" title="حذف" aria-label="حذف @item.MamoorPakhshDS" @onclick="() => AskDelete(item)"><svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6m4-6v6M6 7l1 14h10l1-14M9 7V4h6v3"/></svg></button>
+                                        <button type="button" class="mamoor-row-action edit" @onclick="() => OpenEditAsync(item)">ویرایش</button>
+                                        <button type="button" class="mamoor-row-action delete" @onclick="() => AskDelete(item)">حذف</button>
                                     </div>
                                 </td>
                             </tr>
