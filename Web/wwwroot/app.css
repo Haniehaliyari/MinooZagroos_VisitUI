@@ -877,3 +877,30 @@ button,a{-webkit-tap-highlight-color:transparent}
 .app-shell.theme-dark .page-content :is(.distribution-card h2,.dispatch-all-link){color:var(--text)!important}
 .app-shell.theme-dark .page-content :is(.distribution-card p){color:var(--muted)!important}
 .app-shell.theme-dark .page-content :is(.ant-table,.ant-table-container,.ant-table-content,.ant-table-thead>tr>th,.ant-table-tbody>tr>td){background:var(--surface)!important;color:var(--text)!important;border-color:var(--line)!important}
+
+
+/* Global center alignment for list tables across all application pages */
+.page-content table > thead > tr > th,
+.page-content table > tbody > tr > td,
+.page-content .ant-table-thead > tr > th,
+.page-content .ant-table-tbody > tr > td,
+.page-content .ant-table-cell {
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+
+/* Keep sortable headings and common cell controls visually centered. */
+.page-content table thead th button,
+.page-content table thead th a,
+.page-content .ant-table-thead th button,
+.page-content .ant-table-thead th a {
+    margin-inline: auto;
+}
+
+.page-content table td > .row-actions,
+.page-content table td > .table-actions,
+.page-content table td > .action-buttons,
+.page-content table td > .d-flex {
+    justify-content: center !important;
+    align-items: center !important;
+}
