@@ -459,3 +459,11 @@
 .mamoor-row-actions{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:nowrap}
 .mamoor-row-action{width:36px;min-width:36px;height:36px;min-height:36px;padding:0;border-radius:9px}
 .mamoor-row-action svg{display:block;width:17px;height:17px;flex:0 0 17px}
+
+
+/* Refined outline icons for driver row actions */
+.mamoor-row-actions .mamoor-row-action{display:inline-flex;align-items:center;justify-content:center;width:36px;min-width:36px;height:36px;min-height:36px;padding:0;border-radius:9px;background:var(--surface);line-height:0}
+.mamoor-row-actions .mamoor-row-action svg{display:block;width:17px!important;height:17px!important;flex:0 0 17px;fill:none!important;stroke:currentColor!important;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.mamoor-row-actions .mamoor-row-action.edit{color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 30%,var(--line))}
+.mamoor-row-actions .mamoor-row-action.delete{color:#dc4545;border:1px solid rgba(220,69,69,.28)}
+.mamoor-row-actions .mamoor-row-action:hover{background:var(--surface-soft);transform:translateY(-1px)}
