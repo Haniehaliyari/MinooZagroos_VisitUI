@@ -50,11 +50,13 @@
                             <button class="settings-appearance" @onclick="ToggleAppearance" aria-label="@(isDark ? "فعال‌کردن حالت روشن" : "فعال‌کردن حالت تاریک")" title="@(isDark ? "حالت روشن" : "حالت تاریک")">
                                 @if (isDark)
                                 {
-                                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.7 8.7 0 1 0 20.5 14.2Z"/></svg>
+                                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4m0-12.8L17 7M7 17l-1.4 1.4"/><circle cx="12" cy="12" r="4"/></svg>
+
                                 }
                                 else
                                 {
-                                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4m0-12.8L17 7M7 17l-1.4 1.4"/><circle cx="12" cy="12" r="4"/></svg>
+                                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.7 8.7 0 1 0 20.5 14.2Z"/></svg>
+                                    
                                 }
                             </button>
                             <button class="settings-logout" @onclick="Logout"><svg viewBox="0 0 24 24"><path d="M10 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5M16 16l5-4-5-4M21 12H9" /></svg>خروج از حساب کاربری</button>
