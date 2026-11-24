@@ -48,8 +48,14 @@
                         <td><span class="mamoor-status @(item.KhodrooStatus == 1 ? "active" : "inactive")"><i></i>@(item.KhodrooStatus == 1 ? "فعال" : "غیرفعال")</span></td>
                         <td>
                             <div class="mamoor-row-actions">
-                                <button type="button" class="mamoor-row-action edit" @onclick="() => OpenEdit(item)">ویرایش</button>
-                                <button type="button" class="mamoor-row-action delete" @onclick="() => AskDelete(item)">حذف</button>
+                                <button type="button" class="mamoor-row-action edit" title="ویرایش خودرو" aria-label="ویرایش خودرو" @onclick="() => OpenEdit(item)">
+                                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5.5 4 4M4 20l4.2-.9L19 8.3a2.1 2.1 0 0 0-3-3L5.2 16.1 4 20Z"/></svg>
+                                    <span>ویرایش</span>
+                                </button>
+                                <button type="button" class="mamoor-row-action delete" title="حذف خودرو" aria-label="حذف خودرو" @onclick="() => AskDelete(item)">
+                                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 11v6m4-6v6M6.5 7l.8 13h9.4l.8-13M9 7V4h6v3"/></svg>
+                                    <span>حذف</span>
+                                </button>
                             </div>
                         </td>
                     </tr>
