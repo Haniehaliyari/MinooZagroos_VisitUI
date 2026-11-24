@@ -522,3 +522,58 @@
     .all-havale-table th,.all-havale-table td,
     .havale-table th,.havale-table td{ text-align:center!important; }
 }
+
+/* Match driver and dispatch pages: compact, centered SVG-only row actions
+   and identical editor icon proportions. */
+.mamoor-table th:last-child,
+.mamoor-table td:last-child{
+    width:108px;
+    min-width:108px;
+    max-width:108px;
+    padding-left:8px!important;
+    padding-right:8px!important;
+    text-align:center!important;
+}
+.mamoor-table td:last-child .mamoor-row-actions{
+    width:100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:6px;
+    margin:0 auto;
+    flex-wrap:nowrap;
+}
+.mamoor-table td:last-child .mamoor-row-action{
+    flex:0 0 34px;
+    width:34px!important;
+    min-width:34px!important;
+    height:34px!important;
+    min-height:34px!important;
+    padding:0!important;
+    display:inline-flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    font-size:0!important;
+    line-height:0!important;
+}
+.mamoor-table td:last-child .mamoor-row-action span{display:none!important}
+.mamoor-table td:last-child .mamoor-row-action svg{
+    display:block;
+    width:17px!important;
+    height:17px!important;
+    flex:0 0 17px;
+    fill:none!important;
+    stroke:currentColor!important;
+    stroke-width:1.7;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+}
+.mamoor-modal-title-icon{
+    width:56px!important;
+    height:56px!important;
+    flex:0 0 56px!important;
+}
+.mamoor-modal-title-icon svg{
+    width:26px!important;
+    height:26px!important;
+}
