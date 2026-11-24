@@ -70,8 +70,10 @@
                 </div>
             </div>
         </header>
-        <CascadingValue Value="selectedTheme">
-            <section class="page-content">@Body</section>
+        <CascadingValue Value="false">
+            <CascadingValue Value="selectedTheme">
+                <section class="page-content">@Body</section>
+            </CascadingValue>
         </CascadingValue>
     </main>
 </div>
