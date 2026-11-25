@@ -26,10 +26,10 @@
         else if (FilteredItems.Count == 0) { <div class="visitor-empty"><strong>نتیجه‌ای پیدا نشد</strong><span>عبارت جستجو را تغییر دهید.</span></div> }
         else {
         <div class="visitor-table-wrap"><table class="visitor-table">
-            <thead><tr><th>ردیف</th><th>نام و نام خانوادگی</th><th>شماره ویزیتور</th><th>نام پدر</th><th>وضعیت</th><th>تاریخ عضویت</th><th>موبایل</th><th>کد ملی</th><th>مسیر ویزیت</th><th>ویزیت دیجیتال</th><th>نام کارمند</th><th>دفتر فروش</th><th>نوع ویزیتور</th><th>واحد تجاری</th><th>عملیات</th></tr></thead>
+            <thead><tr><th>ردیف</th><th>نام و نام خانوادگی</th><th>نام پدر</th><th>وضعیت</th><th>تاریخ عضویت</th><th>موبایل</th><th>کد ملی</th><th>مسیر ویزیت</th><th>ویزیت دیجیتال</th><th>نام کارمند</th><th>دفتر فروش</th><th>نوع ویزیتور</th><th>واحد تجاری</th><th>عملیات</th></tr></thead>
             <tbody>@foreach (var item in FilteredItems) {
                 <tr @key="item.VisitorSN"><td class="visitor-row-number">@((FilteredItems.IndexOf(item)+1).ToString("00"))</td>
-                <td><strong class="visitor-person-name">@Display(item.Name) @Display(item.Family)</strong><small class="visitor-subline">کد ثبت: @Display(item.VisitorSN.ToString(CultureInfo.InvariantCulture))</small></td><td><span class="visitor-code">@Display(item.VisitorNo)</span></td><td>@Display(item.Father)</td>
+                <td><strong class="visitor-person-name">@Display(item.Name) @Display(item.Family)</strong><small class="visitor-subline">کد ویزیتور: @Display(item.VisitorNo)</small></td><td>@Display(item.Father)</td>
                 <td><span class="visitor-status @(item.Status == 1 ? "active" : "inactive")"><i></i>@(item.Status == 1 ? "فعال" : "غیرفعال")</span></td>
                 <td>@Display(item.OzviyatDate)</td><td>@Display(item.MblPhone)</td><td>@Display(item.MeliNo)</td>
                 <td><span class="visitor-status @(item.IsMasirVisit ? "active" : "inactive")"><i></i>@(item.IsMasirVisit ? "دارد" : "ندارد")</span></td>
