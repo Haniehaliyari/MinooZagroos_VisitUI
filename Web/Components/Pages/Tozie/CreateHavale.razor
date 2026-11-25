@@ -15,7 +15,6 @@
         <div><div class="havale-eyebrow">توزیع و پخش</div><h1>ایجاد حواله پخش</h1></div>
         <div class="havale-heading-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 17 17 7M7 7h10v10"/></svg></div>
     </div>
-    @if (!string.IsNullOrWhiteSpace(successMessage)) { <div class="havale-alert havale-alert-success">@successMessage</div> }
 
     <section class="havale-panel">
         <div class="havale-section-heading">
@@ -24,7 +23,10 @@
         </div>
         @if (!string.IsNullOrWhiteSpace(factorError)) { <div class="havale-alert havale-alert-error"><strong>خطای دریافت فاکتورها:</strong> @factorError</div> }
         <div class="havale-toolbar">
-            <input class="havale-search" placeholder="جستجو بر اساس شماره یا شرح فاکتور..." @bind="searchText" @bind:event="oninput" @bind:after="ApplyFactorSearch" />
+            <div class="havale-search-wrap">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg>
+                <input class="havale-search" type="search" aria-label="جستجوی فاکتورها" placeholder="جستجو بر اساس شماره یا شرح فاکتور..." @bind="searchText" @bind:event="oninput" @bind:after="ApplyFactorSearch" />
+            </div>
             <div class="havale-selection-count">@SelectedCount فاکتور انتخاب شده</div>
         </div>
         <div class="havale-date-filter">
@@ -142,6 +144,17 @@
         <div class="havale-submit-summary"><strong>@SelectedCount</strong><span>فاکتور برای ثبت حواله انتخاب شده است</span></div>
         <button type="button" class="havale-button havale-button-primary" @onclick="CreateHavaleAsync" disabled="@(submitting || SelectedCount == 0 || !selectedDriverSN.HasValue || string.IsNullOrWhiteSpace(selectedAgentSN))">@(submitting ? "در حال ثبت..." : "ثبت حواله")</button>
     </div>
+    @if (showSuccessModal)
+    {
+        <div class="havale-success-backdrop" role="presentation">
+            <section class="havale-success-modal" role="dialog" aria-modal="true" aria-labelledby="havale-success-title" dir="rtl">
+                <div class="havale-success-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m5 12.5 4.2 4.2L19 7"/></svg></div>
+                <h2 id="havale-success-title">ثبت حواله با موفقیت انجام شد</h2>
+                <p>@(successMessage ?? "حواله با موفقیت ثبت شد.")</p>
+                <button type="button" class="havale-button havale-success-confirm" @onclick="CloseSuccessModal">تأیید</button>
+            </section>
+        </div>
+    }
 </div>
 
 @code {
@@ -173,7 +186,7 @@
     private List<LookupItem> FilteredAgents => FilterLookups(agents, agentSearchText);
     private string havaleDateText = TodayPersianDate();
     private string sendDateText = TodayPersianDate();
-    private bool loadingFactors, loadingLookups, submitting;
+    private bool loadingFactors, loadingLookups, submitting, showSuccessModal;
     private string? appliedFactorDateFrom, appliedFactorDateTo;
 
     private bool HasAppliedFactorDateFilter => !string.IsNullOrWhiteSpace(appliedFactorDateFrom) || !string.IsNullOrWhiteSpace(appliedFactorDateTo);
@@ -464,10 +477,13 @@
             selectedFactorSNs.Clear();
             await LoadFactorsAsync();
             successMessage = "حواله با موفقیت ثبت شد.";
+            showSuccessModal = true;
         }
         catch (Exception ex) { submitError = DescribeRequestError("ثبت حواله", ex); }
         finally { submitting = false; }
     }
+
+    private void CloseSuccessModal() => showSuccessModal = false;
 
     private static void EnsureApiSuccess(HttpResponseMessage response, string json, string operation)
     {
