@@ -19,7 +19,7 @@
 
     <section class="havale-panel">
         <div class="havale-section-heading">
-            <div><span class="havale-step">۱</span><div><h2>انتخاب فاکتورها</h2><p>امکان انتخاب هم‌زمان چند فاکتور وجود دارد.</p></div></div>
+            <div><span class="havale-step">۱</span><div><h2>انتخاب فاکتورها</h2></div></div>
             <button type="button" class="havale-button havale-button-light havale-refresh-button" @onclick="RefreshFactorsAsync" disabled="@loadingFactors" title="به‌روزرسانی فهرست فاکتورها" aria-label="به‌روزرسانی فهرست فاکتورها"><svg class="havale-refresh-icon @(loadingFactors ? "is-spinning" : "")" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.9-3M4 4v4h4M4 13a8 8 0 0 0 14.9 3M20 20v-4h-4"/></svg></button>
         </div>
         @if (!string.IsNullOrWhiteSpace(factorError)) { <div class="havale-alert havale-alert-error"><strong>خطای دریافت فاکتورها:</strong> @factorError</div> }
@@ -81,7 +81,7 @@
 
     <section class="havale-panel">
         <div class="havale-section-heading">
-            <div><span class="havale-step">۲</span><div><h2>اطلاعات حواله</h2><p>راننده، مأمور پخش و تاریخ‌های حواله را مشخص کنید.</p></div></div>
+            <div><span class="havale-step">۲</span><div><h2>اطلاعات حواله</h2></div></div>
             <button type="button" class="havale-button havale-button-light havale-refresh-button" @onclick="LoadLookupsAsync" disabled="@loadingLookups" title="بارگذاری مجدد افراد" aria-label="بارگذاری مجدد افراد"><svg class="havale-refresh-icon @(loadingLookups ? "is-spinning" : "")" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.9-3M4 4v4h4M4 13a8 8 0 0 0 14.9 3M20 20v-4h-4"/></svg></button>
         </div>
         @if (!string.IsNullOrWhiteSpace(driverError)) { <div class="havale-alert havale-alert-error"><strong>خطای دریافت راننده‌ها:</strong> @driverError</div> }
@@ -104,7 +104,7 @@
                         }
                     </div>
                 }
-                <small>@(selectedDriverSN.HasValue ? "راننده انتخاب شده است." : drivers.Count == 0 && !loadingLookups ? "فهرست راننده‌ای دریافت نشده است." : $"{drivers.Count} راننده؛ جستجو با نام یا کد")</small>
+                <small>@(selectedDriverSN.HasValue ? "راننده انتخاب شده است." : drivers.Count == 0 && !loadingLookups ? "فهرست راننده‌ای دریافت نشده است." : $"{drivers.Count} راننده؛")</small>
             </label>
             <label class="havale-lookup-field">مأمور پخش
                 <input type="text" class="havale-lookup-input" placeholder="جستجو با نام، نام خانوادگی یا کد مأمور..."
@@ -123,7 +123,7 @@
                         }
                     </div>
                 }
-                <small>@(!string.IsNullOrWhiteSpace(selectedAgentSN) ? "مأمور پخش انتخاب شده است." : agents.Count == 0 && !loadingLookups ? "فهرست مأمور پخشی دریافت نشده است." : $"{agents.Count} مأمور پخش؛ جستجو با نام یا کد")</small>
+                <small>@(!string.IsNullOrWhiteSpace(selectedAgentSN) ? "مأمور پخش انتخاب شده است." : agents.Count == 0 && !loadingLookups ? "فهرست مأمور پخشی دریافت نشده است." : $"{agents.Count} مأمور پخش؛ ")</small>
             </label>
             <label>تاریخ حواله
                 <input type="text" inputmode="numeric" autocomplete="off" placeholder="۱۴۰۵/۰۸/۲۵" maxlength="10" @bind="havaleDateText" />
@@ -134,7 +134,7 @@
                 <small>فرمت شمسی: سال/ماه/روز</small>
             </label>
         </div>
-        <div class="havale-date-note">تاریخ‌ها در زمان ارسال به فرمت شمسی مورد انتظار سرویس تبدیل می‌شوند.</div>
+      @*   <div class="havale-date-note">تاریخ‌ها در زمان ارسال به فرمت شمسی مورد انتظار سرویس تبدیل می‌شوند.</div> *@
     </section>
 
     @if (!string.IsNullOrWhiteSpace(submitError)) { <div class="havale-alert havale-alert-error">@submitError</div> }
