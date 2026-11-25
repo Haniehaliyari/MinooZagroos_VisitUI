@@ -668,3 +668,53 @@
  .visitor-form-grid{grid-template-columns:1fr}
  .visitor-modal-footer .visitor-button{min-width:0;flex:1}
 }
+
+
+/* Three-column visitor editor: show the complete form without an inner scrollbar */
+.visitor-modal-backdrop{
+    align-items:center;
+    justify-content:center;
+    overflow-y:auto;
+    padding:24px;
+}
+.visitor-modal{
+    width:min(96vw,1120px);
+    max-width:1120px;
+    max-height:none;
+    overflow:visible;
+}
+.visitor-form-grid{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:16px 20px;
+    padding:22px 30px 26px;
+}
+.visitor-field{min-width:0}
+.visitor-field input{min-width:0;width:100%;box-sizing:border-box}
+.visitor-switch-row{width:100%;box-sizing:border-box}
+.visitor-modal-header h2{font-size:18px}
+.visitor-modal-header p{font-size:11px}
+.visitor-field{font-size:11px}
+.visitor-field input{height:45px;font-size:12px}
+.visitor-field input::placeholder{font-size:10px}
+.visitor-switch-row{min-height:62px}
+.visitor-switch-row strong{font-size:11px}
+.visitor-modal-footer{padding:14px 30px;min-height:68px}
+.visitor-modal-footer .visitor-button{min-height:42px;font-size:11px}
+.visitor-modal-error{font-size:11px}
+@media(max-width:900px){
+    .visitor-modal-backdrop{align-items:flex-start;padding:14px;overflow-y:auto}
+    .visitor-modal{width:min(100%,760px);max-width:760px}
+    .visitor-form-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:15px 16px;padding:18px 22px 22px}
+}
+@media(max-width:560px){
+    .visitor-modal-backdrop{padding:8px}
+    .visitor-modal{width:100%;border-radius:18px}
+    .visitor-form-grid{grid-template-columns:1fr;padding:15px 16px 18px;gap:13px}
+    .visitor-modal-header{padding:18px}
+    .visitor-modal-footer{padding:13px 16px}
+    .visitor-modal-footer .visitor-button{min-width:0;flex:1}
+}
+
+/* Persian date input */
+.visitor-field input[dir="ltr"]{text-align:center;letter-spacing:.4px;font-variant-numeric:tabular-nums}
