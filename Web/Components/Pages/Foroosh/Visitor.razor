@@ -32,9 +32,9 @@
                 <td>@Display(item.Name)</td><td><strong class="visitor-person-name">@Display(item.Family)</strong></td><td>@Display(item.Father)</td>
                 <td><span class="visitor-status @(item.Status == 1 ? "active" : "inactive")"><i></i>@(item.Status == 1 ? "فعال" : "غیرفعال")</span></td>
                 <td>@Display(item.OzviyatDate)</td><td>@Display(item.MblPhone)</td><td>@Display(item.MeliNo)</td>
-                <td><span class="visitor-tag @(item.IsMasirVisit ? "yes" : "no")">@(item.IsMasirVisit ? "دارد" : "ندارد")</span></td>
-                <td><span class="visitor-tag @(item.IsVisitDigita ? "yes" : "no")">@(item.IsVisitDigita ? "فعال" : "غیرفعال")</span></td>
-                <td>@Display(item.KarmandDs)</td><td>@Display(item.DaftarForooshDs)</td><td>@Display(item.NoeVisitorDs)</td><td>@Display(item.VahedeTejariDs)</td>
+                <td><span class="visitor-status @(item.IsMasirVisit ? "active" : "inactive")"><i></i>@(item.IsMasirVisit ? "دارد" : "ندارد")</span></td>
+                <td><span class="visitor-status @(item.IsVisitDigita ? "active" : "inactive")"><i></i>@(item.IsVisitDigita ? "فعال" : "غیرفعال")</span></td>
+                <td>@Display(item.KarmandDs)</td><td>@Display(item.DaftarForooshDs)</td><td>@VisitorTypeDisplay(item)</td><td>@Display(item.VahedeTejariDs)</td>
                 <td><div class="visitor-row-actions"><button type="button" class="visitor-row-action edit" title="ویرایش" aria-label="ویرایش" @onclick="() => OpenEdit(item)"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="m16.5 3.5 4 4L8 20l-4 1 1-4Z"/></svg></button><button type="button" class="visitor-row-action delete" title="حذف" aria-label="حذف" @onclick="() => AskDelete(item)"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2m3 0-1 14H6L5 6m5 5v5m4-5v5"/></svg></button></div></td></tr>
             }</tbody>
         </table></div><div class="visitor-table-footer">نمایش @FilteredItems.Count از @items.Count ویزیتور</div>
@@ -101,7 +101,7 @@
         var results = await Task.WhenAll(tasks); karmands.Clear(); karmands.AddRange(results[0]); daftars.Clear(); daftars.AddRange(results[1]); noeVisitors.Clear(); noeVisitors.AddRange(results[2]);
     }
     private static async Task<List<LookupItem>> ReadLookupAsync(HttpClient c,string endpoint,string name) {
-        try { using var r=await c.GetAsync(endpoint); var j=await r.Content.ReadAsStringAsync(); EnsureSuccess(r,j); return ReadArray(ExtractPayload(j)).Select(x=>new LookupItem { Id=ReadDecimal(x,"Id","SN","KarmandSN","DaftarForooshSN","NoeVisitorSN"), Title=ReadString(x,"Title","Name","DS","KarmandDs","KarmandDS","DaftarForooshDs","DaftarForooshDS","NoeVisitorDs","NoeVisitorDS") }).Where(x=>x.Id!=0 && x.Title!="").ToList(); } catch { return []; }
+        try { using var r=await c.GetAsync(endpoint); var j=await r.Content.ReadAsStringAsync(); EnsureSuccess(r,j); return ReadArray(ExtractPayload(j)).Select(x=>new LookupItem { Id=ReadDecimal(x,"Id","SN","KarmandSN","DaftarForooshSN","NoeVisitorSN"), Title=ReadString(x,"Title","Name","DS","NoeVisitorTitle","NoeVisitorName","NoeVisitorDS","NoeVisitorDs","NoeVisitorType","NoeVisitorDesc","KarmandDs","KarmandDS","DaftarForooshDs","DaftarForooshDS") }).Where(x=>x.Id!=0 && x.Title!="").ToList(); } catch { return []; }
     }
     private void OpenCreate() { isEdit=false; editingSN=0; editorError=null; form=new VisitorForm { Status=1, OzviyatDate=DateTime.Today }; ResetLookupText(); showEditor=true; }
     private void OpenEdit(VisitorItem x) {
@@ -137,6 +137,7 @@
     private async Task CloseLookupAsync(int kind){await Task.Delay(180);if(kind==0)showKarmandOptions=false;else if(kind==1)showDaftarOptions=false;else showNoeVisitorOptions=false;await InvokeAsync(StateHasChanged);}
     private static List<LookupItem> FilterLookup(List<LookupItem> xs,string q)=>xs.Where(x=>string.IsNullOrWhiteSpace(q)||Contains(x.Title,q)).ToList();
     private static string? FindTitle(List<LookupItem> xs,decimal? id)=>id.HasValue?xs.FirstOrDefault(x=>x.Id==id)?.Title:null;
+    private string VisitorTypeDisplay(VisitorItem item){if(!string.IsNullOrWhiteSpace(item.NoeVisitorDs))return item.NoeVisitorDs;return FindTitle(noeVisitors,item.NoeVisitorSN)??"—";}
     private static string? NullIfEmpty(string? x)=>string.IsNullOrWhiteSpace(x)?null:x.Trim();
     private static string Display(string? x)=>string.IsNullOrWhiteSpace(x)?"—":x.Trim();
     private static bool Contains(string? a,string b)=>Normalize(a).Contains(Normalize(b),StringComparison.OrdinalIgnoreCase);
