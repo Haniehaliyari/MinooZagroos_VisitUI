@@ -205,3 +205,37 @@
         flex:0 0 42px;
     }
 }
+
+
+/* Success confirmation modal after creating a dispatch voucher */
+.havale-success-backdrop{
+ position:fixed;inset:0;z-index:3000;display:grid;place-items:center;
+ padding:20px;background:rgba(12,27,43,.48);backdrop-filter:blur(5px);
+ animation:havale-success-fade .18s ease-out;
+}
+.havale-success-modal{
+ width:min(420px,100%);padding:30px 26px 24px;border:1px solid #ccebd7;
+ border-radius:20px;background:#fff;text-align:center;
+ box-shadow:0 24px 70px rgba(13,48,34,.22);
+ animation:havale-success-pop .24s cubic-bezier(.2,.8,.2,1);
+}
+.havale-success-mark{
+ width:66px;height:66px;margin:0 auto 16px;display:grid;place-items:center;
+ border-radius:50%;background:#e8f8ee;color:#16834a;
+ box-shadow:inset 0 0 0 1px #c5ebd2;
+}
+.havale-success-mark svg{width:34px;height:34px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.havale-success-modal h2{margin:0 0 9px;color:#176b40;font-size:17px;font-weight:850}
+.havale-success-modal p{margin:0 0 22px;color:#5c7667;font-size:13px;line-height:1.9}
+.havale-success-confirm{min-width:112px!important;height:40px;padding:0 24px!important;background:linear-gradient(110deg,#16834a,#21a663)!important;color:#fff!important;box-shadow:0 6px 16px rgba(22,131,74,.2)}
+.havale-success-confirm:hover{filter:brightness(.96);transform:translateY(-1px)}
+@keyframes havale-success-fade{from{opacity:0}to{opacity:1}}
+@keyframes havale-success-pop{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media(prefers-reduced-motion:reduce){.havale-success-backdrop,.havale-success-modal{animation:none!important}}
+/* The date-filter action stays a true compact icon button, including narrow layouts. */
+.havale-date-filter-actions .havale-filter-icon-button{
+ width:36px!important;min-width:36px!important;max-width:36px!important;
+ height:36px!important;min-height:36px!important;max-height:36px!important;
+ flex:0 0 36px!important;padding:0!important;
+}
+.havale-date-filter-actions .havale-filter-icon-button svg{width:17px;height:17px}
