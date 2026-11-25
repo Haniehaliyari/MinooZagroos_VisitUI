@@ -12,24 +12,24 @@
 <PageTitle>مدیریت ویزیتورها | مینو زاگرس</PageTitle>
 <div class="visitor-page" dir="rtl">
     <header class="visitor-heading">
-        <div><div class="visitor-eyebrow">مدیریت ارتباط با مشتریان</div><h1>مدیریت ویزیتورها</h1><p>اطلاعات ویزیتورها را مشاهده، جستجو و مدیریت کنید</p></div>
+        <div><div class="visitor-eyebrow">مدیریت ارتباط با مشتریان</div><h1>مدیریت ویزیتورها</h1></div>
         <div class="hero-3d-art" aria-hidden="true"><span class="hero-orbit hero-orbit-one"></span><span class="hero-orbit hero-orbit-two"></span><span class="hero-core"><i></i><b></b></span><span class="hero-spark hero-spark-one"></span><span class="hero-spark hero-spark-two"></span></div>
     </header>
     <section class="visitor-panel">
         <div class="visitor-toolbar">
             <div class="visitor-search-wrap"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg><input class="visitor-search" placeholder="جستجو نام، نام خانوادگی، کد ملی، موبایل..." @bind="searchText" @bind:event="oninput" /></div>
-            <div class="visitor-toolbar-actions"><span class="visitor-count">@FilteredItems.Count ویزیتور</span><button type="button" class="visitor-button visitor-button-light" @onclick="LoadAllAsync" disabled="@loading"><svg class="visitor-inline-icon" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.6 9A7 7 0 0 1 18 6l2 6M4 12l2 6a7 7 0 0 0 12.4-3"/></svg></button><button type="button" class="visitor-button visitor-button-primary" @onclick="OpenCreate"><svg class="visitor-inline-icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg> ثبت ویزیتور</button></div>
+            <div class="visitor-toolbar-actions"><span class="visitor-count">@FilteredItems.Count ویزیتور</span><button type="button" class="visitor-button visitor-button-light" @onclick="LoadAllAsync" disabled="@loading"><svg class="visitor-inline-icon" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.6 9A7 7 0 0 1 18 6l2 6M4 12l2 6a7 7 0 0 0 12.4-3"/></svg></button><button type="button" class="visitor-button visitor-button-primary" @onclick="OpenCreate"><svg class="visitor-inline-icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button></div>
         </div>
         @if (!string.IsNullOrWhiteSpace(loadError)) { <div class="visitor-inline-error">@loadError</div> }
         @if (loading) { <div class="visitor-empty"><span class="visitor-spinner"></span><strong>در حال دریافت فهرست ویزیتورها...</strong></div> }
-        else if (items.Count == 0) { <div class="visitor-empty"><strong>هنوز ویزیتوری ثبت نشده است</strong><span>برای شروع، اولین ویزیتور را اضافه کنید.</span><button class="visitor-button visitor-button-primary" @onclick="OpenCreate">ثبت ویزیتور</button></div> }
+        else if (items.Count == 0) { <div class="visitor-empty"><strong>هنوز ویزیتوری ثبت نشده است</strong><span>برای شروع، اولین ویزیتور را اضافه کنید.</span><button class="visitor-button visitor-button-primary" @onclick="OpenCreate"></button></div> }
         else if (FilteredItems.Count == 0) { <div class="visitor-empty"><strong>نتیجه‌ای پیدا نشد</strong><span>عبارت جستجو را تغییر دهید.</span></div> }
         else {
         <div class="visitor-table-wrap"><table class="visitor-table">
             <thead><tr><th>ردیف</th><th>نام و نام خانوادگی</th><th>نام پدر</th><th>وضعیت</th><th>تاریخ عضویت</th><th>موبایل</th><th>کد ملی</th><th>مسیر ویزیت</th><th>ویزیت دیجیتال</th><th>نام کارمند</th><th>دفتر فروش</th><th>نوع ویزیتور</th><th>واحد تجاری</th><th>عملیات</th></tr></thead>
             <tbody>@foreach (var item in FilteredItems) {
                 <tr @key="item.VisitorSN"><td class="visitor-row-number">@((FilteredItems.IndexOf(item)+1).ToString("00"))</td>
-                <td><strong class="visitor-person-name">@Display(item.Name) @Display(item.Family)</strong><small class="visitor-subline">کد ویزیتور: @Display(item.VisitorNo)</small></td><td>@Display(item.Father)</td>
+                <td><strong class="visitor-person-name">@Display(item.Name) @Display(item.Family)</strong><small class="visitor-subline">کد : @Display(item.VisitorNo)</small></td><td>@Display(item.Father)</td>
                 <td><span class="visitor-status @(item.Status == 1 ? "active" : "inactive")"><i></i>@(item.Status == 1 ? "فعال" : "غیرفعال")</span></td>
                 <td>@Display(item.OzviyatDate)</td><td>@Display(item.MblPhone)</td><td>@Display(item.MeliNo)</td>
                 <td><span class="visitor-status @(item.IsMasirVisit ? "active" : "inactive")"><i></i>@(item.IsMasirVisit ? "دارد" : "ندارد")</span></td>
