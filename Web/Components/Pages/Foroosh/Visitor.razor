@@ -31,8 +31,8 @@
                 <tr @key="item.VisitorSN"><td class="visitor-row-number">@((FilteredItems.IndexOf(item)+1).ToString("00"))</td>
                 <td><strong class="visitor-person-name">@Display(item.Name) @Display(item.Family)</strong><small class="visitor-subline">کد : @Display(item.VisitorNo)</small></td><td>@Display(item.Father)</td>
                 <td><span class="visitor-status @(item.Status == 1 ? "active" : "inactive")"><i></i>@(item.Status == 1 ? "فعال" : "غیرفعال")</span></td>
-                <td>@Display(item.OzviyatDate)</td><td>@Display(item.MblPhone)</td><td>@Display(item.MeliNo)</td>
-                <td><span class="visitor-status @(item.IsMasirVisit ? "active" : "inactive")"><i></i>@(item.IsMasirVisit ? "دارد" : "ندارد")</span></td>
+                <td>@DisplayJalaliDate(item.OzviyatDate)</td><td>@Display(item.MblPhone)</td><td>@Display(item.MeliNo)</td>
+                <td><span class="visitor-status @(item.IsMasirVisit ? "active" : "inactive")"><i></i>@(item.IsMasirVisit ? "فعال" : "غیرفعال")</span></td>
                 <td><span class="visitor-status @(item.IsVisitDigita ? "active" : "inactive")"><i></i>@(item.IsVisitDigita ? "فعال" : "غیرفعال")</span></td>
                 <td>@Display(item.KarmandDs)</td><td>@Display(item.DaftarForooshDs)</td><td>@VisitorTypeDisplay(item)</td><td>@Display(item.VahedeTejariDs)</td>
                 <td><div class="visitor-row-actions"><button type="button" class="visitor-row-action edit" title="ویرایش" aria-label="ویرایش" @onclick="() => OpenEdit(item)"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="m16.5 3.5 4 4L8 20l-4 1 1-4Z"/></svg></button><button type="button" class="visitor-row-action delete" title="حذف" aria-label="حذف" @onclick="() => AskDelete(item)"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2m3 0-1 14H6L5 6m5 5v5m4-5v5"/></svg></button></div></td></tr>
@@ -51,7 +51,7 @@
 <label class="visitor-field">نام خانوادگی <b>*</b><input @bind="form.Family" maxlength="150" placeholder="نام خانوادگی" /></label>
 <label class="visitor-field">نام پدر<input @bind="form.Father" maxlength="100" placeholder="نام پدر" /></label>
 <div class="visitor-field"><span>وضعیت</span><button type="button" class="visitor-switch-row" role="switch" aria-checked="@(form.Status == 1)" @onclick="ToggleStatus"><span class="visitor-switch @(form.Status == 1 ? "on" : "")"><i></i></span><strong>@(form.Status == 1 ? "فعال" : "غیرفعال")</strong></button></div>
-<label class="visitor-field">تاریخ عضویت<input type="date" @bind="form.OzviyatDate" /></label>
+<label class="visitor-field">تاریخ عضویت<input type="text" inputmode="numeric" dir="ltr" placeholder="۱۴۰۵/۰۱/۰۱" @bind="form.OzviyatDateText" /></label>
 <label class="visitor-field">موبایل<input @bind="form.MblPhone" maxlength="20" inputmode="tel" placeholder="شماره موبایل" /></label>
 <label class="visitor-field">کد ملی<input @bind="form.MeliNo" maxlength="20" inputmode="numeric" placeholder="کد ملی" /></label>
 <div class="visitor-field"><span>مسیر ویزیت</span><button type="button" class="visitor-switch-row" role="switch" aria-checked="@form.IsMasirVisit" @onclick="() => form.IsMasirVisit = !form.IsMasirVisit"><span class="visitor-switch @(form.IsMasirVisit ? "on" : "")"><i></i></span><strong>@(form.IsMasirVisit ? "دارد" : "ندارد")</strong></button></div>
@@ -103,10 +103,11 @@
     private static async Task<List<LookupItem>> ReadLookupAsync(HttpClient c,string endpoint,string name) {
         try { using var r=await c.GetAsync(endpoint); var j=await r.Content.ReadAsStringAsync(); EnsureSuccess(r,j); return ReadArray(ExtractPayload(j)).Select(x=>new LookupItem { Id=ReadDecimal(x,"Id","SN","KarmandSN","DaftarForooshSN","NoeVisitorSN"), Title=ReadString(x,"Title","Name","DS","NoeVisitorTitle","NoeVisitorName","NoeVisitorDS","NoeVisitorDs","NoeVisitorType","NoeVisitorDesc","KarmandDs","KarmandDS","DaftarForooshDs","DaftarForooshDS") }).Where(x=>x.Id!=0 && x.Title!="").ToList(); } catch { return []; }
     }
-    private void OpenCreate() { isEdit=false; editingSN=0; editorError=null; form=new VisitorForm { Status=1, OzviyatDate=DateTime.Today }; ResetLookupText(); showEditor=true; }
+    private void OpenCreate() { isEdit=false; editingSN=0; editorError=null; form=new VisitorForm { Status=1, OzviyatDate=DateTime.Today, OzviyatDateText=ToPersianDate(DateTime.Today) }; ResetLookupText(); showEditor=true; }
     private void OpenEdit(VisitorItem x) {
         isEdit=true; editingSN=x.VisitorSN; editorError=null;
-        form=new VisitorForm { Name=x.Name, Family=x.Family, Father=x.Father, Status=x.Status, OzviyatDate=ToDateValue(x.OzviyatDate), MblPhone=x.MblPhone, MeliNo=x.MeliNo, IsMasirVisit=x.IsMasirVisit, IsVisitDigita=x.IsVisitDigita, KarmandSN=x.KarmandSN, DaftarForooshSN=x.DaftarForooshSN, NoeVisitorSN=x.NoeVisitorSN };
+        var memberDate=ToDateValue(x.OzviyatDate);
+        form=new VisitorForm { Name=x.Name, Family=x.Family, Father=x.Father, Status=x.Status, OzviyatDate=memberDate, OzviyatDateText=ToPersianDate(memberDate??DateTime.Today), MblPhone=x.MblPhone, MeliNo=x.MeliNo, IsMasirVisit=x.IsMasirVisit, IsVisitDigita=x.IsVisitDigita, KarmandSN=x.KarmandSN, DaftarForooshSN=x.DaftarForooshSN, NoeVisitorSN=x.NoeVisitorSN };
         karmandSearch=FindTitle(karmands,form.KarmandSN)??x.KarmandDs; daftarSearch=FindTitle(daftars,form.DaftarForooshSN)??x.DaftarForooshDs; noeVisitorSearch=FindTitle(noeVisitors,form.NoeVisitorSN)??x.NoeVisitorDs;
         showKarmandOptions=showDaftarOptions=showNoeVisitorOptions=false; showEditor=true;
     }
@@ -115,8 +116,8 @@
         editorError=null; form.Name=form.Name.Trim(); form.Family=form.Family.Trim();
         if(form.Name=="" || form.Family==""){editorError="نام و نام خانوادگی را وارد کنید.";return;}
         if(!form.KarmandSN.HasValue || !form.DaftarForooshSN.HasValue || !form.NoeVisitorSN.HasValue){editorError="کارمند، دفتر فروش و نوع ویزیتور را انتخاب کنید.";return;}
-        if(!form.OzviyatDate.HasValue){editorError="تاریخ عضویت معتبر نیست.";return;}
-        var date=form.OzviyatDate.Value;
+        if(!TryParsePersianDate(form.OzviyatDateText,out var date)){editorError="تاریخ عضویت را به‌صورت شمسی و با قالب ۱۴۰۵/۰۱/۰۱ وارد کنید.";return;}
+        form.OzviyatDate=date;
         saving=true; await InvokeAsync(StateHasChanged);
         try {
             object payload = new { VisitorSN=editingSN==0?(decimal?)null:editingSN, Name=form.Name, Family=form.Family, Father=NullIfEmpty(form.Father), Status=form.Status, OzviyatDate=date, MblPhone=NullIfEmpty(form.MblPhone), MeliNo=NullIfEmpty(form.MeliNo), IsMasirVisit=form.IsMasirVisit, IsVisitDigita=form.IsVisitDigita, KarmandSN=form.KarmandSN, DaftarForooshSN=form.DaftarForooshSN, NoeVisitorSN=form.NoeVisitorSN };
@@ -142,7 +143,15 @@
     private static string Display(string? x)=>string.IsNullOrWhiteSpace(x)?"—":x.Trim();
     private static bool Contains(string? a,string b)=>Normalize(a).Contains(Normalize(b),StringComparison.OrdinalIgnoreCase);
     private static string Normalize(string? s)=>(s??"").Trim().Replace('۰','0').Replace('۱','1').Replace('۲','2').Replace('۳','3').Replace('۴','4').Replace('۵','5').Replace('۶','6').Replace('۷','7').Replace('۸','8').Replace('۹','9').Replace('٠','0').Replace('١','1').Replace('٢','2').Replace('٣','3').Replace('٤','4').Replace('٥','5').Replace('٦','6').Replace('٧','7').Replace('٨','8').Replace('٩','9');
-    private static DateTime? ToDateValue(string s){if(DateTime.TryParse(s,CultureInfo.InvariantCulture,DateTimeStyles.AssumeLocal,out var d))return d.Date;return DateTime.Today;}
+    private static readonly PersianCalendar PersianCalendar = new();
+    private static DateTime? ToDateValue(string s){if(DateTime.TryParse(s,CultureInfo.InvariantCulture,DateTimeStyles.AssumeLocal,out var d))return d.Date;if(DateTime.TryParse(s,CultureInfo.CurrentCulture,DateTimeStyles.AssumeLocal,out d))return d.Date;return null;}
+    private static string ToPersianDate(DateTime? value){if(!value.HasValue)return "";var d=value.Value;return $"{PersianCalendar.GetYear(d):0000}/{PersianCalendar.GetMonth(d):00}/{PersianCalendar.GetDayOfMonth(d):00}";}
+    private static bool TryParsePersianDate(string? value,out DateTime date){
+        date=default;var parts=Normalize(value).Split('/', '-', '.');if(parts.Length!=3)return false;
+        if(!int.TryParse(parts[0],NumberStyles.None,CultureInfo.InvariantCulture,out var year)||!int.TryParse(parts[1],NumberStyles.None,CultureInfo.InvariantCulture,out var month)||!int.TryParse(parts[2],NumberStyles.None,CultureInfo.InvariantCulture,out var day))return false;
+        try{date=PersianCalendar.ToDateTime(year,month,day,0,0,0,0);return true;}catch(ArgumentOutOfRangeException){return false;}
+    }
+    private static string DisplayJalaliDate(string? value){if(string.IsNullOrWhiteSpace(value))return "—";var d=ToDateValue(value);return d.HasValue?ToPersianDate(d):value;}
     private static VisitorItem ReadVisitor(JsonElement x)=>new(){VisitorSN=ReadDecimal(x,"VisitorSN"),VisitorNo=ReadString(x,"VisitorNo"),Name=ReadString(x,"Name"),Family=ReadString(x,"Family"),Father=ReadString(x,"Father"),Status=(byte)Math.Clamp(ReadDecimal(x,"Status"),0,255),OzviyatDate=ReadString(x,"OzviyatDate"),MblPhone=ReadString(x,"MblPhone"),MeliNo=ReadString(x,"MeliNo"),IsMasirVisit=ReadBool(x,"IsMasirVisit"),IsVisitDigita=ReadBool(x,"IsVisitDigita"),KarmandSN=ReadNullableDecimal(x,"KarmandSN"),DaftarForooshSN=ReadNullableDecimal(x,"DaftarForooshSN"),NoeVisitorSN=ReadNullableDecimal(x,"NoeVisitorSN"),KarmandDs=ReadString(x,"KarmandDs","KarmandDS"),DaftarForooshDs=ReadString(x,"DaftarForooshDs","DaftarForooshDS"),NoeVisitorDs=ReadString(x,"NoeVisitorDs","NoeVisitorDS"),VahedeTejariDs=ReadString(x,"VahedeTejariDs","VahedeTejariDS")};
     private static bool ReadBool(JsonElement x,string k){if(!TryGet(x,k,out var v))return false;if(v.ValueKind==JsonValueKind.True)return true;if(v.ValueKind==JsonValueKind.Number&&v.TryGetInt32(out var n))return n!=0;if(v.ValueKind==JsonValueKind.String)return bool.TryParse(v.GetString(),out var b)?b:v.GetString()=="1";return false;}
     private static JsonElement ExtractPayload(string j){using var d=JsonDocument.Parse(j);return FindCollection(d.RootElement.Clone(),0);}
@@ -156,5 +165,5 @@
     private static string ReadError(string j,HttpResponseMessage r){try{using var d=JsonDocument.Parse(j);foreach(var k in new[]{"message","errMsg","errorMessage","detail","title","error"})if(TryGet(d.RootElement,k,out var v)&&v.ValueKind==JsonValueKind.String&&!string.IsNullOrWhiteSpace(v.GetString()))return v.GetString()!;}catch{}return string.IsNullOrWhiteSpace(j)?$"خطای HTTP {(int)r.StatusCode}":j;}
     private sealed class LookupItem{public decimal Id{get;set;}public string Title{get;set;}="";}
     private sealed class VisitorItem{public decimal VisitorSN{get;set;}public string VisitorNo{get;set;}="";public string Name{get;set;}="";public string Family{get;set;}="";public string Father{get;set;}="";public byte Status{get;set;}public string OzviyatDate{get;set;}="";public string MblPhone{get;set;}="";public string MeliNo{get;set;}="";public bool IsMasirVisit{get;set;}public bool IsVisitDigita{get;set;}public decimal? KarmandSN{get;set;}public decimal? DaftarForooshSN{get;set;}public decimal? NoeVisitorSN{get;set;}public string KarmandDs{get;set;}="";public string DaftarForooshDs{get;set;}="";public string NoeVisitorDs{get;set;}="";public string VahedeTejariDs{get;set;}="";}
-    private sealed class VisitorForm{public string Name{get;set;}="";public string Family{get;set;}="";public string Father{get;set;}="";public byte Status{get;set;}=1;public DateTime? OzviyatDate{get;set;}=DateTime.Today;public string MblPhone{get;set;}="";public string MeliNo{get;set;}="";public bool IsMasirVisit{get;set;}public bool IsVisitDigita{get;set;}public decimal? KarmandSN{get;set;}public decimal? DaftarForooshSN{get;set;}public decimal? NoeVisitorSN{get;set;}}
+    private sealed class VisitorForm{public string Name{get;set;}="";public string Family{get;set;}="";public string Father{get;set;}="";public byte Status{get;set;}=1;public DateTime? OzviyatDate{get;set;}=DateTime.Today;public string OzviyatDateText{get;set;}=ToPersianDate(DateTime.Today);public string MblPhone{get;set;}="";public string MeliNo{get;set;}="";public bool IsMasirVisit{get;set;}public bool IsVisitDigita{get;set;}public decimal? KarmandSN{get;set;}public decimal? DaftarForooshSN{get;set;}public decimal? NoeVisitorSN{get;set;}}
 }
