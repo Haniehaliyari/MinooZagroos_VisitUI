@@ -35,7 +35,7 @@
                 <input type="text" inputmode="numeric" autocomplete="off" maxlength="10" placeholder="مثال : ۱۴۰۵/۰۸/۳۰" @bind="factorDateToText" />
             </label>
             <div class="havale-date-filter-actions">
-                <button type="button" class="havale-button havale-button-primary" @onclick="ApplyFactorDateFilterAsync">اعمال فیلتر</button>
+                <button type="button" class="havale-button havale-button-primary havale-filter-icon-button" @onclick="ApplyFactorDateFilterAsync" title="اعمال فیلتر تاریخ" aria-label="اعمال فیلتر تاریخ"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5h16l-6.5 7.5v5l-3 1v-6L4 5Z"/></svg></button>
                 <button type="button" class="havale-button havale-button-light" @onclick="ClearFactorDateFilterAsync">پاک کردن تاریخ</button>
             </div>
         </div>
