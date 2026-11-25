@@ -718,3 +718,62 @@
 
 /* Persian date input */
 .visitor-field input[dir="ltr"]{text-align:center;letter-spacing:.4px;font-variant-numeric:tabular-nums}
+
+
+/* Final alignment pass: identical label and control baselines in every grid column */
+@media(min-width:901px){
+    .visitor-modal{width:min(98vw,1240px);max-width:1240px}
+}
+.visitor-form-grid{
+    align-items:start;
+    grid-auto-rows:minmax(0,auto);
+}
+.visitor-form-grid>.visitor-field{
+    display:flex;
+    flex-direction:column;
+    align-items:stretch;
+    justify-content:flex-start;
+    gap:7px;
+    min-width:0;
+    align-self:stretch;
+    font-size:11px;
+    line-height:1.6;
+}
+.visitor-form-grid>.visitor-field>span,
+.visitor-form-grid>.visitor-field:not(.lookup-field){
+    --visitor-label-line:20px;
+}
+.visitor-form-grid>.visitor-field>span,
+.visitor-form-grid>label.visitor-field{
+    min-height:20px;
+}
+.visitor-form-grid>.visitor-field input{
+    flex:0 0 45px;
+    height:45px;
+    min-height:45px;
+    margin:0;
+    font:inherit;
+    font-size:12px;
+}
+.visitor-form-grid>.visitor-field .visitor-switch-row{
+    flex:0 0 45px;
+    display:flex;
+    align-items:center;
+    justify-content:flex-start;
+    min-height:45px;
+    height:45px;
+    margin:0;
+    padding:0 13px;
+    gap:10px;
+}
+.visitor-form-grid>.visitor-field .visitor-switch-row strong{font-size:11px;line-height:1.5}
+.visitor-form-grid>.visitor-field.lookup-field{position:relative}
+.visitor-form-grid>.visitor-field.lookup-field>span{display:flex;align-items:center;min-height:20px}
+.visitor-form-grid>.visitor-field.lookup-field input{width:100%}
+@media(max-width:900px){
+    .visitor-modal{width:min(100%,760px);max-width:760px}
+    .visitor-form-grid>.visitor-field{gap:7px}
+}
+@media(max-width:560px){
+    .visitor-form-grid>.visitor-field{gap:6px}
+}
