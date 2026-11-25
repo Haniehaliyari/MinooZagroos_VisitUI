@@ -47,13 +47,13 @@
 <header class="visitor-modal-header"><div class="visitor-modal-title-icon"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2m7-10a4 4 0 1 0 0-8 4 4 0 0 0 0 8m9-1v6m-3-3h6"/></svg></div><div><span class="visitor-modal-eyebrow">اطلاعات فردی و سازمانی</span><h2 id="visitor-modal-title">@(isEdit ? "ویرایش ویزیتور" : "ثبت ویزیتور جدید")</h2><p>فیلدهای موردنیاز را تکمیل کنید؛ تاریخ عضویت به‌صورت خودکار امروز تنظیم شده است.</p></div></header>
 @if (!string.IsNullOrWhiteSpace(editorError)) { <div class="visitor-inline-error visitor-modal-error">@editorError</div> }
 <div class="visitor-form-grid">
-<label class="visitor-field">نام <b>*</b><input @bind="form.Name" maxlength="100" placeholder="نام" /></label>
-<label class="visitor-field">نام خانوادگی <b>*</b><input @bind="form.Family" maxlength="150" placeholder="نام خانوادگی" /></label>
-<label class="visitor-field">نام پدر<input @bind="form.Father" maxlength="100" placeholder="نام پدر" /></label>
+<label class="visitor-field"><span>نام <b>*</b></span><input @bind="form.Name" maxlength="100" placeholder="نام" /></label>
+<label class="visitor-field"><span>نام خانوادگی <b>*</b></span><input @bind="form.Family" maxlength="150" placeholder="نام خانوادگی" /></label>
+<label class="visitor-field"><span>نام پدر</span><input @bind="form.Father" maxlength="100" placeholder="نام پدر" /></label>
 <div class="visitor-field"><span>وضعیت</span><button type="button" class="visitor-switch-row" role="switch" aria-checked="@(form.Status == 1)" @onclick="ToggleStatus"><span class="visitor-switch @(form.Status == 1 ? "on" : "")"><i></i></span><strong>@(form.Status == 1 ? "فعال" : "غیرفعال")</strong></button></div>
-<label class="visitor-field">تاریخ عضویت<input type="text" inputmode="numeric" dir="ltr" placeholder="۱۴۰۵/۰۱/۰۱" @bind="form.OzviyatDateText" /></label>
-<label class="visitor-field">موبایل<input @bind="form.MblPhone" maxlength="20" inputmode="tel" placeholder="شماره موبایل" /></label>
-<label class="visitor-field">کد ملی<input @bind="form.MeliNo" maxlength="20" inputmode="numeric" placeholder="کد ملی" /></label>
+<label class="visitor-field"><span>تاریخ عضویت</span><input type="text" inputmode="numeric" dir="ltr" placeholder="۱۴۰۵/۰۱/۰۱" @bind="form.OzviyatDateText" /></label>
+<label class="visitor-field"><span>موبایل</span><input @bind="form.MblPhone" maxlength="20" inputmode="tel" placeholder="شماره موبایل" /></label>
+<label class="visitor-field"><span>کد ملی</span><input @bind="form.MeliNo" maxlength="20" inputmode="numeric" placeholder="کد ملی" /></label>
 <div class="visitor-field"><span>مسیر ویزیت</span><button type="button" class="visitor-switch-row" role="switch" aria-checked="@form.IsMasirVisit" @onclick="() => form.IsMasirVisit = !form.IsMasirVisit"><span class="visitor-switch @(form.IsMasirVisit ? "on" : "")"><i></i></span><strong>@(form.IsMasirVisit ? "فعال" : "غیرفعال")</strong></button></div>
 <div class="visitor-field"><span>ویزیت دیجیتال</span><button type="button" class="visitor-switch-row" role="switch" aria-checked="@form.IsVisitDigita" @onclick="() => form.IsVisitDigita = !form.IsVisitDigita"><span class="visitor-switch @(form.IsVisitDigita ? "on" : "")"><i></i></span><strong>@(form.IsVisitDigita ? "فعال" : "غیرفعال")</strong></button></div>
 <div class="visitor-field lookup-field"><span>نام کارمند <b>*</b></span><input value="@karmandSearch" @oninput="e => OnLookupInput(e, 0)" @onfocus="() => showKarmandOptions = true" @onblur="() => CloseLookupAsync(0)" autocomplete="off" placeholder="جستجو و انتخاب کارمند" />
