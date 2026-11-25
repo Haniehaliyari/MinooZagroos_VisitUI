@@ -929,3 +929,49 @@ button,a{-webkit-tap-highlight-color:transparent}
     .app-shell .page-content :is(.ant-card,.card,.content-card,.form-card,.table-card){animation:none!important}
     .app-shell .page-content :is(button,.ant-btn,[role="button"]) svg{transition:none!important}
 }
+
+
+/* Shared Lucide-inspired icon language: consistent rounded line endings and proportions. */
+.app-shell .page-content svg[viewBox],
+.app-shell .app-sidebar svg[viewBox],
+.app-shell .app-topbar svg[viewBox]{
+ shape-rendering:geometricPrecision;
+}
+.app-shell :is(.page-content,.app-sidebar,.app-topbar) svg[viewBox] :is(path,line,polyline,polygon,circle,rect,ellipse){
+ stroke-linecap:round;
+ stroke-linejoin:round;
+}
+.app-shell .page-content :is(button,.ant-btn,[role="button"]) svg[viewBox]{
+ flex-shrink:0;
+}
+
+/* Main list searches open from a compact magnifier control; filtering logic remains unchanged. */
+.app-shell .page-content :is(.mamoor-search-wrap,.all-havale-search-wrap,.havale-search-wrap){
+ position:relative;display:flex;align-items:center;flex:0 0 42px;
+ width:42px;min-width:42px;max-width:42px;min-height:42px;
+ transition:width .24s ease,max-width .24s ease,flex-basis .24s ease;
+}
+.app-shell .page-content :is(.mamoor-search-wrap,.all-havale-search-wrap,.havale-search-wrap):focus-within{
+ width:min(390px,65vw);max-width:min(390px,65vw);flex-basis:min(390px,65vw);
+}
+.app-shell .page-content :is(.mamoor-search-wrap,.all-havale-search-wrap,.havale-search-wrap) > svg,
+.app-shell .page-content .all-havale-search-icon{
+ position:absolute;z-index:2;right:12px;top:50%;transform:translateY(-50%);
+ width:18px;height:18px;display:block;pointer-events:none;
+ fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;
+}
+.app-shell .page-content .all-havale-search-icon{font-size:0}
+.app-shell .page-content :is(.mamoor-search-wrap,.all-havale-search-wrap,.havale-search-wrap) > :is(input,.mamoor-search,.all-havale-search,.havale-search){
+ position:relative;z-index:1;width:42px;min-width:42px;max-width:42px;height:42px;
+ padding:0 40px 0 10px!important;border-radius:11px!important;
+ color:transparent!important;caret-color:transparent;
+ overflow:hidden;text-overflow:clip;white-space:nowrap;
+ transition:width .24s ease,max-width .24s ease,color .18s ease,background .18s ease;
+}
+.app-shell .page-content :is(.mamoor-search-wrap,.all-havale-search-wrap,.havale-search-wrap):focus-within > :is(input,.mamoor-search,.all-havale-search,.havale-search){
+ width:100%;max-width:100%;color:var(--text,#1b365d)!important;caret-color:currentColor;
+}
+.app-shell .page-content :is(.mamoor-search-wrap,.all-havale-search-wrap,.havale-search-wrap) > :is(input,.mamoor-search,.all-havale-search,.havale-search)::placeholder{color:transparent;opacity:0;transition:opacity .15s ease}
+.app-shell .page-content :is(.mamoor-search-wrap,.all-havale-search-wrap,.havale-search-wrap):focus-within > :is(input,.mamoor-search,.all-havale-search,.havale-search)::placeholder{color:var(--muted,#64788d);opacity:1}
+.app-shell .page-content :is(.mamoor-search-wrap,.all-havale-search-wrap,.havale-search-wrap):focus-within > svg{color:var(--accent,#005a9c)}
+@media(prefers-reduced-motion:reduce){.app-shell .page-content :is(.mamoor-search-wrap,.all-havale-search-wrap,.havale-search-wrap),.app-shell .page-content :is(.mamoor-search-wrap,.all-havale-search-wrap,.havale-search-wrap) *{transition:none!important}}
