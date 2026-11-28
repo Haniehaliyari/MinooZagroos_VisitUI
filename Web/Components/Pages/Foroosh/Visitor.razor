@@ -10,7 +10,7 @@
 @inject BackendApiClient ApiClient
 
 <PageTitle>مدیریت ویزیتورها | مینو زاگرس</PageTitle>
-<div class="visitor-page" dir="rtl">
+<div class="visitor-page" dir="rtl" @onclick="CloseSearch">
     <header class="visitor-heading">
         <div><div class="visitor-eyebrow">مدیریت ارتباط با مشتریان</div><h1>مدیریت ویزیتورها</h1></div>
         <div class="hero-3d-art" aria-hidden="true"><span class="hero-orbit hero-orbit-one"></span><span class="hero-orbit hero-orbit-two"></span><span class="hero-core"><i></i><b></b></span><span class="hero-spark hero-spark-one"></span><span class="hero-spark hero-spark-two"></span></div>
@@ -18,19 +18,13 @@
     <section class="visitor-panel">
         <div class="visitor-toolbar">
             <div class="visitor-search-wrap @(showSearch ? "is-open" : "")">
+                @onclick:stopPropagation="true"
                 @if (showSearch)
                 {
                     <input class="visitor-search" placeholder="جستجو بر اساس نام، نام خانوادگی، کد ملی یا موبایل..." @bind="searchText" @bind:event="oninput" />
                 }
-                <button type="button" class="visitor-search-toggle" title="@(showSearch ? "بستن جستجو" : "جستجو")" aria-label="@(showSearch ? "بستن جستجو" : "جستجو")" aria-expanded="@showSearch" @onclick="ToggleSearch">
-                    @if (showSearch)
-                    {
-                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg>
-                    }
-                    else
-                    {
-                        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8" /><path d="m16 16 5 5" /></svg>
-                    }
+                <button type="button" class="visitor-search-toggle" title="جستجو" aria-label="جستجو" aria-expanded="@showSearch" @onclick="ToggleSearch">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8" /><path d="m16 16 5 5" /></svg>
                 </button>
             </div>
             <div class="visitor-toolbar-actions">
@@ -119,6 +113,13 @@
     {
         showSearch = !showSearch;
         if (!showSearch) searchText = "";
+    }
+
+    private void CloseSearch()
+    {
+        if (!showSearch) return;
+        showSearch = false;
+        searchText = "";
     }
 
     private async Task LoadAllAsync() {
