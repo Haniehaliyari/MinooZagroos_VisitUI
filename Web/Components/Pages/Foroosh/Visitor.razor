@@ -120,7 +120,8 @@
         form.OzviyatDate=date;
         saving=true; await InvokeAsync(StateHasChanged);
         try {
-            object payload = new { dto = new { Name=form.Name, Family=form.Family, Father=NullIfEmpty(form.Father), Status=form.Status, OzviyatDate=date, MblPhone=NullIfEmpty(form.MblPhone), MeliNo=NullIfEmpty(form.MeliNo), IsMasirVisit=form.IsMasirVisit, IsVisitDigita=form.IsVisitDigita, KarmandSN=form.KarmandSN, DaftarForooshSN=form.DaftarForooshSN, NoeVisitorSN=form.NoeVisitorSN }, VisitorSN=editingSN };
+            var membershipDate=ToPersianDate(date).Replace("/", "");
+            object payload = new { dto = new { Name=form.Name, Family=form.Family, Father=form.Father.Trim(), Status=form.Status, OzviyatDate=membershipDate, MblPhone=NullIfEmpty(form.MblPhone), MeliNo=NullIfEmpty(form.MeliNo), IsMasirVisit=form.IsMasirVisit, IsVisitDigita=form.IsVisitDigita, KarmandSN=form.KarmandSN, DaftarForooshSN=form.DaftarForooshSN, NoeVisitorSN=form.NoeVisitorSN }, VisitorSN=editingSN };
             using var c=await ApiClient.CreateAuthorizedClientAsync(); using var r=await c.PostAsJsonAsync(isEdit?UpdateEndpoint:CreateEndpoint,payload); var j=await r.Content.ReadAsStringAsync(); EnsureSuccess(r,j);
             showEditor=false; successMessage=isEdit?"اطلاعات ویزیتور با موفقیت ویرایش شد.":"ویزیتور جدید با موفقیت ثبت شد."; showSuccessModal=true;
         } catch(Exception ex){editorError=ex.Message;} finally{saving=false;}
@@ -147,7 +148,14 @@
     private static DateTime? ToDateValue(string s){if(DateTime.TryParse(s,CultureInfo.InvariantCulture,DateTimeStyles.AssumeLocal,out var d))return d.Date;if(DateTime.TryParse(s,CultureInfo.CurrentCulture,DateTimeStyles.AssumeLocal,out d))return d.Date;return null;}
     private static string ToPersianDate(DateTime? value){if(!value.HasValue)return "";var d=value.Value;return $"{PersianCalendar.GetYear(d):0000}/{PersianCalendar.GetMonth(d):00}/{PersianCalendar.GetDayOfMonth(d):00}";}
     private static bool TryParsePersianDate(string? value,out DateTime date){
-        date=default;var parts=Normalize(value).Split('/', '-', '.');if(parts.Length!=3)return false;
+        date=default;
+        var normalized=Normalize(value).Trim();
+        string[] parts;
+        if(normalized.Length==8 && normalized.All(char.IsDigit))
+            parts=[normalized[..4],normalized.Substring(4,2),normalized.Substring(6,2)];
+        else
+            parts=normalized.Split('/', '-', '.');
+        if(parts.Length!=3)return false;
         if(!int.TryParse(parts[0],NumberStyles.None,CultureInfo.InvariantCulture,out var year)||!int.TryParse(parts[1],NumberStyles.None,CultureInfo.InvariantCulture,out var month)||!int.TryParse(parts[2],NumberStyles.None,CultureInfo.InvariantCulture,out var day))return false;
         try{date=PersianCalendar.ToDateTime(year,month,day,0,0,0,0);return true;}catch(ArgumentOutOfRangeException){return false;}
     }
