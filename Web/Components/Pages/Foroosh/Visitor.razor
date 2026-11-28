@@ -67,9 +67,9 @@
 </section></div>
 }
 @if (pendingDelete is not null) { <div class="visitor-modal-backdrop" @onclick="CancelDelete"><section class="visitor-confirm-modal" role="dialog" aria-modal="true" @onclick:stopPropagation="true" dir="rtl"><div class="visitor-confirm-icon">!</div><h2>حذف ویزیتور</h2><p>آیا از حذف «<strong>@pendingDelete.Name @pendingDelete.Family</strong>» مطمئن هستید؟</p>@if (!string.IsNullOrWhiteSpace(deleteError)) { <div class="visitor-inline-error">@deleteError</div> }<footer class="visitor-modal-footer"><button class="visitor-button visitor-button-light" @onclick="CancelDelete" disabled="@deleting">انصراف</button><button class="visitor-button visitor-button-danger" @onclick="DeleteAsync" disabled="@deleting">@(deleting ? "در حال حذف..." : "بله، حذف شود")</button></footer></section></div> }
-@if (showSuccessModal) { <div class="visitor-modal-backdrop"><section class="visitor-confirm-modal visitor-success-modal" role="dialog" aria-modal="true" dir="rtl"><div class="visitor-success-icon">✓</div><h2>عملیات با موفقیت انجام شد</h2><p>@successMessage</p><footer class="visitor-modal-footer"><button class="visitor-button visitor-button-primary" @onclick="ConfirmSuccessAndReload">تأیید</button></footer></section></div> }
+@if (showSuccessModal) { <div class="visitor-modal-backdrop visitor-success-backdrop"><section class="visitor-confirm-modal visitor-success-modal" role="dialog" aria-modal="true" aria-labelledby="visitor-success-title" dir="rtl"><div class="visitor-success-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4.5 4.5L19 7" /></svg></div><h2 id="visitor-success-title">عملیات با موفقیت انجام شد</h2><p>@successMessage</p><footer class="visitor-modal-footer"><button type="button" class="visitor-button visitor-button-primary" @onclick="ConfirmSuccessAndReload">تأیید</button></footer></section></div> }
 
-@code {
+\n<style>\n    .visitor-success-backdrop{z-index:1200;align-items:center;justify-content:center;}\n    .visitor-success-modal{text-align:center;}\n    .visitor-success-modal h2{margin:12px 0 8px;}\n    .visitor-success-modal p{line-height:1.9;margin:0 0 18px;}\n    .visitor-success-modal .visitor-modal-footer{justify-content:center;}\n    .visitor-success-icon{display:grid;place-items:center;width:58px;height:58px;margin:0 auto;border-radius:50%;background:#e7f7ed;color:#16834a;}\n    .visitor-success-icon svg{display:block;width:31px;height:31px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}\n</style>\n\n@code {
     private const string AllEndpoint = "api/v1/Visitor/GetAllVisitor";
     private const string CreateEndpoint = "api/v1/Visitor/CreateVisitor";
     private const string UpdateEndpoint = "api/v1/Visitor/UpdateVisitor";
@@ -140,15 +140,15 @@
                 NoeVisitorSN = form.NoeVisitorSN
             };
             using var c=await ApiClient.CreateAuthorizedClientAsync(); using var r=await c.PostAsJsonAsync(isEdit?UpdateEndpoint:CreateEndpoint,payload); var j=await r.Content.ReadAsStringAsync(); EnsureSuccess(r,j);
-            showEditor=false; successMessage=isEdit?"اطلاعات ویزیتور با موفقیت ویرایش شد.":"ویزیتور جدید با موفقیت ثبت شد."; showSuccessModal=true;
+            var savedVisitorName=$"{form.Name} {form.Family}".Trim(); showEditor=false; successMessage=isEdit?$"ویزیتور «{savedVisitorName}» با موفقیت ویرایش شد.":$"ویزیتور «{savedVisitorName}» با موفقیت ایجاد شد."; showSuccessModal=true;
         } catch(Exception ex){editorError=ex.Message;} finally{saving=false;}
     }
     private async Task DeleteAsync() {
         if(pendingDelete is null)return; deleting=true; deleteError=null;
-        try { using var c=await ApiClient.CreateAuthorizedClientAsync(); var url=$"{DeleteEndpoint}?VisitorSN={Uri.EscapeDataString(pendingDelete.VisitorSN.ToString(CultureInfo.InvariantCulture))}"; using var r=await c.PostAsync(url,null); var j=await r.Content.ReadAsStringAsync(); EnsureSuccess(r,j); successMessage="ویزیتور با موفقیت حذف شد."; pendingDelete=null; showSuccessModal=true; }
+        try { var deletedVisitorName=$"{pendingDelete.Name} {pendingDelete.Family}".Trim(); using var c=await ApiClient.CreateAuthorizedClientAsync(); var url=$"{DeleteEndpoint}?VisitorSN={Uri.EscapeDataString(pendingDelete.VisitorSN.ToString(CultureInfo.InvariantCulture))}"; using var r=await c.PostAsync(url,null); var j=await r.Content.ReadAsStringAsync(); EnsureSuccess(r,j); successMessage=$"ویزیتور «{deletedVisitorName}» با موفقیت حذف شد."; pendingDelete=null; showSuccessModal=true; }
         catch(Exception ex){deleteError=ex.Message;} finally{deleting=false;}
     }
-    private async Task ConfirmSuccessAndReload(){showSuccessModal=false;await LoadAllAsync();}
+    private async Task ConfirmSuccessAndReload(){showSuccessModal=false;successMessage="";searchText="";await LoadAllAsync();}
     private void AskDelete(VisitorItem x){pendingDelete=x;deleteError=null;} private void CancelDelete(){if(!deleting)pendingDelete=null;} private void CloseEditor(){if(!saving)showEditor=false;}
     private void ToggleStatus()=>form.Status=form.Status==1?(byte)0:(byte)1;
     private void OnLookupInput(ChangeEventArgs e,int kind){var v=e.Value?.ToString()??"";if(kind==0){karmandSearch=v;form.KarmandSN=null;showKarmandOptions=true;}else if(kind==1){daftarSearch=v;form.DaftarForooshSN=null;showDaftarOptions=true;}else{noeVisitorSearch=v;form.NoeVisitorSN=null;showNoeVisitorOptions=true;}}
