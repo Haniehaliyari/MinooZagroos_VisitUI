@@ -89,7 +89,7 @@
                 {
                     var payload = await GetLookupPayloadAsync(c, definition.Item2);
                     var parsed = ReadArray(payload).Select(ReadLookup)
-                        .Where(x => x.Id != 0 && !string.IsNullOrWhiteSpace(x.Title)).ToList();
+                        .Where(x => x.Id != "0" && !string.IsNullOrWhiteSpace(x.Title)).ToList();
                     Set(definition.Item3, parsed);
                     if (parsed.Count == 0)
                         errors.Add($"{definition.Item1}: سرویس پاسخ داده اما گزینه قابل نمایشی برنگردانده است.");
