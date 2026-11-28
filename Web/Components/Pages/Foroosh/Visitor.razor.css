@@ -852,3 +852,13 @@
     .visitor-modal{width:100%;max-width:none}
     .visitor-form-grid{grid-template-columns:1fr;padding:16px;gap:14px}
 }
+
+
+/* Visitor success dialog styles (kept in the scoped stylesheet) */
+.visitor-success-backdrop{z-index:1200;align-items:center;justify-content:center}
+.visitor-success-modal{text-align:center}
+.visitor-success-modal h2{margin:12px 0 8px}
+.visitor-success-modal p{line-height:1.9;margin:0 0 18px}
+.visitor-success-modal .visitor-modal-footer{justify-content:center}
+.visitor-success-icon{display:grid;place-items:center;width:58px;height:58px;margin:0 auto;border-radius:50%;background:#e7f7ed;color:#16834a}
+.visitor-success-icon svg{display:block;width:31px;height:31px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
