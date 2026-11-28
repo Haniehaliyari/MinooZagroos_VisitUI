@@ -168,10 +168,51 @@
                 VisitorSN = visitorSn
             };
 
+            // بعضی نسخه‌های API فقط نتیجه موفقیت برمی‌گردانند و شناسه را در body قرار نمی‌دهند.
+            // قبل از ثبت، شناسه‌های موجود را می‌گیریم تا در صورت نبود شناسه در پاسخ، رکورد تازه را پیدا کنیم.
+            var existingIds = new HashSet<decimal>();
+            try
+            {
+                var before = await GetJsonAsync(client, AllEndpoint);
+                foreach (var item in ReadArray(before))
+                {
+                    var existingId = ReadDecimal(item, "PishFactorSN", "Identifire", "Identifier", "Id", "SN");
+                    if (existingId != 0) existingIds.Add(existingId);
+                }
+            }
+            catch
+            {
+                // خود عملیات ثبت مرجع اصلی است؛ اگر خواندن فهرست قبل از ثبت در دسترس نبود،
+                // ابتدا ثبت را انجام می‌دهیم و بعد شناسه را از پاسخ یا فهرست دریافت می‌کنیم.
+            }
+
             var response = await PostAsync(client, CreateEndpoint, dto);
             savedPishFactorSN = ReadReturnedDecimal(response);
             if (savedPishFactorSN == 0)
-                throw new InvalidOperationException("درخواست ثبت سربرگ موفق بود، اما شناسه پیش‌فاکتور از پاسخ سرویس دریافت نشد.");
+            {
+                var after = await GetJsonAsync(client, AllEndpoint);
+                var createdItems = ReadArray(after)
+                    .Where(item => !existingIds.Contains(ReadDecimal(item, "PishFactorSN", "Identifire", "Identifier", "Id", "SN")))
+                    .Where(item =>
+                        ReadDecimal(item, "MoshtariInfoSN") == moshtariSn &&
+                        ReadDecimal(item, "VisitorSN") == visitorSn &&
+                        Normalize(ReadText(item, "SodoorDate")).Replace("/", "") == Normalize(sodoor).Replace("/", "") &&
+                        (string.IsNullOrWhiteSpace(form.PishFactorDs) ||
+                         ReadText(item, "PishFactorDs").Equals(form.PishFactorDs, StringComparison.OrdinalIgnoreCase)))
+                    .ToList();
+
+                if (createdItems.Count == 1)
+                    savedPishFactorSN = ReadDecimal(createdItems[0], "PishFactorSN", "Identifire", "Identifier", "Id", "SN");
+                else if (createdItems.Count > 1)
+                    savedPishFactorSN = createdItems
+                        .Select(item => ReadDecimal(item, "PishFactorSN", "Identifire", "Identifier", "Id", "SN"))
+                        .Where(id => id != 0)
+                        .OrderByDescending(id => id)
+                        .FirstOrDefault();
+            }
+
+            if (savedPishFactorSN == 0)
+                throw new InvalidOperationException("سربرگ ثبت شده، اما شناسه آن نه در پاسخ ثبت و نه در فهرست پیش‌فاکتورها پیدا نشد. برای جلوگیری از ثبت تکراری، دوباره ثبت نکنید و فهرست پیش‌فاکتورها را بررسی کنید.");
 
             form.SodoorDateText = ToPersianDate(sodoorDate);
             masterSaved = true;
@@ -459,7 +500,7 @@
     private static decimal ReadReturnedDecimal(JsonElement element)
     {
         if (element.ValueKind == JsonValueKind.Number && element.TryGetDecimal(out var number)) return number;
-        if (decimal.TryParse(ReadText(element, "PishFactorSN", "PishFactorHaSN", "id", "value", "sn"), NumberStyles.Any, CultureInfo.InvariantCulture, out number)) return number;
+        if (decimal.TryParse(ReadText(element, "PishFactorSN", "PishFactorHaSN", "Identifire", "Identifier", "InsertedId", "NewId", "id", "value", "sn"), NumberStyles.Any, CultureInfo.InvariantCulture, out number)) return number;
         foreach (var key in new[] { "data", "result", "value" })
             if (TryGet(element, key, out var nested))
             {
