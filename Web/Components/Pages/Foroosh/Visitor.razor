@@ -17,16 +17,7 @@
     </header>
     <section class="visitor-panel">
         <div class="visitor-toolbar">
-            <div class="visitor-search-wrap">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <circle cx="10.8" cy="10.8" r="6.8" />
-                    <path d="m16 16 5 5" />
-                </svg>
-                <input class="visitor-search"
-                       placeholder="جستجو بر اساس نام، نام خانوادگی، کد ملی یا موبایل..."
-                       @bind="searchText"
-                       @bind:event="oninput" />
-            </div>
+            <div class="visitor-search-wrap"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg><input class="visitor-search" placeholder="جستجو بر اساس نام، نام خانوادگی، کد ملی یا موبایل..." @bind="searchText" @bind:event="oninput"/></div>
             <div class="visitor-toolbar-actions">
                 <span class="visitor-count">@FilteredItems.Count ویزیتور</span>
                 <button type="button" class="visitor-button visitor-button-light" title="بارگذاری مجدد" aria-label="بارگذاری مجدد" @onclick="LoadAllAsync" disabled="@loading">
