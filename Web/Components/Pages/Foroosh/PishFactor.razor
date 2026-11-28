@@ -44,14 +44,14 @@
 <label>نوع پرداخت<select @bind="form.NoePardakhtSN"><option value="">انتخاب نوع پرداخت</option>@foreach(var o in noePardakhts){<option value="@o.Id">@o.Title</option>}</select></label>
 <label>نوع تحویل<select @bind="form.NoeTahvilSN"><option value="">انتخاب نوع تحویل</option>@foreach(var o in noeTavhils){<option value="@o.Id">@o.Title</option>}</select></label>
 <label>کانال فروش<select @bind="form.KanaleForooshSN"><option value="">انتخاب کانال فروش</option>@foreach(var o in kanalha){<option value="@o.Id">@o.Title</option>}</select></label>
-<label>وضعیت<select @bind="form.Status"><option value="1">فعال</option><option value="0">غیرفعال</option></select></label>
+<label>وضعیت<input value="@(form.Status==1?"فعال":"غیرفعال")" readonly/></label>
 <label>تخفیف کل<input type="number" min="0" @bind="form.TakhfifKol"/></label>
-<label>مبلغ کل<input type="number" min="0" @bind="form.MablaghKol"/></label>
+<label>مبلغ کل<input value="@form.MablaghKol" readonly/></label>
 </div></div>
 <div class="pish-form-section">
 <div class="pish-section-title"><div><h3>اقلام پیش‌فاکتور</h3><small>برای هر کالا یک ردیف اضافه کنید؛ تعداد ردیف‌ها محدودیتی ندارد.</small></div><button class="visitor-button visitor-button-primary" @onclick="AddRow">＋ افزودن کالا</button></div>
-<div class="visitor-lines-wrap"><table class="visitor-lines"><thead><tr><th>ردیف</th><th>کالا <b>*</b></th><th>تعداد <b>*</b></th><th>نرخ واحد</th><th>درصد تخفیف</th><th>مبلغ تخفیف</th><th>مالیات</th><th>عوارض</th><th></th></tr></thead><tbody>
-@for(var i=0;i<form.Lines.Count;i++){var row=form.Lines[i];<tr @key="row.Key"><td>@(i+1)</td><td><select @bind="row.KalaSN"><option value="0">انتخاب کالا</option>@foreach(var k in kalas){<option value="@k.Id">@k.Title</option>}</select></td><td><input type="number" min="0.001" step="0.001" @bind="row.Tedad"/></td><td><input type="number" min="0" @bind="row.NerkheVahed"/></td><td><input type="number" min="0" max="100" step="0.01" @bind="row.DarsadeTakhfif"/></td><td><input type="number" min="0" @bind="row.MablagheTakhfif"/></td><td><input type="number" min="0" @bind="row.Maliat"/></td><td><input type="number" min="0" @bind="row.Avarez"/></td><td><button class="visitor-remove" title="حذف ردیف" @onclick="()=>RemoveRow(row)">×</button></td></tr>}
+<div class="visitor-lines-wrap"><table class="visitor-lines"><thead><tr><th>ردیف</th><th>کالا <b>*</b></th><th>تعداد <b>*</b></th><th>نرخ واحد</th><th>درصد تخفیف</th><th>مبلغ تخفیف</th><th>مالیات</th><th>عوارض</th><th>جایزه</th><th></th></tr></thead><tbody>
+@for(var i=0;i<form.Lines.Count;i++){var row=form.Lines[i];<tr @key="row.Key"><td>@(i+1)</td><td><select @bind="row.KalaSN"><option value="0">انتخاب کالا</option>@foreach(var k in kalas){<option value="@k.Id">@k.Title</option>}</select></td><td><input type="number" min="0.001" step="0.001" @bind="row.Tedad"/></td><td><input type="number" value="@row.NerkheVahed" readonly/></td><td><input type="number" value="@row.DarsadeTakhfif" readonly/></td><td><input type="number" value="@row.MablagheTakhfif" readonly/></td><td><input type="number" value="@row.Maliat" readonly/></td><td><input type="number" value="@row.Avarez" readonly/></td><td><input type="checkbox" class="visitor-prize-checkbox" @bind="row.IsJayeze" aria-label="جایزه"/></td><td><button class="visitor-remove" title="حذف ردیف" @onclick="()=>RemoveRow(row)">×</button></td></tr>}
 </tbody></table></div>
 <div class="visitor-line-summary"><span>@form.Lines.Count قلم کالا</span><span>مجموع تعداد: <b>@form.Lines.Sum(x=>x.Tedad).ToString("N2")</b></span></div>
 </div>
@@ -65,6 +65,8 @@
     private const string AllEndpoint="api/v1/PishFactor/GetAllPishFactor", AllHaEndpoint="api/v1/PishFactor/GetAllPishFactorHa";
     private const string CreateEndpoint="api/v1/PishFactor/CreatePishFactor", UpdateEndpoint="api/v1/PishFactor/UpdatePishFactor", DeleteEndpoint="api/v1/PishFactor/DeletePishFactor";
     private const string CreateHaEndpoint="api/v1/PishFactor/CreatePishFactorHa", UpdateHaEndpoint="api/v1/PishFactor/UpdatePishFactorHa", DeleteHaEndpoint="api/v1/PishFactor/DeletePishFactorHa";
+    private const string CalculateHaEndpoint="api/v1/PishFactor/CalculatePishFactorHa";
+    private const decimal VahedeTejariSN=230034.935m;
     private readonly List<Factor> items=[]; private readonly List<FactorLineData> allLines=[];
     private readonly List<Lookup> noePardakhts=[],noeTavhils=[],kalas=[],visitors=[],moshtaris=[],kanalha=[];
     private FactorForm form=new(); private Factor? pendingDelete; private string searchText=""; private string? loadError,editorError,deleteError; private string successMessage="";
@@ -76,24 +78,68 @@
     private async Task LoadCombosAsync(){comboError=null;using var c=await ApiClient.CreateAuthorizedClientAsync();var defs=new[]{("نوع پرداخت","api/v1/NoePardakht/GetNoePardakhtByCombo",noePardakhts),("نوع تحویل","api/v1/NoeTahvil/GetNoeTahvilByCombo",noeTavhils),("کالا","api/v1/Kala/GetKalaByCombo",kalas),("ویزیتور","api/v1/Visitor/GetVisitorByCombo",visitors),("مشتری","api/v1/Moshtari/GetMoshtariInfoByCombo",moshtaris),("کانال فروش","api/v1/KanaleForoosh/GetKanaleForooshByCombo",kanalha)};var errors=new List<string>();foreach(var d in defs){try{var arr=await GetJson(c,d.Item2);d.Item3.Clear();d.Item3.AddRange(ReadArray(arr).Select(ReadLookup).Where(x=>x.Id!=0&&!string.IsNullOrWhiteSpace(x.Title)));if(d.Item3.Count==0)errors.Add($"{d.Item1}: پاسخ سرویس خالی یا ساختار آن ناشناخته است.");}catch(Exception ex){d.Item3.Clear();errors.Add($"{d.Item1}: {ex.Message}");}}if(errors.Count>0)comboError=string.Join(" | ",errors);}
     private async Task<JsonElement> GetJson(HttpClient c,string endpoint){using var r=await c.GetAsync(endpoint);var j=await r.Content.ReadAsStringAsync();EnsureSuccess(r,j);return Extract(j);}
     private void OpenCreate(){isEdit=false;editingSN=0;editorError=null;form=new FactorForm{Status=1,SodoorDateText=ToPersianDate(DateTime.Today),Lines=[new FactorLine()]};showEditor=true;}
-    private async Task OpenEditAsync(Factor x){isEdit=true;editingSN=x.PishFactorSN;editorError=null;form=new FactorForm{PishFactorDs=x.PishFactorDs,PishFactorNo=x.PishFactorNo,SodoorDateText=ToPersianDateText(x.SodoorDate),Status=x.Status,NoePardakhtSN=x.NoePardakhtSN,NoeTahvilSN=x.NoeTahvilSN,KanaleForooshSN=x.KanaleForooshSN,MoshtariInfoSN=x.MoshtariInfoSN,VisitorSN=x.VisitorSN,TakhfifKol=x.TakhfifKol??0,MablaghKol=x.MablaghKol??0,Lines=allLines.Where(z=>z.PishFactorSN==x.PishFactorSN).Select(z=>new FactorLine{PishFactorHaSN=z.PishFactorHaSN,KalaSN=z.KalaSN,Tedad=z.Tedad,NerkheVahed=z.NerkheVahed??0,DarsadeTakhfif=z.DarsadeTakhfif??0,MablagheTakhfif=z.MablagheTakhfif??0,Maliat=z.Maliat??0,Avarez=z.Avarez??0}).ToList()};if(form.Lines.Count==0)form.Lines.Add(new FactorLine());showEditor=true;await Task.CompletedTask;}
+    private async Task OpenEditAsync(Factor x){isEdit=true;editingSN=x.PishFactorSN;editorError=null;form=new FactorForm{PishFactorDs=x.PishFactorDs,PishFactorNo=x.PishFactorNo,SodoorDateText=ToPersianDateText(x.SodoorDate),Status=x.Status,NoePardakhtSN=x.NoePardakhtSN,NoeTahvilSN=x.NoeTahvilSN,KanaleForooshSN=x.KanaleForooshSN,MoshtariInfoSN=x.MoshtariInfoSN,VisitorSN=x.VisitorSN,TakhfifKol=x.TakhfifKol??0,MablaghKol=x.MablaghKol??0,Lines=allLines.Where(z=>z.PishFactorSN==x.PishFactorSN).Select(z=>new FactorLine{PishFactorHaSN=z.PishFactorHaSN,KalaSN=z.KalaSN,Tedad=z.Tedad,NerkheVahed=z.NerkheVahed??0,DarsadeTakhfif=z.DarsadeTakhfif??0,MablagheTakhfif=z.MablagheTakhfif??0,Maliat=z.Maliat??0,Avarez=z.Avarez??0,IsJayeze=z.IsJayeze}).ToList()};if(form.Lines.Count==0)form.Lines.Add(new FactorLine());showEditor=true;await Task.CompletedTask;}
     private void AddRow()=>form.Lines.Add(new FactorLine()); private void RemoveRow(FactorLine row){if(form.Lines.Count>1)form.Lines.Remove(row);}
     private async Task SaveAsync(){editorError=null;if(form.MoshtariInfoSN==0||form.VisitorSN==0){editorError="انتخاب مشتری و ویزیتور الزامی است.";return;}if(!TryParsePersianDate(form.SodoorDateText,out var sodoorDate)){editorError="تاریخ صدور را به‌صورت شمسی و با قالب ۱۴۰۵/۰۱/۰۱ وارد کنید.";return;}if(form.Lines.Count==0||form.Lines.Any(x=>x.KalaSN==0||x.Tedad<=0)){editorError="برای تمام ردیف‌ها کالا و تعداد معتبر انتخاب کنید.";return;}form.SodoorDate=ToPersianDate(sodoorDate).Replace("/","");saving=true;
         try{using var c=await ApiClient.CreateAuthorizedClientAsync();decimal masterSn=editingSN;
-            var master=new{PishFactorSN=editingSN,Identifire=editingSN,PishFactorDs=form.PishFactorDs,PishFactorNo=form.PishFactorNo,NoePardakhtSN=form.NoePardakhtSN,NoeTahvilSN=form.NoeTahvilSN,SodoorDate=form.SodoorDate,Status=form.Status,VahedeTejariSN=230034.935m,KanaleForooshSN=form.KanaleForooshSN,TakhfifKol=form.TakhfifKol,MablaghKol=form.MablaghKol,Avarez=0,Maliat=0,RezAvarez=0,MoshtariInfoSN=form.MoshtariInfoSN,VisitorSN=form.VisitorSN};
+            var master=new{PishFactorSN=editingSN,Identifire=editingSN,PishFactorDs=form.PishFactorDs,PishFactorNo=form.PishFactorNo,NoePardakhtSN=form.NoePardakhtSN,NoeTahvilSN=form.NoeTahvilSN,SodoorDate=form.SodoorDate,Status=form.Status,VahedeTejariSN=VahedeTejariSN,KanaleForooshSN=form.KanaleForooshSN,TakhfifKol=form.TakhfifKol,MablaghKol=form.MablaghKol,Avarez=0,Maliat=0,RezAvarez=0,MoshtariInfoSN=form.MoshtariInfoSN,VisitorSN=form.VisitorSN};
             var response=await Post(c,isEdit?UpdateEndpoint:CreateEndpoint,master);if(!isEdit){masterSn=ReadReturnedDecimal(response);if(masterSn==0)throw new InvalidOperationException("پیش‌فاکتور ثبت شد اما شماره شناسه آن از پاسخ سرویس قابل دریافت نبود.");}
             var old=allLines.Where(x=>x.PishFactorSN==masterSn).ToList();var keep=new HashSet<decimal>();
-            foreach(var row in form.Lines){var dto=new{PishFactorHaSN=row.PishFactorHaSN,Identifire=row.PishFactorHaSN,PishFactorSN=masterSn,KalaSN=row.KalaSN,Tedad=row.Tedad,Status=(byte)1,NerkheVahed=(long?)row.NerkheVahed,DarsadeTakhfif=row.DarsadeTakhfif,MablagheTakhfif=row.MablagheTakhfif,Avarez=row.Avarez,Maliat=row.Maliat,RezAvarez=0};if(isEdit&&row.PishFactorHaSN!=0){await Post(c,UpdateHaEndpoint,dto);keep.Add(row.PishFactorHaSN);}else await Post(c,CreateHaEndpoint,dto);}
+            foreach(var row in form.Lines)
+            {
+                // مقادیر محاسباتی فقط از رکورد قبلی خوانده می‌شوند و در فرم قابل ویرایش نیستند.
+                var dto=new
+                {
+                    PishFactorHaSN=row.PishFactorHaSN,
+                    Identifire=row.PishFactorHaSN,
+                    PishFactorSN=masterSn,
+                    KalaSN=row.KalaSN,
+                    Tedad=row.Tedad,
+                    Status=(byte)1,
+                    IsJayeze=row.IsJayeze,
+                    NerkheVahed=(long?)row.NerkheVahed,
+                    DarsadeTakhfif=(decimal?)row.DarsadeTakhfif,
+                    MablagheTakhfif=(decimal?)row.MablagheTakhfif,
+                    Avarez=(decimal?)row.Avarez,
+                    Maliat=(decimal?)row.Maliat,
+                    RezAvarez=(decimal?)0
+                };
+
+                if(isEdit && row.PishFactorHaSN!=0)
+                {
+                    await Post(c,UpdateHaEndpoint,dto);
+                    keep.Add(row.PishFactorHaSN);
+                }
+                else
+                {
+                    var created=await Post(c,CreateHaEndpoint,dto);
+                    row.PishFactorHaSN=ReadReturnedDecimal(created);
+                    if(row.PishFactorHaSN==0)
+                        throw new InvalidOperationException("قلم کالا ثبت شد اما شناسه ردیف از پاسخ سرویس دریافت نشد؛ امکان محاسبه نرخ وجود ندارد.");
+                }
+
+                await CalculateLineAsync(c,row.PishFactorHaSN,row.KalaSN,form.SodoorDate);
+            }
             foreach(var oldRow in old.Where(x=>!keep.Contains(x.PishFactorHaSN)&&form.Lines.All(z=>z.PishFactorHaSN!=x.PishFactorHaSN)))await Post(c,$"{DeleteHaEndpoint}?PishFactorHaSN={oldRow.PishFactorHaSN.ToString(CultureInfo.InvariantCulture)}",null);
             successMessage=isEdit?"پیش‌فاکتور ویرایش شد.":"پیش‌فاکتور با موفقیت ثبت شد.";showEditor=false;showSuccess=true;
         }catch(Exception ex){editorError=ex.Message;}finally{saving=false;}}
+    private async Task CalculateLineAsync(HttpClient client,decimal pishFactorHaSN,decimal kalaSN,string sodoorDate)
+    {
+        var url=$"{CalculateHaEndpoint}?PishFactorHaSN={pishFactorHaSN.ToString(CultureInfo.InvariantCulture)}"
+            +$"&KalaSN={kalaSN.ToString(CultureInfo.InvariantCulture)}"
+            +$"&VahedeTejariSN={VahedeTejariSN.ToString(CultureInfo.InvariantCulture)}"
+            +$"&SodoorDate={Uri.EscapeDataString(sodoorDate)}";
+        using var response=await client.PostAsync(url,null);
+        var json=await response.Content.ReadAsStringAsync();
+        EnsureSuccess(response,json);
+    }
     private async Task<JsonElement> Post(HttpClient c,string endpoint,object? body){using var r=await c.PostAsJsonAsync(endpoint,body);var j=await r.Content.ReadAsStringAsync();EnsureSuccess(r,j);return Extract(j);}
     private async Task DeleteAsync(){if(pendingDelete is null)return;deleting=true;deleteError=null;try{using var c=await ApiClient.CreateAuthorizedClientAsync();await Post(c,$"{DeleteEndpoint}?PishFactorSN={pendingDelete.PishFactorSN.ToString(CultureInfo.InvariantCulture)}",null);pendingDelete=null;showSuccess=true;successMessage="پیش‌فاکتور حذف شد.";}catch(Exception ex){deleteError=ex.Message;}finally{deleting=false;}}
     private async Task ConfirmSuccess(){showSuccess=false;await LoadAllAsync();}
     private void CloseEditor(){if(!saving)showEditor=false;}
     private static Lookup ReadLookup(JsonElement x){var id=Dec(x,"Id","ID","SN","Value","Key","KalaSN","VisitorSN","MoshtariInfoSN","MoshtariSN","NoePardakhtSN","NoeTahvilSN","KanaleForooshSN");var title=Str(x,"Title","Text","Label","Name","DS","DisplayName","FullName","KalaDs","KalaDS","KalaName","KalaTitle","KalaNo","VisitorDs","VisitorDS","VisitorName","VisitorTitle","VisitorFullName","MoshtariDs","MoshtariDS","MoshtariInfoDs","MoshtariInfoDS","MoshtariInfoTitle","MoshtariName","MoshtariTitle","MoshtariFullName","NoePardakhtDs","NoePardakhtDS","NoePardakhtName","NoePardakhtTitle","NoeTahvilDs","NoeTahvilDS","NoeTahvilName","NoeTahvilTitle","KanaleForooshDs","KanaleForooshDS","KanaleForooshName","KanaleForooshTitle");if((id==0||string.IsNullOrWhiteSpace(title))&&x.ValueKind==JsonValueKind.Object){foreach(var p in x.EnumerateObject()){if(p.Value.ValueKind!=JsonValueKind.Object)continue;var nested=ReadLookup(p.Value);if(id==0)id=nested.Id;if(string.IsNullOrWhiteSpace(title))title=nested.Title;if(id!=0&&!string.IsNullOrWhiteSpace(title))break;}}return new(){Id=id,Title=title};}
     private static Factor ReadFactor(JsonElement x)=>new(){PishFactorSN=Dec(x,"PishFactorSN"),PishFactorNo=Str(x,"PishFactorNo"),PishFactorDs=Str(x,"PishFactorDs"),SodoorDate=Str(x,"SodoorDate"),Status=(byte)Dec(x,"Status"),NoePardakhtSN=NDec(x,"NoePardakhtSN"),NoeTahvilSN=NDec(x,"NoeTahvilSN"),KanaleForooshSN=NDec(x,"KanaleForooshSN"),MoshtariInfoSN=Dec(x,"MoshtariInfoSN"),VisitorSN=Dec(x,"VisitorSN"),TakhfifKol=NDec(x,"TakhfifKol"),MablaghKol=(long?)NDec(x,"MablaghKol"),MoshtariNo=Str(x,"MoshtariNo"),VisitorDs=Str(x,"VisitorDs"),NoePardakhtDs=Str(x,"NoePardakhtDs"),NoeTahvilDs=Str(x,"NoeTahvilDs")};
-    private static FactorLineData ReadLine(JsonElement x)=>new(){PishFactorHaSN=Dec(x,"PishFactorHaSN"),PishFactorSN=Dec(x,"PishFactorSN"),KalaSN=Dec(x,"KalaSN"),Tedad=Dec(x,"Tedad"),NerkheVahed=NLong(x,"NerkheVahed"),DarsadeTakhfif=NDec(x,"DarsadeTakhfif"),MablagheTakhfif=NDec(x,"MablagheTakhfif"),Avarez=NDec(x,"Avarez"),Maliat=NDec(x,"Maliat")};
+    private static FactorLineData ReadLine(JsonElement x)=>new(){PishFactorHaSN=Dec(x,"PishFactorHaSN"),PishFactorSN=Dec(x,"PishFactorSN"),KalaSN=Dec(x,"KalaSN"),Tedad=Dec(x,"Tedad"),NerkheVahed=NLong(x,"NerkheVahed"),DarsadeTakhfif=NDec(x,"DarsadeTakhfif"),MablagheTakhfif=NDec(x,"MablagheTakhfif"),Avarez=NDec(x,"Avarez"),Maliat=NDec(x,"Maliat"),IsJayeze=BoolN(x,"IsJayeze")??false};
     private static string Show(string? s)=>string.IsNullOrWhiteSpace(s)?"—":s;
     private static string ToPersianDate(DateTime value){var pc=new PersianCalendar();return $"{pc.GetYear(value):0000}/{pc.GetMonth(value):00}/{pc.GetDayOfMonth(value):00}";}
     private static string ToPersianDateText(string? value){if(string.IsNullOrWhiteSpace(value))return ToPersianDate(DateTime.Today);var n=Norm(value).Trim();if(n.Length==8&&n.All(char.IsDigit))n=$"{n[..4]}/{n.Substring(4,2)}/{n.Substring(6,2)}";if(n.Contains('T')||n.Contains(':')){if(DateTime.TryParse(value,CultureInfo.InvariantCulture,DateTimeStyles.AssumeLocal,out var gregorian))return ToPersianDate(gregorian);}var parts=n.Split('/','-','.');if(parts.Length==3&&int.TryParse(parts[0],out var y)&&int.TryParse(parts[1],out var m)&&int.TryParse(parts[2],out var d)){try{return ToPersianDate(new PersianCalendar().ToDateTime(y,m,d,0,0,0,0));}catch{}}if(DateTime.TryParse(value,CultureInfo.InvariantCulture,DateTimeStyles.AssumeLocal,out var parsed))return ToPersianDate(parsed);return value;}
@@ -110,11 +156,11 @@
     private static decimal? NDec(JsonElement x,params string[] keys){foreach(var k in keys)if(Try(x,k,out var v)){if(v.ValueKind==JsonValueKind.Null)return null;if(decimal.TryParse(Norm(v.ToString()),NumberStyles.Any,CultureInfo.InvariantCulture,out var n))return n;}return null;}
     private static long? NLong(JsonElement x,params string[] keys){var n=NDec(x,keys);return n.HasValue?(long)n.Value:null;}
     private static bool? BoolN(JsonElement x,string k){if(!Try(x,k,out var v)||v.ValueKind==JsonValueKind.Null)return null;if(v.ValueKind==JsonValueKind.True)return true;if(v.ValueKind==JsonValueKind.False)return false;return v.ToString()=="1";}
-    private static decimal ReadReturnedDecimal(JsonElement x){if(x.ValueKind==JsonValueKind.Number&&x.TryGetDecimal(out var n))return n;if(decimal.TryParse(Str(x,"PishFactorSN","id","value"),NumberStyles.Any,CultureInfo.InvariantCulture,out n))return n;foreach(var k in new[]{"data","result","value"})if(Try(x,k,out var v)){var z=ReadReturnedDecimal(v);if(z!=0)return z;}return 0;}
+    private static decimal ReadReturnedDecimal(JsonElement x){if(x.ValueKind==JsonValueKind.Number&&x.TryGetDecimal(out var n))return n;if(decimal.TryParse(Str(x,"PishFactorSN","PishFactorHaSN","id","value"),NumberStyles.Any,CultureInfo.InvariantCulture,out n))return n;foreach(var k in new[]{"data","result","value"})if(Try(x,k,out var v)){var z=ReadReturnedDecimal(v);if(z!=0)return z;}return 0;}
     private static void EnsureSuccess(HttpResponseMessage r,string j){if(!r.IsSuccessStatusCode)throw new InvalidOperationException(j);using var d=JsonDocument.Parse(j);var x=d.RootElement;if(Try(x,"success",out var s)&&s.ValueKind==JsonValueKind.False)throw new InvalidOperationException(Str(x,"message","errMsg","errorMessage") is string e&&e!=""?e:"عملیات ناموفق بود.");if(Try(x,"isSuccess",out var ok)&&ok.ValueKind==JsonValueKind.False)throw new InvalidOperationException(Str(x,"message","errMsg","errorMessage"));if(Try(x,"errMsg",out var em)&&em.ValueKind==JsonValueKind.String&&!string.IsNullOrWhiteSpace(em.GetString()))throw new InvalidOperationException(em.GetString()!);}
     private sealed class Lookup{public decimal Id{get;set;}public string Title{get;set;}="";}
     private sealed class Factor{public decimal PishFactorSN{get;set;}public string PishFactorNo{get;set;}="";public string PishFactorDs{get;set;}="";public string SodoorDate{get;set;}="";public byte Status{get;set;}public decimal? NoePardakhtSN{get;set;}public decimal? NoeTahvilSN{get;set;}public decimal? KanaleForooshSN{get;set;}public decimal MoshtariInfoSN{get;set;}public decimal VisitorSN{get;set;}public decimal? TakhfifKol{get;set;}public long? MablaghKol{get;set;}public string MoshtariNo{get;set;}="";public string VisitorDs{get;set;}="";public string NoePardakhtDs{get;set;}="";public string NoeTahvilDs{get;set;}="";}
-    private sealed class FactorLineData{public decimal PishFactorHaSN{get;set;}public decimal PishFactorSN{get;set;}public decimal KalaSN{get;set;}public decimal Tedad{get;set;}public long? NerkheVahed{get;set;}public decimal? DarsadeTakhfif{get;set;}public decimal? MablagheTakhfif{get;set;}public decimal? Avarez{get;set;}public decimal? Maliat{get;set;}}
-    private sealed class FactorLine{public Guid Key{get;}=Guid.NewGuid();public decimal PishFactorHaSN{get;set;}public decimal KalaSN{get;set;}public decimal Tedad{get;set;}=1;public long NerkheVahed{get;set;}public decimal DarsadeTakhfif{get;set;}public decimal MablagheTakhfif{get;set;}public decimal Maliat{get;set;}public decimal Avarez{get;set;}}
+    private sealed class FactorLineData{public decimal PishFactorHaSN{get;set;}public decimal PishFactorSN{get;set;}public decimal KalaSN{get;set;}public decimal Tedad{get;set;}public long? NerkheVahed{get;set;}public decimal? DarsadeTakhfif{get;set;}public decimal? MablagheTakhfif{get;set;}public decimal? Avarez{get;set;}public decimal? Maliat{get;set;}public bool IsJayeze{get;set;}}
+    private sealed class FactorLine{public Guid Key{get;}=Guid.NewGuid();public decimal PishFactorHaSN{get;set;}public decimal KalaSN{get;set;}public decimal Tedad{get;set;}=1;public long NerkheVahed{get;set;}public decimal DarsadeTakhfif{get;set;}public decimal MablagheTakhfif{get;set;}public decimal Maliat{get;set;}public decimal Avarez{get;set;}public bool IsJayeze{get;set;}}
     private sealed class FactorForm{public string? PishFactorDs{get;set;}public string? PishFactorNo{get;set;}public string SodoorDate{get;set;}="";public string SodoorDateText{get;set;}=ToPersianDate(DateTime.Today);public byte Status{get;set;}=1;public decimal? NoePardakhtSN{get;set;}public decimal? NoeTahvilSN{get;set;}public decimal? KanaleForooshSN{get;set;}public decimal MoshtariInfoSN{get;set;}public decimal VisitorSN{get;set;}public decimal TakhfifKol{get;set;}public long MablaghKol{get;set;}public List<FactorLine> Lines{get;set;}=[new()];}
 }
