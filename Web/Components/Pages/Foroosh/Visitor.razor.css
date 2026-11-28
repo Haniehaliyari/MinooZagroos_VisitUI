@@ -523,9 +523,6 @@
 .visitor-page{max-width:1440px}
 .visitor-heading h1{font-size:25px;font-weight:850}
 .visitor-heading p{font-size:13px}
-.visitor-search-wrap>svg{width:19px;height:19px;stroke:var(--muted);stroke-width:1.9;fill:none}
-.visitor-search{height:48px;font-size:14px;padding-right:44px}
-.visitor-search::placeholder{font-size:13px}
 .visitor-count{font-size:13px;font-weight:750;padding:9px 14px}
 .visitor-button{min-height:43px;font-size:13px;padding:0 16px}
 .visitor-table{min-width:1680px}
@@ -863,7 +860,7 @@
 .visitor-success-icon{display:grid;place-items:center;width:58px;height:58px;margin:0 auto;border-radius:50%;background:#e7f7ed;color:#16834a}
 .visitor-success-icon svg{display:block;width:31px;height:31px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
-/* Search field: exact dimensions and positioning of the driver page */
+/* Search field: match the driver page markup, sizing and responsive behavior */
 .visitor-search-wrap{
     position:relative;
     flex:1;
@@ -882,16 +879,17 @@
 }
 .visitor-search{
     width:100%;
-    height:44px;
+    height:48px;
     padding:0 42px 0 13px;
     border:1px solid var(--line);
     border-radius:10px;
     background:var(--surface);
     color:var(--text);
     font:inherit;
-    font-size:12px;
+    font-size:14px;
     outline:none;
 }
+.visitor-search::placeholder{font-size:13px}
 .visitor-search:focus,.visitor-field input:focus{
     border-color:var(--accent);
     box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 12%,transparent);
