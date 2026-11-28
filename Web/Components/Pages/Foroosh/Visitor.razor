@@ -70,7 +70,7 @@
 @if (showSuccessModal) { <div class="visitor-modal-backdrop visitor-success-backdrop"><section class="visitor-confirm-modal visitor-success-modal" role="dialog" aria-modal="true" aria-labelledby="visitor-success-title" dir="rtl"><div class="visitor-success-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4.5 4.5L19 7" /></svg></div><h2 id="visitor-success-title">عملیات با موفقیت انجام شد</h2><p>@successMessage</p><footer class="visitor-modal-footer"><button type="button" class="visitor-button visitor-button-primary" @onclick="ConfirmSuccessAndReload">تأیید</button></footer></section></div> }
 
 
-\n@code {
+@code {
     private const string AllEndpoint = "api/v1/Visitor/GetAllVisitor";
     private const string CreateEndpoint = "api/v1/Visitor/CreateVisitor";
     private const string UpdateEndpoint = "api/v1/Visitor/UpdateVisitor";
