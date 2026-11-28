@@ -10,22 +10,22 @@
 @inject BackendApiClient ApiClient
 
 <PageTitle>مدیریت ویزیتورها | مینو زاگرس</PageTitle>
-<div class="visitor-page" dir="rtl" @onclick="CloseSearch">
+<div class="visitor-page" dir="rtl">
     <header class="visitor-heading">
         <div><div class="visitor-eyebrow">مدیریت ارتباط با مشتریان</div><h1>مدیریت ویزیتورها</h1></div>
         <div class="hero-3d-art" aria-hidden="true"><span class="hero-orbit hero-orbit-one"></span><span class="hero-orbit hero-orbit-two"></span><span class="hero-core"><i></i><b></b></span><span class="hero-spark hero-spark-one"></span><span class="hero-spark hero-spark-two"></span></div>
     </header>
     <section class="visitor-panel">
         <div class="visitor-toolbar">
-            <div class="visitor-search-wrap @(showSearch ? "is-open" : "")">
-                @onclick:stopPropagation="true"
-                @if (showSearch)
-                {
-                    <input class="visitor-search" placeholder="جستجو بر اساس نام، نام خانوادگی، کد ملی یا موبایل..." @bind="searchText" @bind:event="oninput" />
-                }
-                <button type="button" class="visitor-search-toggle" title="جستجو" aria-label="جستجو" aria-expanded="@showSearch" @onclick="ToggleSearch">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8" /><path d="m16 16 5 5" /></svg>
-                </button>
+            <div class="visitor-search-wrap">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="10.8" cy="10.8" r="6.8" />
+                    <path d="m16 16 5 5" />
+                </svg>
+                <input class="visitor-search"
+                       placeholder="جستجو بر اساس نام، نام خانوادگی، کد ملی یا موبایل..."
+                       @bind="searchText"
+                       @bind:event="oninput" />
             </div>
             <div class="visitor-toolbar-actions">
                 <span class="visitor-count">@FilteredItems.Count ویزیتور</span>
@@ -101,7 +101,7 @@
     private VisitorItem? pendingDelete;
     private string searchText = "", karmandSearch = "", daftarSearch = "", noeVisitorSearch = "";
     private string? loadError, editorError, deleteError;
-    private bool loading, showEditor, isEdit, saving, deleting, showSearch, showKarmandOptions, showDaftarOptions, showNoeVisitorOptions, showSuccessModal;
+    private bool loading, showEditor, isEdit, saving, deleting, showKarmandOptions, showDaftarOptions, showNoeVisitorOptions, showSuccessModal;
     private string successMessage = "";
     private decimal editingSN;
     private string editingVisitorNo = "";
@@ -109,18 +109,6 @@
 
     protected override async Task OnInitializedAsync() => await Task.WhenAll(LoadAllAsync(), LoadCombosAsync());
 
-    private void ToggleSearch()
-    {
-        showSearch = !showSearch;
-        if (!showSearch) searchText = "";
-    }
-
-    private void CloseSearch()
-    {
-        if (!showSearch) return;
-        showSearch = false;
-        searchText = "";
-    }
 
     private async Task LoadAllAsync() {
         loading = true; loadError = null;
