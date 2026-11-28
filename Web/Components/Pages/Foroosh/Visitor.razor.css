@@ -862,3 +862,42 @@
 .visitor-success-modal .visitor-modal-footer{justify-content:center}
 .visitor-success-icon{display:grid;place-items:center;width:58px;height:58px;margin:0 auto;border-radius:50%;background:#e7f7ed;color:#16834a}
 .visitor-success-icon svg{display:block;width:31px;height:31px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* Search field: exact dimensions and positioning of the driver page */
+.visitor-search-wrap{
+    position:relative;
+    flex:1;
+    max-width:570px;
+}
+.visitor-search-wrap>svg{
+    position:absolute;
+    right:13px;
+    top:13px;
+    width:18px;
+    height:18px;
+    fill:none;
+    stroke:var(--muted);
+    stroke-width:1.8;
+    pointer-events:none;
+}
+.visitor-search{
+    width:100%;
+    height:44px;
+    padding:0 42px 0 13px;
+    border:1px solid var(--line);
+    border-radius:10px;
+    background:var(--surface);
+    color:var(--text);
+    font:inherit;
+    font-size:12px;
+    outline:none;
+}
+.visitor-search:focus,.visitor-field input:focus{
+    border-color:var(--accent);
+    box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 12%,transparent);
+}
+.visitor-toolbar-actions{
+    display:flex;
+    align-items:center;
+    gap:9px;
+}
