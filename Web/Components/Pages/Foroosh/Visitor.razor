@@ -26,7 +26,7 @@
         else if (FilteredItems.Count == 0) { <div class="visitor-empty"><strong>نتیجه‌ای پیدا نشد</strong><span>عبارت جستجو را تغییر دهید.</span></div> }
         else {
         <div class="visitor-table-wrap"><table class="visitor-table">
-            <thead><tr><th>ردیف</th><th>نام و نام خانوادگی</th><th>نام پدر</th><th>وضعیت</th><th>تاریخ عضویت</th><th>موبایل</th><th>کد ملی</th><th>مسیر ویزیت</th><th>ویزیت دیجیتال</th><th>نام کارمند</th><th>دفتر فروش</th><th>نوع ویزیتور</th><th>واحد تجاری</th><th>عملیات</th></tr></thead>
+            <thead><tr><th>ردیف</th><th>نام و نام خانوادگی</th><th>نام پدر</th><th>وضعیت</th><th>تاریخ عضویت</th><th>موبایل</th><th>کد ملی</th><th>مسیر ویزیت</th><th>ویزیت دیجیتال</th><th>نام کارمند</th><th>دفتر فروش</th><th>نوع ویزیتور</th><th>عملیات</th></tr></thead>
             <tbody>@foreach (var item in FilteredItems) {
                 <tr @key="item.VisitorSN"><td class="visitor-row-number">@((FilteredItems.IndexOf(item)+1).ToString("00"))</td>
                 <td><strong class="visitor-person-name">@Display(item.Name) @Display(item.Family)</strong><small class="visitor-subline">کد : @Display(item.VisitorNo)</small></td><td>@Display(item.Father)</td>
@@ -34,7 +34,7 @@
                 <td>@DisplayJalaliDate(item.OzviyatDate)</td><td>@Display(item.MblPhone)</td><td>@Display(item.MeliNo)</td>
                 <td><span class="visitor-status @(item.IsMasirVisit ? "active" : "inactive")"><i></i>@(item.IsMasirVisit ? "فعال" : "غیرفعال")</span></td>
                 <td><span class="visitor-status @(item.IsVisitDigita ? "active" : "inactive")"><i></i>@(item.IsVisitDigita ? "فعال" : "غیرفعال")</span></td>
-                <td>@Display(item.KarmandDs)</td><td>@DaftarDisplay(item)</td><td>@VisitorTypeDisplay(item)</td><td>@Display(item.VahedeTejariDs)</td>
+                <td>@Display(item.KarmandDs)</td><td>@DaftarDisplay(item)</td><td>@VisitorTypeDisplay(item)</td>
                 <td><div class="visitor-row-actions"><button type="button" class="visitor-row-action edit" title="ویرایش" aria-label="ویرایش" @onclick="() => OpenEdit(item)"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="m16.5 3.5 4 4L8 20l-4 1 1-4Z"/></svg></button><button type="button" class="visitor-row-action delete" title="حذف" aria-label="حذف" @onclick="() => AskDelete(item)"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2m3 0-1 14H6L5 6m5 5v5m4-5v5"/></svg></button></div></td></tr>
             }</tbody>
         </table></div><div class="visitor-table-footer">نمایش @FilteredItems.Count از @items.Count ویزیتور</div>
