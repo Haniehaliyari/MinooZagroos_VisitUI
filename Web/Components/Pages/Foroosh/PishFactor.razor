@@ -1,0 +1,122 @@
+@page "/foroosh/pish-factor"
+@attribute [Authorize]
+@layout MainLayout
+@using System.Globalization
+@using System.Net.Http.Json
+@using System.Text.Json
+@using Microsoft.AspNetCore.Authorization
+@using Web.Components.Layout
+@using MyProject.Services.Api
+@inject BackendApiClient ApiClient
+
+<PageTitle>مدیریت پیش‌فاکتورها | مینو زاگرس</PageTitle>
+<div class="pish-page" dir="rtl">
+    <header class="pish-heading">
+        <div><div class="pish-eyebrow">فروش و سفارش‌گیری</div><h1>مدیریت پیش‌فاکتورها</h1><p>ثبت پیش‌فاکتور و مدیریت اقلام هر درخواست</p></div>
+        <div class="pish-hero-icon"><svg viewBox="0 0 24 24"><path d="M7 3h8l4 4v14H5V3zM15 3v5h5M8 12h8M8 16h8"/></svg></div>
+    </header>
+    <section class="pish-panel">
+        <div class="pish-toolbar">
+            <div class="pish-search"><svg viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg><input placeholder="جستجو بر اساس شماره، شرح، مشتری یا ویزیتور..." @bind="searchText" @bind:event="oninput" /></div>
+            <div class="pish-actions"><span class="pish-count">@Filtered.Count پیش‌فاکتور</span><button class="pish-btn light" @onclick="LoadAllAsync" disabled="@loading">↻</button><button class="pish-btn primary" @onclick="OpenCreate">＋ پیش‌فاکتور جدید</button></div>
+        </div>
+        @if(!string.IsNullOrWhiteSpace(loadError)){<div class="pish-error">@loadError</div>}
+        @if(loading){<div class="pish-empty">در حال دریافت اطلاعات...</div>}
+        else if(Filtered.Count==0){<div class="pish-empty">@(items.Count==0?"هنوز پیش‌فاکتوری ثبت نشده است":"موردی مطابق جستجو پیدا نشد")</div>}
+        else{
+        <div class="pish-table-wrap"><table class="pish-table"><thead><tr><th>ردیف</th><th>شماره</th><th>شرح پیش‌فاکتور</th><th>تاریخ صدور</th><th>مشتری</th><th>ویزیتور</th><th>نوع پرداخت</th><th>نوع تحویل</th><th>مبلغ کل</th><th>وضعیت</th><th>عملیات</th></tr></thead><tbody>
+        @foreach(var x in Filtered){<tr @key="x.PishFactorSN"><td>@(Filtered.IndexOf(x)+1)</td><td>@Show(x.PishFactorNo)</td><td>@Show(x.PishFactorDs)</td><td>@Show(x.SodoorDate)</td><td>@Show(x.MoshtariNo)</td><td>@Show(x.VisitorDs)</td><td>@Show(x.NoePardakhtDs)</td><td>@Show(x.NoeTahvilDs)</td><td>@x.MablaghKol?.ToString("N0")</td><td><span class="pish-status @(x.Status==1?"active":"inactive")">@(x.Status==1?"فعال":"غیرفعال")</span></td><td><div class="pish-row-actions"><button title="ویرایش" @onclick="()=>OpenEditAsync(x)">✎</button><button title="حذف" class="danger" @onclick="()=>pendingDelete=x">⌫</button></div></td></tr>}
+        </tbody></table></div>
+        <div class="pish-footer">نمایش @Filtered.Count از @items.Count پیش‌فاکتور</div>}
+    </section>
+</div>
+
+@if(showEditor){
+<div class="pish-backdrop" @onclick="CloseEditor"><section class="pish-modal" role="dialog" aria-modal="true" @onclick:stopPropagation="true" dir="rtl">
+<header class="pish-modal-head"><div><span>اطلاعات فروش</span><h2>@(isEdit?"ویرایش پیش‌فاکتور":"ثبت پیش‌فاکتور جدید")</h2><p>ابتدا اطلاعات کلی و سپس یک یا چند قلم کالا را ثبت کنید.</p></div><button class="pish-close" @onclick="CloseEditor">×</button></header>
+@if(!string.IsNullOrWhiteSpace(editorError)){<div class="pish-error">@editorError</div>}
+<div class="pish-form-section"><h3>اطلاعات اصلی پیش‌فاکتور</h3><div class="pish-grid">
+<label>شرح پیش‌فاکتور<input @bind="form.PishFactorDs" placeholder="شرح یا توضیحات پیش‌فاکتور"/></label>
+<label>تاریخ صدور <b>*</b><input @bind="form.SodoorDate" placeholder="مثلاً 14050807" dir="ltr"/></label>
+<label>مشتری <b>*</b><select @bind="form.MoshtariInfoSN"><option value="0">انتخاب مشتری</option>@foreach(var o in moshtaris){<option value="@o.Id">@o.Title</option>}</select></label>
+<label>ویزیتور <b>*</b><select @bind="form.VisitorSN"><option value="0">انتخاب ویزیتور</option>@foreach(var o in visitors){<option value="@o.Id">@o.Title</option>}</select></label>
+<label>نوع پرداخت<select @bind="form.NoePardakhtSN"><option value="">انتخاب نوع پرداخت</option>@foreach(var o in noePardakhts){<option value="@o.Id">@o.Title</option>}</select></label>
+<label>نوع تحویل<select @bind="form.NoeTahvilSN"><option value="">انتخاب نوع تحویل</option>@foreach(var o in noeTavhils){<option value="@o.Id">@o.Title</option>}</select></label>
+<label>مامور پخش<select @bind="form.MamoorPakhshSN"><option value="">انتخاب مامور پخش</option>@foreach(var o in mamoorha){<option value="@o.Id">@o.Title</option>}</select></label>
+<label>حواله پخش<select @bind="form.HavalePakhshSN"><option value="">انتخاب حواله پخش</option>@foreach(var o in havaleha){<option value="@o.Id">@o.Title</option>}</select></label>
+<label>درخواست<select @bind="form.DarkhastSN"><option value="">انتخاب درخواست</option>@foreach(var o in darkhastHa){<option value="@o.Id">@o.Title</option>}</select></label>
+<label>کانال فروش<select @bind="form.KanaleForooshSN"><option value="">انتخاب کانال فروش</option>@foreach(var o in kanalha){<option value="@o.Id">@o.Title</option>}</select></label>
+<label>زمان وصول (دقیقه)<input type="number" min="0" @bind="form.VosoolTime"/></label>
+<label>وضعیت<select @bind="form.Status"><option value="1">فعال</option><option value="0">غیرفعال</option></select></label>
+<label>تخفیف کل<input type="number" min="0" @bind="form.TakhfifKol"/></label>
+<label>مبلغ کل<input type="number" min="0" @bind="form.MablaghKol"/></label>
+<label class="check-field"><input type="checkbox" @bind="form.IsSanadeMali"/> صدور سند مالی</label>
+</div></div>
+<div class="pish-form-section">
+<div class="pish-section-title"><div><h3>اقلام پیش‌فاکتور</h3><small>برای هر کالا یک ردیف اضافه کنید؛ تعداد ردیف‌ها محدودیتی ندارد.</small></div><button class="pish-btn add" @onclick="AddRow">＋ افزودن کالا</button></div>
+<div class="pish-lines-wrap"><table class="pish-lines"><thead><tr><th>ردیف</th><th>کالا <b>*</b></th><th>تعداد <b>*</b></th><th>نرخ واحد</th><th>درصد تخفیف</th><th>مبلغ تخفیف</th><th>مالیات</th><th>عوارض</th><th></th></tr></thead><tbody>
+@for(var i=0;i<form.Lines.Count;i++){var row=form.Lines[i];<tr @key="row.Key"><td>@(i+1)</td><td><select @bind="row.KalaSN"><option value="0">انتخاب کالا</option>@foreach(var k in kalas){<option value="@k.Id">@k.Title</option>}</select></td><td><input type="number" min="0.001" step="0.001" @bind="row.Tedad"/></td><td><input type="number" min="0" @bind="row.NerkheVahed"/></td><td><input type="number" min="0" max="100" step="0.01" @bind="row.DarsadeTakhfif"/></td><td><input type="number" min="0" @bind="row.MablagheTakhfif"/></td><td><input type="number" min="0" @bind="row.Maliat"/></td><td><input type="number" min="0" @bind="row.Avarez"/></td><td><button class="pish-remove" title="حذف ردیف" @onclick="()=>RemoveRow(row)">×</button></td></tr>}
+</tbody></table></div>
+<div class="pish-line-summary"><span>@form.Lines.Count قلم کالا</span><span>مجموع تعداد: <b>@form.Lines.Sum(x=>x.Tedad).ToString("N2")</b></span></div>
+</div>
+<footer class="pish-modal-footer"><button class="pish-btn light" @onclick="CloseEditor" disabled="@saving">انصراف</button><button class="pish-btn primary" @onclick="SaveAsync" disabled="@saving">@(saving?"در حال ذخیره...":isEdit?"ذخیره تغییرات":"ثبت پیش‌فاکتور")</button></footer>
+</section></div>
+}
+@if(pendingDelete is not null){<div class="pish-backdrop" @onclick="()=>pendingDelete=null"><section class="pish-confirm" @onclick:stopPropagation="true" dir="rtl"><h3>حذف پیش‌فاکتور</h3><p>آیا از حذف پیش‌فاکتور شماره «@pendingDelete.PishFactorNo» مطمئن هستید؟</p>@if(!string.IsNullOrWhiteSpace(deleteError)){<div class="pish-error">@deleteError</div>}<footer><button class="pish-btn light" @onclick="()=>pendingDelete=null">انصراف</button><button class="pish-btn danger" @onclick="DeleteAsync" disabled="@deleting">@(deleting?"در حال حذف...":"حذف پیش‌فاکتور")</button></footer></section></div>}
+@if(showSuccess){<div class="pish-backdrop"><section class="pish-confirm" dir="rtl"><h3>عملیات موفق</h3><p>@successMessage</p><footer><button class="pish-btn primary" @onclick="ConfirmSuccess">تأیید</button></footer></section></div>}
+
+@code {
+    private const string AllEndpoint="api/v1/PishFactor/GetAllPishFactor", AllHaEndpoint="api/v1/PishFactor/GetAllPishFactorHa";
+    private const string CreateEndpoint="api/v1/PishFactor/CreatePishFactor", UpdateEndpoint="api/v1/PishFactor/UpdatePishFactor", DeleteEndpoint="api/v1/PishFactor/DeletePishFactor";
+    private const string CreateHaEndpoint="api/v1/PishFactor/CreatePishFactorHa", UpdateHaEndpoint="api/v1/PishFactor/UpdatePishFactorHa", DeleteHaEndpoint="api/v1/PishFactor/DeletePishFactorHa";
+    private readonly List<Factor> items=[]; private readonly List<FactorLine> allLines=[];
+    private readonly List<Lookup> noePardakhts=[],noeTavhils=[],kalas=[],mamoorha=[],havaleha=[],visitors=[],moshtaris=[],darkhastHa=[],kanalha=[];
+    private FactorForm form=new(); private Factor? pendingDelete; private string searchText=""; private string? loadError,editorError,deleteError; private string successMessage="";
+    private bool loading,showEditor,isEdit,saving,deleting,showSuccess; private decimal editingSN;
+    private List<Factor> Filtered=>items.Where(x=>string.IsNullOrWhiteSpace(searchText)||new[]{x.PishFactorNo,x.PishFactorDs,x.MoshtariNo,x.VisitorDs,x.NoePardakhtDs,x.NoeTahvilDs}.Any(v=>Contains(v,searchText))).OrderByDescending(x=>x.PishFactorSN).ToList();
+
+    protected override async Task OnInitializedAsync(){await Task.WhenAll(LoadAllAsync(),LoadCombosAsync());}
+    private async Task LoadAllAsync(){loading=true;loadError=null;try{using var c=await ApiClient.CreateAuthorizedClientAsync();var a=await GetJson(c,AllEndpoint);var b=await GetJson(c,AllHaEndpoint);items.Clear();items.AddRange(ReadArray(a).Select(ReadFactor).Where(x=>x.PishFactorSN!=0));allLines.Clear();allLines.AddRange(ReadArray(b).Select(ReadLine).Where(x=>x.PishFactorHaSN!=0));}catch(Exception ex){loadError=ex.Message;}finally{loading=false;}}
+    private async Task LoadCombosAsync(){using var c=await ApiClient.CreateAuthorizedClientAsync();var defs=new[]{("api/v1/NoePardakht/GetNoePardakhtByCombo",noePardakhts),("api/v1/NoeTahvil/GetNoeTahvilByCombo",noeTavhils),("api/v1/Kala/GetKalaByCombo",kalas),("api/v1/MamoorPakhsh/GetMamoorPakhshByCombo",mamoorha),("api/v1/Havale/GetHavaleByCombo",havaleha),("api/v1/Visitor/GetVisitorByCombo",visitors),("api/v1/Moshtari/GetMoshtariInfoByCombo",moshtaris),("api/v1/Darkhast/GetDarkhastByCombo",darkhastHa),("api/v1/KanaleForoosh/GetKanaleForooshByCombo",kanalha)};foreach(var d in defs){try{var arr=await GetJson(c,d.Item1);d.Item2.Clear();d.Item2.AddRange(ReadArray(arr).Select(ReadLookup).Where(x=>x.Id!=0&&!string.IsNullOrWhiteSpace(x.Title)));}catch{d.Item2.Clear();}}}
+    private async Task<JsonElement> GetJson(HttpClient c,string endpoint){using var r=await c.GetAsync(endpoint);var j=await r.Content.ReadAsStringAsync();EnsureSuccess(r,j);return Extract(j);}
+    private void OpenCreate(){isEdit=false;editingSN=0;editorError=null;form=new FactorForm{Status=1,SodoorDate=DateTime.Now.ToString("yyyyMMdd",CultureInfo.InvariantCulture),VosoolTime=0,Lines=[new FactorLine()]};showEditor=true;}
+    private async Task OpenEditAsync(Factor x){isEdit=true;editingSN=x.PishFactorSN;editorError=null;form=new FactorForm{PishFactorDs=x.PishFactorDs, PishFactorNo=x.PishFactorNo,SodoorDate=x.SodoorDate,Status=x.Status,NoePardakhtSN=x.NoePardakhtSN,NoeTahvilSN=x.NoeTahvilSN,KanaleForooshSN=x.KanaleForooshSN,DarkhastSN=x.DarkhastSN,MamoorPakhshSN=x.MamoorPakhshSN,HavalePakhshSN=x.HavalePakhshSN,MoshtariInfoSN=x.MoshtariInfoSN,VisitorSN=x.VisitorSN,VosoolTime=x.VosoolTime,TakhfifKol=x.TakhfifKol??0,MablaghKol=x.MablaghKol??0,IsSanadeMali=x.IsSanadeMali??false,Lines=allLines.Where(z=>z.PishFactorSN==x.PishFactorSN).Select(z=>new FactorLine{PishFactorHaSN=z.PishFactorHaSN,KalaSN=z.KalaSN,Tedad=z.Tedad,NerkheVahed=z.NerkheVahed??0,DarsadeTakhfif=z.DarsadeTakhfif??0,MablagheTakhfif=z.MablagheTakhfif??0,Maliat=z.Maliat??0,Avarez=z.Avarez??0}).ToList()};if(form.Lines.Count==0)form.Lines.Add(new FactorLine());showEditor=true;await Task.CompletedTask;}
+    private void AddRow()=>form.Lines.Add(new FactorLine()); private void RemoveRow(FactorLine row){if(form.Lines.Count>1)form.Lines.Remove(row);}
+    private async Task SaveAsync(){editorError=null;if(form.MoshtariInfoSN==0||form.VisitorSN==0){editorError="انتخاب مشتری و ویزیتور الزامی است.";return;}if(string.IsNullOrWhiteSpace(form.SodoorDate)){editorError="تاریخ صدور را وارد کنید.";return;}if(form.Lines.Count==0||form.Lines.Any(x=>x.KalaSN==0||x.Tedad<=0)){editorError="برای تمام ردیف‌ها کالا و تعداد معتبر انتخاب کنید.";return;}saving=true;
+        try{using var c=await ApiClient.CreateAuthorizedClientAsync();decimal masterSn=editingSN;
+            var master=new{PishFactorSN=editingSN,Identifire=editingSN,PishFactorDs=form.PishFactorDs,PishFactorNo=form.PishFactorNo,NoePardakhtSN=form.NoePardakhtSN,NoeTahvilSN=form.NoeTahvilSN,SodoorDate=form.SodoorDate,Status=form.Status,VahedeTejariSN=230034.935m,IsSanadeMali=form.IsSanadeMali,KanaleForooshSN=form.KanaleForooshSN,DarkhastSN=form.DarkhastSN,VosoolTime=form.VosoolTime,TakhfifKol=form.TakhfifKol,MablaghKol=form.MablaghKol,Avarez=0,Maliat=0,RezAvarez=0,MoshtariInfoSN=form.MoshtariInfoSN,VisitorSN=form.VisitorSN,MamoorPakhshSN=form.MamoorPakhshSN,HavalePakhshSN=form.HavalePakhshSN};
+            var response=await Post(c,isEdit?UpdateEndpoint:CreateEndpoint,master);if(!isEdit){masterSn=ReadReturnedDecimal(response);if(masterSn==0)throw new InvalidOperationException("پیش‌فاکتور ثبت شد اما شماره شناسه آن از پاسخ سرویس قابل دریافت نبود.");}
+            var old=allLines.Where(x=>x.PishFactorSN==masterSn).ToList();var keep=new HashSet<decimal>();
+            foreach(var row in form.Lines){var dto=new{PishFactorHaSN=row.PishFactorHaSN,Identifire=row.PishFactorHaSN,PishFactorSN=masterSn,KalaSN=row.KalaSN,Tedad=row.Tedad,Status=(byte)1,NerkheVahed=(long?)row.NerkheVahed,DarsadeTakhfif=row.DarsadeTakhfif,MablagheTakhfif=row.MablagheTakhfif,Avarez=row.Avarez,Maliat=row.Maliat,RezAvarez=0};if(isEdit&&row.PishFactorHaSN!=0){await Post(c,UpdateHaEndpoint,dto);keep.Add(row.PishFactorHaSN);}else await Post(c,CreateHaEndpoint,dto);}
+            foreach(var oldRow in old.Where(x=>!keep.Contains(x.PishFactorHaSN)&&form.Lines.All(z=>z.PishFactorHaSN!=x.PishFactorHaSN)))await Post(c,$"{DeleteHaEndpoint}?PishFactorHaSN={oldRow.PishFactorHaSN.ToString(CultureInfo.InvariantCulture)}",null);
+            successMessage=isEdit?"پیش‌فاکتور ویرایش شد.":"پیش‌فاکتور با موفقیت ثبت شد.";showEditor=false;showSuccess=true;
+        }catch(Exception ex){editorError=ex.Message;}finally{saving=false;}}
+    private async Task<JsonElement> Post(HttpClient c,string endpoint,object? body){using var r=await c.PostAsJsonAsync(endpoint,body);var j=await r.Content.ReadAsStringAsync();EnsureSuccess(r,j);return Extract(j);}
+    private async Task DeleteAsync(){if(pendingDelete is null)return;deleting=true;deleteError=null;try{using var c=await ApiClient.CreateAuthorizedClientAsync();await Post(c,$"{DeleteEndpoint}?PishFactorSN={pendingDelete.PishFactorSN.ToString(CultureInfo.InvariantCulture)}",null);pendingDelete=null;showSuccess=true;successMessage="پیش‌فاکتور حذف شد.";}catch(Exception ex){deleteError=ex.Message;}finally{deleting=false;}}
+    private async Task ConfirmSuccess(){showSuccess=false;await LoadAllAsync();}
+    private void CloseEditor(){if(!saving)showEditor=false;}
+    private static Lookup ReadLookup(JsonElement x)=>new(){Id=Dec(x,"Id","SN","KalaSN","VisitorSN","MoshtariInfoSN","NoePardakhtSN","NoeTahvilSN","MamoorPakhshSN","HavaleMamoorPakhshSN","DarkhastSN","KanaleForooshSN"),Title=Str(x,"Title","Name","DS","KalaDs","KalaDS","KalaNo","VisitorDs","VisitorDS","MoshtariDs","MoshtariDS","NoePardakhtDs","NoeTahvilDs","MamoorPakhshDS","HavaleNo","DarkhastNo","KanaleForooshDs")};
+    private static Factor ReadFactor(JsonElement x)=>new(){PishFactorSN=Dec(x,"PishFactorSN"),PishFactorNo=Str(x,"PishFactorNo"),PishFactorDs=Str(x,"PishFactorDs"),SodoorDate=Str(x,"SodoorDate"),Status=(byte)Dec(x,"Status"),NoePardakhtSN=NDec(x,"NoePardakhtSN"),NoeTahvilSN=NDec(x,"NoeTahvilSN"),KanaleForooshSN=NDec(x,"KanaleForooshSN"),DarkhastSN=NDec(x,"DarkhastSN"),MamoorPakhshSN=NDec(x,"MamoorPakhshSN"),HavalePakhshSN=NDec(x,"HavalePakhshSN"),MoshtariInfoSN=Dec(x,"MoshtariInfoSN"),VisitorSN=Dec(x,"VisitorSN"),VosoolTime=(int)Dec(x,"VosoolTime"),TakhfifKol= NDec(x,"TakhfifKol"),MablaghKol=(long?)NDec(x,"MablaghKol"),IsSanadeMali=BoolN(x,"IsSanadeMali"),MoshtariNo=Str(x,"MoshtariNo"),VisitorDs=Str(x,"VisitorDs"),NoePardakhtDs=Str(x,"NoePardakhtDs"),NoeTahvilDs=Str(x,"NoeTahvilDs")};
+    private static FactorLineData ReadLine(JsonElement x)=>new(){PishFactorHaSN=Dec(x,"PishFactorHaSN"),PishFactorSN=Dec(x,"PishFactorSN"),KalaSN=Dec(x,"KalaSN"),Tedad=Dec(x,"Tedad"),NerkheVahed=NLong(x,"NerkheVahed"),DarsadeTakhfif=NDec(x,"DarsadeTakhfif"),MablagheTakhfif=NDec(x,"MablagheTakhfif"),Avarez=NDec(x,"Avarez"),Maliat=NDec(x,"Maliat")};
+    private static FactorLineData ReadLine(JsonElement x)=>ReadLineData(x);
+    private static FactorLineData ReadLineData(JsonElement x)=>new(){PishFactorHaSN=Dec(x,"PishFactorHaSN"),PishFactorSN=Dec(x,"PishFactorSN"),KalaSN=Dec(x,"KalaSN"),Tedad=Dec(x,"Tedad"),NerkheVahed=NLong(x,"NerkheVahed"),DarsadeTakhfif=NDec(x,"DarsadeTakhfif"),MablagheTakhfif=NDec(x,"MablagheTakhfif"),Avarez=NDec(x,"Avarez"),Maliat=NDec(x,"Maliat")};
+    private static string Show(string? s)=>string.IsNullOrWhiteSpace(s)?"—":s;
+    private static bool Contains(string? s,string q)=>Norm(s).Contains(Norm(q),StringComparison.OrdinalIgnoreCase);
+    private static string Norm(string? s)=>(s??"").Trim().Replace('۰','0').Replace('۱','1').Replace('۲','2').Replace('۳','3').Replace('۴','4').Replace('۵','5').Replace('۶','6').Replace('۷','7').Replace('۸','8').Replace('۹','9');
+    private static JsonElement Extract(string j){using var d=JsonDocument.Parse(j);return Find(d.RootElement.Clone(),0);}
+    private static JsonElement Find(JsonElement x,int depth){if(x.ValueKind==JsonValueKind.Array)return x;if(depth>8||x.ValueKind!=JsonValueKind.Object)return x;foreach(var k in new[]{"data","result","items","list","records","results","value"})if(Try(x,k,out var v)){var z=Find(v,depth+1);if(z.ValueKind==JsonValueKind.Array||z.ValueKind==JsonValueKind.Object)return z;}foreach(var p in x.EnumerateObject()){var z=Find(p.Value,depth+1);if(z.ValueKind==JsonValueKind.Array)return z;}return x;}
+    private static List<JsonElement> ReadArray(JsonElement x)=>x.ValueKind==JsonValueKind.Array?x.EnumerateArray().Select(v=>v.Clone()).ToList():x.ValueKind==JsonValueKind.Object?new(){x.Clone()}:new();
+    private static bool Try(JsonElement x,string k,out JsonElement v){if(x.ValueKind==JsonValueKind.Object)foreach(var p in x.EnumerateObject())if(p.Name.Equals(k,StringComparison.OrdinalIgnoreCase)){v=p.Value;return true;}v=default;return false;}
+    private static string Str(JsonElement x,params string[] keys){foreach(var k in keys)if(Try(x,k,out var v)){if(v.ValueKind==JsonValueKind.String||v.ValueKind==JsonValueKind.Number)return v.ToString();}return "";}
+    private static decimal Dec(JsonElement x,params string[] keys)=>NDec(x,keys)??0;
+    private static decimal? NDec(JsonElement x,params string[] keys){foreach(var k in keys)if(Try(x,k,out var v)){if(v.ValueKind==JsonValueKind.Null)return null;if(decimal.TryParse(Norm(v.ToString()),NumberStyles.Any,CultureInfo.InvariantCulture,out var n))return n;}return null;}
+    private static long? NLong(JsonElement x,params string[] keys){var n=NDec(x,keys);return n.HasValue?(long)n.Value:null;}
+    private static bool? BoolN(JsonElement x,string k){if(!Try(x,k,out var v)||v.ValueKind==JsonValueKind.Null)return null;if(v.ValueKind==JsonValueKind.True)return true;if(v.ValueKind==JsonValueKind.False)return false;return v.ToString()=="1";}
+    private static decimal ReadReturnedDecimal(JsonElement x){if(x.ValueKind==JsonValueKind.Number&&x.TryGetDecimal(out var n))return n;if(decimal.TryParse(Str(x,"PishFactorSN","id","value"),NumberStyles.Any,CultureInfo.InvariantCulture,out n))return n;foreach(var k in new[]{"data","result","value"})if(Try(x,k,out var v)){var z=ReadReturnedDecimal(v);if(z!=0)return z;}return 0;}
+    private static void EnsureSuccess(HttpResponseMessage r,string j){if(!r.IsSuccessStatusCode)throw new InvalidOperationException(j);using var d=JsonDocument.Parse(j);var x=d.RootElement;if(Try(x,"success",out var s)&&s.ValueKind==JsonValueKind.False)throw new InvalidOperationException(Str(x,"message","errMsg","errorMessage") is string e&&e!=""?e:"عملیات ناموفق بود.");if(Try(x,"isSuccess",out var ok)&&ok.ValueKind==JsonValueKind.False)throw new InvalidOperationException(Str(x,"message","errMsg","errorMessage"));if(Try(x,"errMsg",out var em)&&em.ValueKind==JsonValueKind.String&&!string.IsNullOrWhiteSpace(em.GetString()))throw new InvalidOperationException(em.GetString()!);}
+    private sealed class Lookup{public decimal Id{get;set;}public string Title{get;set;}="";}
+    private sealed class Factor{public decimal PishFactorSN{get;set;}public string PishFactorNo{get;set;}="";public string PishFactorDs{get;set;}="";public string SodoorDate{get;set;}="";public byte Status{get;set;}public decimal? NoePardakhtSN{get;set;}public decimal? NoeTahvilSN{get;set;}public decimal? KanaleForooshSN{get;set;}public decimal? DarkhastSN{get;set;}public decimal? MamoorPakhshSN{get;set;}public decimal? HavalePakhshSN{get;set;}public decimal MoshtariInfoSN{get;set;}public decimal VisitorSN{get;set;}public int VosoolTime{get;set;}public decimal? TakhfifKol{get;set;}public long? MablaghKol{get;set;}public bool? IsSanadeMali{get;set;}public string MoshtariNo{get;set;}="";public string VisitorDs{get;set;}="";public string NoePardakhtDs{get;set;}="";public string NoeTahvilDs{get;set;}="";}
+    private sealed class FactorLineData{public decimal PishFactorHaSN{get;set;}public decimal PishFactorSN{get;set;}public decimal KalaSN{get;set;}public decimal Tedad{get;set;}public long? NerkheVahed{get;set;}public decimal? DarsadeTakhfif{get;set;}public decimal? MablagheTakhfif{get;set;}public decimal? Avarez{get;set;}public decimal? Maliat{get;set;}}
+    private sealed class FactorLine{public Guid Key{get;}=Guid.NewGuid();public decimal PishFactorHaSN{get;set;}public decimal KalaSN{get;set;}public decimal Tedad{get;set;}=1;public long NerkheVahed{get;set;}public decimal DarsadeTakhfif{get;set;}public decimal MablagheTakhfif{get;set;}public decimal Maliat{get;set;}public decimal Avarez{get;set;}}
+    private sealed class FactorForm{public string? PishFactorDs{get;set;}public string? PishFactorNo{get;set;}public string SodoorDate{get;set;}=DateTime.Now.ToString("yyyyMMdd");public byte Status{get;set;}=1;public decimal? NoePardakhtSN{get;set;}public decimal? NoeTahvilSN{get;set;}public decimal? KanaleForooshSN{get;set;}public decimal? DarkhastSN{get;set;}public decimal? MamoorPakhshSN{get;set;}public decimal? HavalePakhshSN{get;set;}public decimal MoshtariInfoSN{get;set;}public decimal VisitorSN{get;set;}public int VosoolTime{get;set;}public decimal TakhfifKol{get;set;}public long MablaghKol{get;set;}public bool IsSanadeMali{get;set;}public List<FactorLine> Lines{get;set;}=[new()];}
+}
