@@ -17,9 +17,21 @@
     </header>
     <section class="visitor-panel">
         <div class="visitor-toolbar">
-            <div class="visitor-search-wrap">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8" /><path d="m16 16 5 5" /></svg>
-                <input class="visitor-search" placeholder="جستجو بر اساس نام، نام خانوادگی، کد ملی یا موبایل..." @bind="searchText" @bind:event="oninput" />
+            <div class="visitor-search-wrap @(showSearch ? "is-open" : "")">
+                @if (showSearch)
+                {
+                    <input class="visitor-search" placeholder="جستجو بر اساس نام، نام خانوادگی، کد ملی یا موبایل..." @bind="searchText" @bind:event="oninput" />
+                }
+                <button type="button" class="visitor-search-toggle" title="@(showSearch ? "بستن جستجو" : "جستجو")" aria-label="@(showSearch ? "بستن جستجو" : "جستجو")" aria-expanded="@showSearch" @onclick="ToggleSearch">
+                    @if (showSearch)
+                    {
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg>
+                    }
+                    else
+                    {
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8" /><path d="m16 16 5 5" /></svg>
+                    }
+                </button>
             </div>
             <div class="visitor-toolbar-actions">
                 <span class="visitor-count">@FilteredItems.Count ویزیتور</span>
@@ -95,13 +107,19 @@
     private VisitorItem? pendingDelete;
     private string searchText = "", karmandSearch = "", daftarSearch = "", noeVisitorSearch = "";
     private string? loadError, editorError, deleteError;
-    private bool loading, showEditor, isEdit, saving, deleting, showKarmandOptions, showDaftarOptions, showNoeVisitorOptions, showSuccessModal;
+    private bool loading, showEditor, isEdit, saving, deleting, showSearch, showKarmandOptions, showDaftarOptions, showNoeVisitorOptions, showSuccessModal;
     private string successMessage = "";
     private decimal editingSN;
     private string editingVisitorNo = "";
     private List<VisitorItem> FilteredItems => items.Where(x => string.IsNullOrWhiteSpace(searchText) || new[] {x.Name,x.Family,x.VisitorNo,x.Father,x.MeliNo,x.MblPhone,x.KarmandDs,x.DaftarForooshDs,x.NoeVisitorDs,x.VahedeTejariDs}.Any(v => Contains(v,searchText))).OrderBy(x => x.Name).ThenBy(x => x.Family).ToList();
 
     protected override async Task OnInitializedAsync() => await Task.WhenAll(LoadAllAsync(), LoadCombosAsync());
+
+    private void ToggleSearch()
+    {
+        showSearch = !showSearch;
+        if (!showSearch) searchText = "";
+    }
 
     private async Task LoadAllAsync() {
         loading = true; loadError = null;
