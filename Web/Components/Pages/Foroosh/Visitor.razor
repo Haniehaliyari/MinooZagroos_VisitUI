@@ -17,8 +17,21 @@
     </header>
     <section class="visitor-panel">
         <div class="visitor-toolbar">
-            <div class="visitor-search-wrap"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg><input class="visitor-search" placeholder="جستجو نام، نام خانوادگی، کد ملی، موبایل..." @bind="searchText" @bind:event="oninput" /></div>
-            <div class="visitor-toolbar-actions"><span class="visitor-count">@FilteredItems.Count ویزیتور</span><button type="button" class="visitor-button visitor-button-light" @onclick="LoadAllAsync" disabled="@loading"><svg class="visitor-inline-icon" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.6 9A7 7 0 0 1 18 6l2 6M4 12l2 6a7 7 0 0 0 12.4-3"/></svg></button><button type="button" class="visitor-button visitor-button-primary" @onclick="OpenCreate"><svg class="visitor-inline-icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button></div>
+            <div class="visitor-search-area">
+                @if (showSearch)
+                {
+                    <div class="visitor-search-wrap visitor-search-expanded">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg>
+                        <input class="visitor-search" placeholder="جستجو نام، نام خانوادگی، کد ملی، موبایل..." @bind="searchText" @bind:event="oninput" />
+                        <button type="button" class="visitor-search-close" title="بستن جستجو" aria-label="بستن جستجو" @onclick="CloseSearch"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
+                    </div>
+                }
+                else
+                {
+                    <button type="button" class="visitor-search-toggle" title="جستجو" aria-label="باز کردن جستجو" @onclick="() => showSearch = true"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg></button>
+                }
+            </div>
+            <div class="visitor-toolbar-actions"><span class="visitor-count">@FilteredItems.Count ویزیتور</span><button type="button" class="visitor-button visitor-button-light" title="بارگذاری مجدد" aria-label="بارگذاری مجدد" @onclick="LoadAllAsync" disabled="@loading"><svg class="visitor-inline-icon" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.6 9A7 7 0 0 1 18 6l2 6M4 12l2 6a7 7 0 0 0 12.4-3"/></svg></button><button type="button" class="visitor-button visitor-button-primary" title="ثبت ویزیتور" aria-label="ثبت ویزیتور" @onclick="OpenCreate"><svg class="visitor-inline-icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button></div>
         </div>
         @if (!string.IsNullOrWhiteSpace(loadError)) { <div class="visitor-inline-error">@loadError</div> }
         @if (loading) { <div class="visitor-empty"><span class="visitor-spinner"></span><strong>در حال دریافت فهرست ویزیتورها...</strong></div> }
@@ -84,7 +97,7 @@
     private VisitorItem? pendingDelete;
     private string searchText = "", karmandSearch = "", daftarSearch = "", noeVisitorSearch = "";
     private string? loadError, editorError, deleteError;
-    private bool loading, showEditor, isEdit, saving, deleting, showKarmandOptions, showDaftarOptions, showNoeVisitorOptions, showSuccessModal;
+    private bool loading, showEditor, isEdit, saving, deleting, showSearch, showKarmandOptions, showDaftarOptions, showNoeVisitorOptions, showSuccessModal;
     private string successMessage = "";
     private decimal editingSN;
     private string editingVisitorNo = "";
@@ -105,6 +118,8 @@
     private static async Task<List<LookupItem>> ReadLookupAsync(HttpClient c,string endpoint,string name) {
         try { using var r=await c.GetAsync(endpoint); var j=await r.Content.ReadAsStringAsync(); EnsureSuccess(r,j); return ReadArray(ExtractPayload(j)).Select(x=>new LookupItem { Id=ReadDecimal(x,"Id","SN","KarmandSN","KarmandId","DaftarForooshSN","DaftarSN","NoeVisitorSN","NoeVisitorId"), Title=ReadString(x,"Title","Name","DS","KarmandDs","KarmandDS","KarmandName","KarmandTitle","KarmandFullName","DaftarForooshDs","DaftarForooshDS","DaftarForooshName","DaftarForooshTitle","DaftarForooshFullName","NoeVisitorTitle","NoeVisitorName","NoeVisitorDS","NoeVisitorDs","NoeVisitorType","NoeVisitorDesc") }).Where(x=>x.Id!=0 && !string.IsNullOrWhiteSpace(x.Title)).ToList(); } catch { return []; }
     }
+    private void CloseSearch() { showSearch = false; searchText = ""; }
+
     private void OpenCreate() { isEdit=false; editingSN=0; editingVisitorNo=""; editorError=null; form=new VisitorForm { Status=1, OzviyatDate=DateTime.Today, OzviyatDateText=ToPersianDate(DateTime.Today) }; ResetLookupText(); showEditor=true; }
     private void OpenEdit(VisitorItem x) {
         isEdit=true; editingSN=x.VisitorSN; editingVisitorNo=x.VisitorNo; editorError=null;
