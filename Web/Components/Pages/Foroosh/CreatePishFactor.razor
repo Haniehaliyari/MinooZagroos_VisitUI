@@ -1,0 +1,120 @@
+@page "/foroosh/create-pishfactor"
+@attribute [Authorize]
+@layout MainLayout
+@using System.Globalization
+@using System.Net.Http
+@using System.Text.Json
+@using Microsoft.AspNetCore.Authorization
+@using Web.Components.Layout
+@using MyProject.Services.Api
+@inject BackendApiClient ApiClient
+
+<PageTitle>ایجاد پیش‌فاکتور | مینو زاگرس</PageTitle>
+<div class="visitor-page" dir="rtl">
+    <header class="visitor-heading">
+        <div><div class="visitor-eyebrow">فروش و سفارش‌گیری</div><h1>ایجاد پیش‌فاکتور</h1></div>
+        <div class="hero-3d-art" aria-hidden="true"><span class="hero-orbit hero-orbit-one"></span><span class="hero-orbit hero-orbit-two"></span><span class="hero-core"><i></i><b></b></span><span class="hero-spark hero-spark-one"></span><span class="hero-spark hero-spark-two"></span></div>
+    </header>
+    <section class="visitor-panel">
+        <div class="visitor-toolbar">
+            <div class="visitor-search-wrap"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg><input class="visitor-search" placeholder="جستجو در پیش‌فاکتورها..." @bind="searchText" @bind:event="oninput" /></div>
+            <div class="visitor-toolbar-actions"><span class="visitor-count">۰ پیش‌فاکتور</span><button type="button" class="visitor-button visitor-button-primary" title="ایجاد پیش‌فاکتور" aria-label="ایجاد پیش‌فاکتور" @onclick="OpenCreate"><svg class="visitor-inline-icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button></div>
+        </div>
+        <div class="visitor-empty"><strong>برای شروع، پیش‌فاکتور جدید ایجاد کنید</strong><span>اطلاعات اولیه پیش‌فاکتور از طریق دکمه ایجاد تکمیل می‌شود.</span><button type="button" class="visitor-button visitor-button-primary" @onclick="OpenCreate">ایجاد پیش‌فاکتور</button></div>
+    </section>
+</div>
+@if (showEditor)
+{
+    <div class="visitor-modal-backdrop" @onclick="CloseEditor">
+        <section class="visitor-modal create-pishfactor-modal" role="dialog" aria-modal="true" aria-labelledby="create-pishfactor-title" @onclick:stopPropagation="true" dir="rtl">
+            <header class="visitor-modal-header">
+                <div class="visitor-modal-title-icon"><svg viewBox="0 0 24 24"><path d="M7 3h8l4 4v14H5V3zM15 3v5h5M8 12h8M8 16h8"/></svg></div>
+                <div class="visitor-modal-heading-copy"><span class="visitor-modal-eyebrow">اطلاعات اصلی فروش</span><h2 id="create-pishfactor-title">ایجاد پیش‌فاکتور جدید</h2><p>اطلاعات اولیه پیش‌فاکتور را وارد یا انتخاب کنید.</p></div>
+                <button type="button" class="visitor-modal-close" aria-label="بستن" @onclick="CloseEditor">×</button>
+            </header>
+            @if (!string.IsNullOrWhiteSpace(comboError)) { <div class="visitor-inline-error create-pishfactor-error">@comboError <button type="button" class="visitor-button visitor-button-light" @onclick="LoadCombosAsync" disabled="@loadingCombos">تلاش مجدد</button></div> }
+            @if (loadingCombos) { <div class="create-pishfactor-loading"><span class="visitor-spinner"></span><span>در حال دریافت فهرست انتخاب‌ها...</span></div> }
+            <div class="pish-form-section create-pishfactor-section">
+                <div class="visitor-form-section-title">اطلاعات سربرگ پیش‌فاکتور</div>
+                <div class="visitor-form-grid create-pishfactor-grid">
+                    <label class="visitor-field"><span>نوع پرداخت</span><select @bind="form.NoePardakhtSN"><option value="">انتخاب نوع پرداخت</option>@foreach(var x in noePardakhts){<option value="@x.Id">@x.Title</option>}</select></label>
+                    <label class="visitor-field"><span>شرح پیش‌فاکتور</span><input @bind="form.PishFactorDs" maxlength="500" placeholder="شرح پیش‌فاکتور را وارد کنید" /></label>
+                    <label class="visitor-field"><span>نوع تحویل</span><select @bind="form.NoeTahvilSN"><option value="">انتخاب نوع تحویل</option>@foreach(var x in noeTahvil){<option value="@x.Id">@x.Title</option>}</select></label>
+                    <label class="visitor-field"><span>تاریخ صدور</span><input value="@form.SodoorDateText" readonly aria-readonly="true" /></label>
+                    <label class="visitor-field"><span>وضعیت</span><input value="موقت" readonly aria-readonly="true" class="create-pishfactor-readonly create-pishfactor-status" /></label>
+                    <label class="visitor-field"><span>کارتن</span><input value="@FormatNumber(form.Karton)" readonly aria-readonly="true" class="create-pishfactor-readonly" /></label>
+                    <label class="visitor-field"><span>وزن</span><input value="@FormatNumber(form.Vazn)" readonly aria-readonly="true" class="create-pishfactor-readonly" /></label>
+                    <label class="visitor-field"><span>حجم</span><input value="@FormatNumber(form.Hajm)" readonly aria-readonly="true" class="create-pishfactor-readonly" /></label>
+                    <label class="visitor-field"><span>تاریخ وصول</span><input @bind="form.VosoolDateText" inputmode="numeric" dir="ltr" placeholder="۱۴۰۵/۰۱/۰۱" /></label>
+                    <label class="visitor-field"><span>تخفیف کل</span><input type="number" min="0" step="1" @bind="form.TakhfifKol" /></label>
+                    <label class="visitor-field"><span>مبلغ کل</span><input value="@FormatNumber(form.MablaghKol)" readonly aria-readonly="true" class="create-pishfactor-readonly" /></label>
+                    <label class="visitor-field"><span>عوارض</span><input value="@FormatNumber(form.Avarez)" readonly aria-readonly="true" class="create-pishfactor-readonly" /></label>
+                    <label class="visitor-field"><span>مالیات</span><input value="@FormatNumber(form.Maliat)" readonly aria-readonly="true" class="create-pishfactor-readonly" /></label>
+                    <label class="visitor-field"><span>مشتری</span><select @bind="form.MoshtariInfoSN"><option value="">انتخاب مشتری</option>@foreach(var x in moshtaris){<option value="@x.Id">@x.Title</option>}</select></label>
+                    <label class="visitor-field"><span>ویزیتور</span><select @bind="form.VisitorSN"><option value="">انتخاب ویزیتور</option>@foreach(var x in visitors){<option value="@x.Id">@x.Title</option>}</select></label>
+                </div>
+            </div>
+            <footer class="visitor-modal-footer create-pishfactor-footer"><button type="button" class="visitor-button visitor-button-light" @onclick="CloseEditor">بستن</button><span class="create-pishfactor-next-note">بخش اول فرم آماده است؛ ادامه فرم در مرحله بعد تکمیل می‌شود.</span></footer>
+        </section>
+    </div>
+}
+@code {
+    private const string NoePardakhtEndpoint="api/v1/NoePardakht/GetNoePardakhtByCombo", NoeTahvilEndpoint="api/v1/NoeTahvil/GetNoeTahvilByCombo", VisitorEndpoint="api/v1/Visitor/GetVisitorByCombo", MoshtariEndpoint="api/v1/Moshtari/GetMoshtariInfoByCombo";
+    private readonly List<LookupItem> noePardakhts=[], noeTahvil=[], visitors=[], moshtaris=[];
+    private CreateForm form=new();
+    private bool showEditor,loadingCombos;
+    private string searchText="";
+    private string? comboError;
+    protected override Task OnInitializedAsync()=>LoadCombosAsync();
+    private void OpenCreate(){form=new CreateForm{SodoorDateText=ToPersianDate(DateTime.Today)};showEditor=true;}
+    private void CloseEditor()=>showEditor=false;
+    private async Task LoadCombosAsync(){
+        loadingCombos=true;comboError=null;
+        try{
+            using var c=await ApiClient.CreateAuthorizedClientAsync();
+            var results=await Task.WhenAll(
+                ReadLookupAsync(c,NoePardakhtEndpoint,new[]{"NoePardakhtSN"},new[]{"NoePardakhtDs","NoePardakhtName"}),
+                ReadLookupAsync(c,NoeTahvilEndpoint,new[]{"NoeTahvilSN"},new[]{"NoeTahvilDs","NoeTahvilName"}),
+                ReadLookupAsync(c,VisitorEndpoint,new[]{"VisitorSN"},new[]{"VisitorDs","VisitorName","Name","Family"}),
+                ReadLookupAsync(c,MoshtariEndpoint,new[]{"MoshtariInfoSN","MoshtariSN"},new[]{"MoshtariDs","MoshtariName","MoshtariNo"}));
+            Set(noePardakhts,results[0]);Set(noeTahvil,results[1]);Set(visitors,results[2]);Set(moshtaris,results[3]);
+            var missing=new[]{("نوع پرداخت",noePardakhts),("نوع تحویل",noeTahvil),("ویزیتور",visitors),("مشتری",moshtaris)}.Where(x=>x.Item2.Count==0).Select(x=>x.Item1).ToArray();
+            if(missing.Length>0)comboError="فهرست این موارد دریافت نشد یا خالی است: "+string.Join("، ",missing);
+        }catch(Exception ex){comboError="دریافت فهرست‌های انتخاب با خطا مواجه شد: "+ex.Message;}
+        finally{loadingCombos=false;}
+    }
+    private static void Set(List<LookupItem> target,List<LookupItem> source){target.Clear();target.AddRange(source);}
+    private static async Task<List<LookupItem>> ReadLookupAsync(HttpClient c,string endpoint,string[] idAliases,string[] titleAliases){
+        using var r=await c.GetAsync(endpoint);var json=await r.Content.ReadAsStringAsync();
+        if(!r.IsSuccessStatusCode)throw new InvalidOperationException(endpoint+": "+json);
+        using var doc=JsonDocument.Parse(json);var arr=FindArray(doc.RootElement);var list=new List<LookupItem>();
+        if(arr.ValueKind!=JsonValueKind.Array)return list;
+        foreach(var e in arr.EnumerateArray()){
+            if(e.ValueKind!=JsonValueKind.Object)continue;
+            var id=ReadValue(e,new[]{"Id","ID","SN","Value","Key"}.Concat(idAliases).ToArray());
+            var title=ReadValue(e,new[]{"Title","Name","DS","Ds","Description"}.Concat(titleAliases).ToArray());
+            if(!string.IsNullOrWhiteSpace(id)&&id!="0"&&!string.IsNullOrWhiteSpace(title))list.Add(new LookupItem{Id=id,Title=title});
+        }
+        return list;
+    }
+    private static JsonElement FindArray(JsonElement e){
+        if(e.ValueKind==JsonValueKind.Array)return e;
+        if(e.ValueKind==JsonValueKind.Object){
+            foreach(var p in e.EnumerateObject()){var a=FindArray(p.Value);if(a.ValueKind==JsonValueKind.Array)return a;}
+        }
+        return default;
+    }
+    private static string ReadValue(JsonElement e,string[] names){
+        foreach(var n in names)if(e.TryGetProperty(n,out var v)&&v.ValueKind!=JsonValueKind.Null){var s=v.ToString();if(!string.IsNullOrWhiteSpace(s))return s;}
+        return "";
+    }
+    private static string ToPersianDate(DateTime d){var c=new PersianCalendar();return $"{c.GetYear(d):0000}/{c.GetMonth(d):00}/{c.GetDayOfMonth(d):00}";}
+    private static string FormatNumber(decimal n)=>n.ToString("N0",CultureInfo.GetCultureInfo("fa-IR"));
+    private sealed class LookupItem{public string Id{get;set;}="";public string Title{get;set;}="";}
+    private sealed class CreateForm{
+        public string NoePardakhtSN{get;set;}="";public string PishFactorDs{get;set;}="";public string NoeTahvilSN{get;set;}="";
+        public string SodoorDateText{get;set;}="";public decimal Karton{get;set;}public decimal Vazn{get;set;}public decimal Hajm{get;set;}
+        public string VosoolDateText{get;set;}="";public decimal TakhfifKol{get;set;}public decimal MablaghKol{get;set;}public decimal Avarez{get;set;}public decimal Maliat{get;set;}
+        public string MoshtariInfoSN{get;set;}="";public string VisitorSN{get;set;}="";
+    }
+}
