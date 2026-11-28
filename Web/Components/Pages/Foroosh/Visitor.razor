@@ -162,7 +162,25 @@
     private static string ReadString(JsonElement x,params string[] keys){foreach(var k in keys)if(TryGet(x,k,out var v)){if(v.ValueKind==JsonValueKind.String)return v.GetString()??"";if(v.ValueKind==JsonValueKind.Number)return v.ToString();}return "";}
     private static bool TryGet(JsonElement x,string k,out JsonElement v){if(x.ValueKind==JsonValueKind.Object)foreach(var p in x.EnumerateObject())if(string.Equals(p.Name,k,StringComparison.OrdinalIgnoreCase)){v=p.Value;return true;}v=default;return false;}
     private static void EnsureSuccess(HttpResponseMessage r,string j){if(!r.IsSuccessStatusCode)throw new InvalidOperationException(ReadError(j,r));using var d=JsonDocument.Parse(j);var x=d.RootElement;if(TryGet(x,"statusCode",out var sc)&&sc.ValueKind==JsonValueKind.Number&&sc.GetInt32()>=400)throw new InvalidOperationException(ReadError(j,r));if(TryGet(x,"success",out var s)&&s.ValueKind==JsonValueKind.False)throw new InvalidOperationException(ReadError(j,r));if(TryGet(x,"isSuccess",out var ok)&&ok.ValueKind==JsonValueKind.False)throw new InvalidOperationException(ReadError(j,r));if(TryGet(x,"errMsg",out var e)&&e.ValueKind==JsonValueKind.String&&!string.IsNullOrWhiteSpace(e.GetString()))throw new InvalidOperationException(e.GetString()!);}
-    private static string ReadError(string j,HttpResponseMessage r){try{using var d=JsonDocument.Parse(j);foreach(var k in new[]{"message","errMsg","errorMessage","detail","title","error"})if(TryGet(d.RootElement,k,out var v)&&v.ValueKind==JsonValueKind.String&&!string.IsNullOrWhiteSpace(v.GetString()))return v.GetString()!;}catch{}return string.IsNullOrWhiteSpace(j)?$"خطای HTTP {(int)r.StatusCode}":j;}
+    private static string ReadError(string j,HttpResponseMessage r){
+        try{
+            using var d=JsonDocument.Parse(j);
+            var root=d.RootElement;
+            if(TryGet(root,"errors",out var errors)&&errors.ValueKind==JsonValueKind.Object){
+                var details=new List<string>();
+                foreach(var property in errors.EnumerateObject()){
+                    var messages=property.Value.ValueKind==JsonValueKind.Array
+                        ? string.Join("، ",property.Value.EnumerateArray().Where(v=>v.ValueKind==JsonValueKind.String).Select(v=>v.GetString()).Where(v=>!string.IsNullOrWhiteSpace(v)))
+                        : property.Value.ValueKind==JsonValueKind.String?property.Value.GetString():property.Value.ToString();
+                    if(!string.IsNullOrWhiteSpace(messages))details.Add($"{property.Name}: {messages}");
+                }
+                if(details.Count>0)return "خطای اعتبارسنجی اطلاعات ارسالی:\\n"+string.Join("\\n",details);
+            }
+            foreach(var k in new[]{"message","errMsg","errorMessage","detail","title","error"})
+                if(TryGet(root,k,out var v)&&v.ValueKind==JsonValueKind.String&&!string.IsNullOrWhiteSpace(v.GetString()))return v.GetString()!;
+        }catch{}
+        return string.IsNullOrWhiteSpace(j)?$"خطای HTTP {(int)r.StatusCode}":j;
+    }
     private sealed class LookupItem{public decimal Id{get;set;}public string Title{get;set;}="";}
     private sealed class VisitorItem{public decimal VisitorSN{get;set;}public string VisitorNo{get;set;}="";public string Name{get;set;}="";public string Family{get;set;}="";public string Father{get;set;}="";public byte Status{get;set;}public string OzviyatDate{get;set;}="";public string MblPhone{get;set;}="";public string MeliNo{get;set;}="";public bool IsMasirVisit{get;set;}public bool IsVisitDigita{get;set;}public decimal? KarmandSN{get;set;}public decimal? DaftarForooshSN{get;set;}public decimal? NoeVisitorSN{get;set;}public string KarmandDs{get;set;}="";public string DaftarForooshDs{get;set;}="";public string NoeVisitorDs{get;set;}="";public string VahedeTejariDs{get;set;}="";}
     private sealed class VisitorForm{public string Name{get;set;}="";public string Family{get;set;}="";public string Father{get;set;}="";public byte Status{get;set;}=1;public DateTime? OzviyatDate{get;set;}=DateTime.Today;public string OzviyatDateText{get;set;}=ToPersianDate(DateTime.Today);public string MblPhone{get;set;}="";public string MeliNo{get;set;}="";public bool IsMasirVisit{get;set;}public bool IsVisitDigita{get;set;}public decimal? KarmandSN{get;set;}public decimal? DaftarForooshSN{get;set;}public decimal? NoeVisitorSN{get;set;}}
