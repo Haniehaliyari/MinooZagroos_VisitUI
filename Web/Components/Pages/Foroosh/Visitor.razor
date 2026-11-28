@@ -49,16 +49,16 @@
 <div class="visitor-form-grid">
 <label class="visitor-field"><span>نام <b>*</b></span><input @bind="form.Name" maxlength="100" placeholder="نام" /></label>
 <label class="visitor-field"><span>نام خانوادگی <b>*</b></span><input @bind="form.Family" maxlength="150" placeholder="نام خانوادگی" /></label>
-<label class="visitor-field"><span>نام پدر</span><input @bind="form.Father" maxlength="100" placeholder="نام پدر" /></label>
-<div class="visitor-field"><span>وضعیت</span><button type="button" class="visitor-switch-row" role="switch" aria-checked="@(form.Status == 1)" @onclick="ToggleStatus"><span class="visitor-switch @(form.Status == 1 ? "on" : "")"><i></i></span><strong>@(form.Status == 1 ? "فعال" : "غیرفعال")</strong></button></div>
-<label class="visitor-field"><span>تاریخ عضویت</span><input type="text" inputmode="numeric" dir="ltr" placeholder="۱۴۰۵/۰۱/۰۱" @bind="form.OzviyatDateText" /></label>
+<label class="visitor-field"><span>نام پدر <b>*</b></span><input @bind="form.Father" maxlength="100" placeholder="نام پدر" /></label>
+<div class="visitor-field"><span>وضعیت <b>*</b></span><button type="button" class="visitor-switch-row" role="switch" aria-checked="@(form.Status == 1)" @onclick="ToggleStatus"><span class="visitor-switch @(form.Status == 1 ? "on" : "")"><i></i></span><strong>@(form.Status == 1 ? "فعال" : "غیرفعال")</strong></button></div>
+<label class="visitor-field"><span>تاریخ عضویت <b>*</b></span><input type="text" inputmode="numeric" dir="ltr" placeholder="۱۴۰۵/۰۱/۰۱" @bind="form.OzviyatDateText" /></label>
 <label class="visitor-field"><span>موبایل</span><input @bind="form.MblPhone" maxlength="20" inputmode="tel" placeholder="شماره موبایل" /></label>
 <label class="visitor-field"><span>کد ملی</span><input @bind="form.MeliNo" maxlength="20" inputmode="numeric" placeholder="کد ملی" /></label>
 <div class="visitor-field"><span>مسیر ویزیت</span><button type="button" class="visitor-switch-row" role="switch" aria-checked="@form.IsMasirVisit" @onclick="() => form.IsMasirVisit = !form.IsMasirVisit"><span class="visitor-switch @(form.IsMasirVisit ? "on" : "")"><i></i></span><strong>@(form.IsMasirVisit ? "فعال" : "غیرفعال")</strong></button></div>
 <div class="visitor-field"><span>ویزیت دیجیتال</span><button type="button" class="visitor-switch-row" role="switch" aria-checked="@form.IsVisitDigita" @onclick="() => form.IsVisitDigita = !form.IsVisitDigita"><span class="visitor-switch @(form.IsVisitDigita ? "on" : "")"><i></i></span><strong>@(form.IsVisitDigita ? "فعال" : "غیرفعال")</strong></button></div>
-<div class="visitor-field lookup-field"><span>نام کارمند <b>*</b></span><input value="@karmandSearch" @oninput="e => OnLookupInput(e, 0)" @onfocus="() => showKarmandOptions = true" @onblur="() => CloseLookupAsync(0)" autocomplete="off" placeholder="جستجو و انتخاب کارمند" />
+<div class="visitor-field lookup-field"><span>نام کارمند</span><input value="@karmandSearch" @oninput="e => OnLookupInput(e, 0)" @onfocus="() => showKarmandOptions = true" @onblur="() => CloseLookupAsync(0)" autocomplete="off" placeholder="جستجو و انتخاب کارمند" />
 @if (showKarmandOptions) { <div class="visitor-options">@foreach (var o in FilterLookup(karmands,karmandSearch)) { <button type="button" @onmousedown:preventDefault @onclick="() => SelectLookup(o,0)">@o.Title</button> } @if (FilterLookup(karmands,karmandSearch).Count==0) { <div class="visitor-option-empty">موردی یافت نشد</div> }</div> }</div>
-<div class="visitor-field lookup-field"><span>دفتر فروش <b>*</b></span><input value="@daftarSearch" @oninput="e => OnLookupInput(e, 1)" @onfocus="() => showDaftarOptions = true" @onblur="() => CloseLookupAsync(1)" autocomplete="off" placeholder="جستجو و انتخاب دفتر فروش" />
+<div class="visitor-field lookup-field"><span>دفتر فروش</span><input value="@daftarSearch" @oninput="e => OnLookupInput(e, 1)" @onfocus="() => showDaftarOptions = true" @onblur="() => CloseLookupAsync(1)" autocomplete="off" placeholder="جستجو و انتخاب دفتر فروش" />
 @if (showDaftarOptions) { <div class="visitor-options">@foreach (var o in FilterLookup(daftars,daftarSearch)) { <button type="button" @onmousedown:preventDefault @onclick="() => SelectLookup(o,1)">@o.Title</button> } @if (FilterLookup(daftars,daftarSearch).Count==0) { <div class="visitor-option-empty">موردی یافت نشد</div> }</div> }</div>
 <div class="visitor-field lookup-field"><span>نوع ویزیتور <b>*</b></span><input value="@noeVisitorSearch" @oninput="e => OnLookupInput(e, 2)" @onfocus="() => showNoeVisitorOptions = true" @onblur="() => CloseLookupAsync(2)" autocomplete="off" placeholder="جستجو و انتخاب نوع ویزیتور" />
 @if (showNoeVisitorOptions) { <div class="visitor-options">@foreach (var o in FilterLookup(noeVisitors,noeVisitorSearch)) { <button type="button" @onmousedown:preventDefault @onclick="() => SelectLookup(o,2)">@o.Title</button> } @if (FilterLookup(noeVisitors,noeVisitorSearch).Count==0) { <div class="visitor-option-empty">موردی یافت نشد</div> }</div> }</div>
@@ -114,8 +114,8 @@
     private void ResetLookupText(){karmandSearch=daftarSearch=noeVisitorSearch="";showKarmandOptions=showDaftarOptions=showNoeVisitorOptions=false;}
     private async Task SaveAsync() {
         editorError=null; form.Name=form.Name.Trim(); form.Family=form.Family.Trim();
-        if(form.Name=="" || form.Family==""){editorError="نام و نام خانوادگی را وارد کنید.";return;}
-        if(!form.KarmandSN.HasValue || !form.DaftarForooshSN.HasValue || !form.NoeVisitorSN.HasValue){editorError="کارمند، دفتر فروش و نوع ویزیتور را انتخاب کنید.";return;}
+        if(form.Name=="" || form.Family=="" || string.IsNullOrWhiteSpace(form.Father)){editorError="نام، نام خانوادگی و نام پدر الزامی هستند.";return;}
+        if(!form.NoeVisitorSN.HasValue){editorError="نوع ویزیتور را انتخاب کنید.";return;}
         if(!TryParsePersianDate(form.OzviyatDateText,out var date)){editorError="تاریخ عضویت را به‌صورت شمسی و با قالب ۱۴۰۵/۰۱/۰۱ وارد کنید.";return;}
         form.OzviyatDate=date;
         saving=true; await InvokeAsync(StateHasChanged);
