@@ -69,7 +69,7 @@
     private const string AllEndpoint="api/v1/PishFactor/GetAllPishFactor", AllHaEndpoint="api/v1/PishFactor/GetAllPishFactorHa";
     private const string CreateEndpoint="api/v1/PishFactor/CreatePishFactor", UpdateEndpoint="api/v1/PishFactor/UpdatePishFactor", DeleteEndpoint="api/v1/PishFactor/DeletePishFactor";
     private const string CreateHaEndpoint="api/v1/PishFactor/CreatePishFactorHa", UpdateHaEndpoint="api/v1/PishFactor/UpdatePishFactorHa", DeleteHaEndpoint="api/v1/PishFactor/DeletePishFactorHa";
-    private readonly List<Factor> items=[]; private readonly List<FactorLine> allLines=[];
+    private readonly List<Factor> items=[]; private readonly List<FactorLineData> allLines=[];
     private readonly List<Lookup> noePardakhts=[],noeTavhils=[],kalas=[],mamoorha=[],havaleha=[],visitors=[],moshtaris=[],darkhastHa=[],kanalha=[];
     private FactorForm form=new(); private Factor? pendingDelete; private string searchText=""; private string? loadError,editorError,deleteError; private string successMessage="";
     private bool loading,showEditor,isEdit,saving,deleting,showSuccess; private decimal editingSN;
@@ -98,8 +98,6 @@
     private static Lookup ReadLookup(JsonElement x)=>new(){Id=Dec(x,"Id","SN","KalaSN","VisitorSN","MoshtariInfoSN","NoePardakhtSN","NoeTahvilSN","MamoorPakhshSN","HavaleMamoorPakhshSN","DarkhastSN","KanaleForooshSN"),Title=Str(x,"Title","Name","DS","KalaDs","KalaDS","KalaNo","VisitorDs","VisitorDS","MoshtariDs","MoshtariDS","NoePardakhtDs","NoeTahvilDs","MamoorPakhshDS","HavaleNo","DarkhastNo","KanaleForooshDs")};
     private static Factor ReadFactor(JsonElement x)=>new(){PishFactorSN=Dec(x,"PishFactorSN"),PishFactorNo=Str(x,"PishFactorNo"),PishFactorDs=Str(x,"PishFactorDs"),SodoorDate=Str(x,"SodoorDate"),Status=(byte)Dec(x,"Status"),NoePardakhtSN=NDec(x,"NoePardakhtSN"),NoeTahvilSN=NDec(x,"NoeTahvilSN"),KanaleForooshSN=NDec(x,"KanaleForooshSN"),DarkhastSN=NDec(x,"DarkhastSN"),MamoorPakhshSN=NDec(x,"MamoorPakhshSN"),HavalePakhshSN=NDec(x,"HavalePakhshSN"),MoshtariInfoSN=Dec(x,"MoshtariInfoSN"),VisitorSN=Dec(x,"VisitorSN"),VosoolTime=(int)Dec(x,"VosoolTime"),TakhfifKol= NDec(x,"TakhfifKol"),MablaghKol=(long?)NDec(x,"MablaghKol"),IsSanadeMali=BoolN(x,"IsSanadeMali"),MoshtariNo=Str(x,"MoshtariNo"),VisitorDs=Str(x,"VisitorDs"),NoePardakhtDs=Str(x,"NoePardakhtDs"),NoeTahvilDs=Str(x,"NoeTahvilDs")};
     private static FactorLineData ReadLine(JsonElement x)=>new(){PishFactorHaSN=Dec(x,"PishFactorHaSN"),PishFactorSN=Dec(x,"PishFactorSN"),KalaSN=Dec(x,"KalaSN"),Tedad=Dec(x,"Tedad"),NerkheVahed=NLong(x,"NerkheVahed"),DarsadeTakhfif=NDec(x,"DarsadeTakhfif"),MablagheTakhfif=NDec(x,"MablagheTakhfif"),Avarez=NDec(x,"Avarez"),Maliat=NDec(x,"Maliat")};
-    private static FactorLineData ReadLine(JsonElement x)=>ReadLineData(x);
-    private static FactorLineData ReadLineData(JsonElement x)=>new(){PishFactorHaSN=Dec(x,"PishFactorHaSN"),PishFactorSN=Dec(x,"PishFactorSN"),KalaSN=Dec(x,"KalaSN"),Tedad=Dec(x,"Tedad"),NerkheVahed=NLong(x,"NerkheVahed"),DarsadeTakhfif=NDec(x,"DarsadeTakhfif"),MablagheTakhfif=NDec(x,"MablagheTakhfif"),Avarez=NDec(x,"Avarez"),Maliat=NDec(x,"Maliat")};
     private static string Show(string? s)=>string.IsNullOrWhiteSpace(s)?"—":s;
     private static bool Contains(string? s,string q)=>Norm(s).Contains(Norm(q),StringComparison.OrdinalIgnoreCase);
     private static string Norm(string? s)=>(s??"").Trim().Replace('۰','0').Replace('۱','1').Replace('۲','2').Replace('۳','3').Replace('۴','4').Replace('۵','5').Replace('۶','6').Replace('۷','7').Replace('۸','8').Replace('۹','9');
