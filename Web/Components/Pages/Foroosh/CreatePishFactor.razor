@@ -141,15 +141,18 @@
             "NoePardakhtDs", "NoePardakhtDS", "NoePardakhtName", "NoePardakhtTitle",
             "NoeTahvilDs", "NoeTahvilDS", "NoeTahvilName", "NoeTahvilTitle");
 
-        if ((id == "0" || string.IsNullOrWhiteSpace(title)) && element.ValueKind == JsonValueKind.Object)
+        if ((id == 0m || string.IsNullOrWhiteSpace(title)) && element.ValueKind == JsonValueKind.Object)
         {
             foreach (var property in element.EnumerateObject())
             {
                 if (property.Value.ValueKind != JsonValueKind.Object) continue;
                 var nested = ReadLookup(property.Value);
-                if (id == "0") id = nested.Id;
+                if (id == 0m &&
+                    decimal.TryParse(Normalize(nested.Id), NumberStyles.Any,
+                        CultureInfo.InvariantCulture, out var nestedId))
+                    id = nestedId;
                 if (string.IsNullOrWhiteSpace(title)) title = nested.Title;
-                if (id != "0" && !string.IsNullOrWhiteSpace(title)) break;
+                if (id != 0m && !string.IsNullOrWhiteSpace(title)) break;
             }
         }
         return new LookupItem { Id = id.ToString(CultureInfo.InvariantCulture), Title = title };
