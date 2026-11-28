@@ -3,6 +3,7 @@
 @layout MainLayout
 @using System.Globalization
 @using System.Net.Http
+@using System.Net.Http.Json
 @using System.Text.Json
 @using Microsoft.AspNetCore.Authorization
 @using Web.Components.Layout
@@ -18,81 +19,294 @@
     <section class="visitor-panel">
         <div class="visitor-toolbar">
             <div class="visitor-search-wrap"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg><input class="visitor-search" placeholder="جستجو در پیش‌فاکتورها..." @bind="searchText" @bind:event="oninput" /></div>
-            <div class="visitor-toolbar-actions"><span class="visitor-count">۰ پیش‌فاکتور</span><button type="button" class="visitor-button visitor-button-primary" title="ایجاد پیش‌فاکتور" aria-label="ایجاد پیش‌فاکتور" @onclick="OpenCreate"><svg class="visitor-inline-icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button></div>
+            <div class="visitor-toolbar-actions"><span class="visitor-count">@(masterSaved ? "۱ پیش‌فاکتور در حال تکمیل" : "۰ پیش‌فاکتور")</span><button type="button" class="visitor-button visitor-button-primary" title="ایجاد پیش‌فاکتور" aria-label="ایجاد پیش‌فاکتور" @onclick="OpenCreate"><svg class="visitor-inline-icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button></div>
         </div>
-        <div class="visitor-empty"><strong>برای شروع، پیش‌فاکتور جدید ایجاد کنید</strong><span>اطلاعات اولیه پیش‌فاکتور از طریق دکمه ایجاد تکمیل می‌شود.</span><button type="button" class="visitor-button visitor-button-primary" @onclick="OpenCreate">ایجاد پیش‌فاکتور</button></div>
+        <div class="visitor-empty"><strong>@(masterSaved ? "سربرگ پیش‌فاکتور ثبت شده است" : "برای شروع، پیش‌فاکتور جدید ایجاد کنید")</strong><span>@(masterSaved ? $"شناسه پیش‌فاکتور: {savedPishFactorSN}" : "ابتدا سربرگ را ثبت کنید؛ سپس کالاهای پیش‌فاکتور را اضافه کنید.")</span><button type="button" class="visitor-button visitor-button-primary" @onclick="OpenCreate">@(masterSaved ? "ادامه تکمیل پیش‌فاکتور" : "ایجاد پیش‌فاکتور")</button></div>
     </section>
 </div>
+
 @if (showEditor)
 {
     <div class="visitor-modal-backdrop" @onclick="CloseEditor">
         <section class="visitor-modal create-pishfactor-modal" role="dialog" aria-modal="true" aria-labelledby="create-pishfactor-title" @onclick:stopPropagation="true" dir="rtl">
             <header class="visitor-modal-header">
                 <div class="visitor-modal-title-icon"><svg viewBox="0 0 24 24"><path d="M7 3h8l4 4v14H5V3zM15 3v5h5M8 12h8M8 16h8"/></svg></div>
-                <div class="visitor-modal-heading-copy"><span class="visitor-modal-eyebrow">اطلاعات اصلی فروش</span><h2 id="create-pishfactor-title">ایجاد پیش‌فاکتور جدید</h2><p>اطلاعات اولیه پیش‌فاکتور را وارد یا انتخاب کنید.</p></div>
+                <div class="visitor-modal-heading-copy"><span class="visitor-modal-eyebrow">اطلاعات اصلی فروش</span><h2 id="create-pishfactor-title">@(masterSaved ? "تکمیل پیش‌فاکتور" : "ایجاد پیش‌فاکتور جدید")</h2><p>@(masterSaved ? $"سربرگ با شناسه {savedPishFactorSN} ثبت شده؛ اکنون کالاها را اضافه کنید." : "ابتدا اطلاعات سربرگ را ثبت کنید تا شناسه پیش‌فاکتور ایجاد شود.")</p></div>
                 <button type="button" class="visitor-modal-close" aria-label="بستن" @onclick="CloseEditor">×</button>
             </header>
+            @if (!string.IsNullOrWhiteSpace(pageError)) { <div class="visitor-inline-error create-pishfactor-error">@pageError</div> }
             @if (!string.IsNullOrWhiteSpace(comboError)) { <div class="visitor-inline-error create-pishfactor-error">@comboError <button type="button" class="visitor-button visitor-button-light" @onclick="LoadCombosAsync" disabled="@loadingCombos">تلاش مجدد</button></div> }
             @if (loadingCombos) { <div class="create-pishfactor-loading"><span class="visitor-spinner"></span><span>در حال دریافت فهرست انتخاب‌ها...</span></div> }
+
             <div class="pish-form-section create-pishfactor-section">
-                <div class="visitor-form-section-title">اطلاعات سربرگ پیش‌فاکتور</div>
+                <div class="visitor-form-section-title">مرحله اول ـ اطلاعات سربرگ پیش‌فاکتور</div>
                 <div class="visitor-form-grid create-pishfactor-grid">
-                    <label class="visitor-field"><span>نوع پرداخت</span><select @bind="form.NoePardakhtSN"><option value="">انتخاب نوع پرداخت</option>@foreach(var x in noePardakhts){<option value="@x.Id">@x.Title</option>}</select></label>
-                    <label class="visitor-field"><span>شرح پیش‌فاکتور</span><input @bind="form.PishFactorDs" maxlength="500" placeholder="شرح پیش‌فاکتور را وارد کنید" /></label>
-                    <label class="visitor-field"><span>نوع تحویل</span><select @bind="form.NoeTahvilSN"><option value="">انتخاب نوع تحویل</option>@foreach(var x in noeTahvil){<option value="@x.Id">@x.Title</option>}</select></label>
+                    <label class="visitor-field"><span>نوع پرداخت</span><select @bind="form.NoePardakhtSN" disabled="@masterSaved"><option value="">انتخاب نوع پرداخت</option>@foreach(var x in noePardakhts){<option value="@x.Id">@x.Title</option>}</select></label>
+                    <label class="visitor-field"><span>شرح پیش‌فاکتور</span><input @bind="form.PishFactorDs" maxlength="500" placeholder="شرح پیش‌فاکتور را وارد کنید" disabled="@masterSaved" /></label>
+                    <label class="visitor-field"><span>نوع تحویل</span><select @bind="form.NoeTahvilSN" disabled="@masterSaved"><option value="">انتخاب نوع تحویل</option>@foreach(var x in noeTahvil){<option value="@x.Id">@x.Title</option>}</select></label>
                     <label class="visitor-field"><span>تاریخ صدور</span><input value="@form.SodoorDateText" readonly aria-readonly="true" /></label>
                     <label class="visitor-field"><span>وضعیت</span><input value="موقت" readonly aria-readonly="true" class="create-pishfactor-readonly create-pishfactor-status" /></label>
                     <label class="visitor-field"><span>کارتن</span><input value="@FormatNumber(form.Karton)" readonly aria-readonly="true" class="create-pishfactor-readonly" /></label>
                     <label class="visitor-field"><span>وزن</span><input value="@FormatNumber(form.Vazn)" readonly aria-readonly="true" class="create-pishfactor-readonly" /></label>
                     <label class="visitor-field"><span>حجم</span><input value="@FormatNumber(form.Hajm)" readonly aria-readonly="true" class="create-pishfactor-readonly" /></label>
-                    <label class="visitor-field"><span>تاریخ وصول</span><input @bind="form.VosoolDateText" inputmode="numeric" dir="ltr" placeholder="۱۴۰۵/۰۱/۰۱" /></label>
-                    <label class="visitor-field"><span>تخفیف کل</span><input type="number" min="0" step="1" @bind="form.TakhfifKol" /></label>
+                    <label class="visitor-field"><span>تاریخ وصول</span><input @bind="form.VosoolDateText" inputmode="numeric" dir="ltr" placeholder="۱۴۰۵/۰۱/۰۱" disabled="@masterSaved" /></label>
+                    <label class="visitor-field"><span>تخفیف کل</span><input type="number" min="0" step="1" @bind="form.TakhfifKol" disabled="@masterSaved" /></label>
                     <label class="visitor-field"><span>مبلغ کل</span><input value="@FormatNumber(form.MablaghKol)" readonly aria-readonly="true" class="create-pishfactor-readonly" /></label>
                     <label class="visitor-field"><span>عوارض</span><input value="@FormatNumber(form.Avarez)" readonly aria-readonly="true" class="create-pishfactor-readonly" /></label>
                     <label class="visitor-field"><span>مالیات</span><input value="@FormatNumber(form.Maliat)" readonly aria-readonly="true" class="create-pishfactor-readonly" /></label>
-                    <label class="visitor-field"><span>مشتری</span><select @bind="form.MoshtariInfoSN"><option value="">انتخاب مشتری</option>@foreach(var x in moshtaris){<option value="@x.Id">@x.Title</option>}</select></label>
-                    <label class="visitor-field"><span>ویزیتور</span><select @bind="form.VisitorSN"><option value="">انتخاب ویزیتور</option>@foreach(var x in visitors){<option value="@x.Id">@x.Title</option>}</select></label>
+                    <label class="visitor-field"><span>مشتری</span><select @bind="form.MoshtariInfoSN" disabled="@masterSaved"><option value="">انتخاب مشتری</option>@foreach(var x in moshtaris){<option value="@x.Id">@x.Title</option>}</select></label>
+                    <label class="visitor-field"><span>ویزیتور</span><select @bind="form.VisitorSN" disabled="@masterSaved"><option value="">انتخاب ویزیتور</option>@foreach(var x in visitors){<option value="@x.Id">@x.Title</option>}</select></label>
                 </div>
+                @if (!masterSaved)
+                {
+                    <div class="visitor-modal-footer create-pishfactor-footer">
+                        <button type="button" class="visitor-button visitor-button-light" @onclick="CloseEditor">انصراف</button>
+                        <button type="button" class="visitor-button visitor-button-primary" @onclick="SaveMasterAsync" disabled="@savingMaster">@(savingMaster ? "در حال ثبت سربرگ..." : "ثبت سربرگ و ادامه")</button>
+                    </div>
+                }
+                else
+                {
+                    <div class="visitor-inline-success" style="margin-top:12px">سربرگ پیش‌فاکتور با موفقیت ثبت شد. شناسه: @savedPishFactorSN</div>
+                }
             </div>
-            <footer class="visitor-modal-footer create-pishfactor-footer"><button type="button" class="visitor-button visitor-button-light" @onclick="CloseEditor">بستن</button><span class="create-pishfactor-next-note">بخش اول فرم آماده است؛ ادامه فرم در مرحله بعد تکمیل می‌شود.</span></footer>
+
+            @if (masterSaved)
+            {
+                <div class="pish-form-section create-pishfactor-section">
+                    <div class="visitor-form-section-title">مرحله دوم ـ افزودن کالا به پیش‌فاکتور</div>
+                    <div class="visitor-form-grid create-pishfactor-grid">
+                        <label class="visitor-field"><span>انتخاب کالا</span><select @bind="lineForm.KalaSN" disabled="@savingLine"><option value="">انتخاب کالا</option>@foreach(var x in kalas){<option value="@x.Id">@x.Title</option>}</select></label>
+                        <label class="visitor-field"><span>تعداد کالا</span><input type="number" min="0.001" step="0.001" @bind="lineForm.Tedad" disabled="@savingLine" /></label>
+                        <label class="visitor-field"><span>جایزه</span><input type="checkbox" class="visitor-prize-checkbox" @bind="lineForm.IsJayeze" disabled="@savingLine" /></label>
+                    </div>
+                    <div class="visitor-modal-footer create-pishfactor-footer">
+                        <button type="button" class="visitor-button visitor-button-primary" @onclick="AddProductAsync" disabled="@savingLine">@(savingLine ? "در حال ثبت و محاسبه..." : "ثبت کالا و محاسبه نرخ، تخفیف و مالیات")</button>
+                    </div>
+                    @if (savedLines.Count > 0)
+                    {
+                        <div class="pish-section-title"><div><h3>کالاهای ثبت‌شده</h3><small>مقادیر مالی از سرویس محاسباتی دریافت شده‌اند و قابل ویرایش نیستند.</small></div></div>
+                        <div class="visitor-lines-wrap"><table class="visitor-lines"><thead><tr><th>ردیف</th><th>کالا</th><th>تعداد</th><th>نرخ واحد</th><th>درصد تخفیف</th><th>مبلغ تخفیف</th><th>مالیات</th><th>عوارض</th><th>جایزه</th></tr></thead><tbody>
+                        @foreach(var row in savedLines){<tr @key="row.PishFactorHaSN"><td>@(savedLines.IndexOf(row)+1)</td><td>@row.KalaTitle</td><td>@row.Tedad.ToString("N2")</td><td>@FormatNumber(row.NerkheVahed)</td><td>@FormatNumber(row.DarsadeTakhfif)</td><td>@FormatNumber(row.MablagheTakhfif)</td><td>@FormatNumber(row.Maliat)</td><td>@FormatNumber(row.Avarez)</td><td>@(row.IsJayeze ? "بله" : "خیر")</td></tr>}
+                        </tbody></table></div>
+                        <div class="visitor-line-summary"><span>@savedLines.Count قلم کالا ثبت شده</span><span>مجموع تعداد: <b>@savedLines.Sum(x=>x.Tedad).ToString("N2")</b></span></div>
+                    }
+                </div>
+            }
+            <footer class="visitor-modal-footer create-pishfactor-footer">
+                @if (masterSaved) { <button type="button" class="visitor-button visitor-button-light" @onclick="FinishAsync" disabled="@savingLine">پایان و بستن</button> }
+                else { <span class="create-pishfactor-next-note">پس از ثبت سربرگ، بخش انتخاب و ثبت کالا فعال می‌شود.</span> }
+            </footer>
         </section>
     </div>
 }
+
 @code {
-    private const string NoePardakhtEndpoint="api/v1/NoePardakht/GetNoePardakhtByCombo", NoeTahvilEndpoint="api/v1/NoeTahvil/GetNoeTahvilByCombo", VisitorEndpoint="api/v1/Visitor/GetVisitorByCombo", MoshtariEndpoint="api/v1/Moshtari/GetMoshtariInfoByCombo";
-    private readonly List<LookupItem> noePardakhts=[], noeTahvil=[], visitors=[], moshtaris=[];
-    private CreateForm form=new();
-    private bool showEditor,loadingCombos;
-    private string searchText="";
-    private string? comboError;
-    protected override Task OnInitializedAsync()=>LoadCombosAsync();
-    private void OpenCreate(){form=new CreateForm{SodoorDateText=ToPersianDate(DateTime.Today)};showEditor=true;}
-    private void CloseEditor()=>showEditor=false;
+    private const string CreateEndpoint = "api/v1/PishFactor/CreatePishFactor";
+    private const string CreateHaEndpoint = "api/v1/PishFactor/CreatePishFactorHa";
+    private const string CalculateHaEndpoint = "api/v1/PishFactor/CalculatePishFactorHa";
+    private const string AllHaEndpoint = "api/v1/PishFactor/GetAllPishFactorHa";
+    private const string AllEndpoint = "api/v1/PishFactor/GetAllPishFactor";
+    private const decimal VahedeTejariSN = 230034.935m;
+
+    private readonly List<LookupItem> noePardakhts = [], noeTahvil = [], visitors = [], moshtaris = [], kalas = [];
+    private readonly List<SavedLine> savedLines = [];
+    private CreateForm form = new();
+    private LineForm lineForm = new();
+    private bool showEditor, loadingCombos, savingMaster, savingLine, masterSaved;
+    private decimal savedPishFactorSN;
+    private string searchText = "";
+    private string? comboError, pageError;
+
+    protected override Task OnInitializedAsync() => LoadCombosAsync();
+
+    private void OpenCreate()
+    {
+        if (masterSaved) { showEditor = true; return; }
+        form = new CreateForm { SodoorDateText = ToPersianDate(DateTime.Today) };
+        lineForm = new LineForm();
+        pageError = null;
+        showEditor = true;
+    }
+
+    private void CloseEditor()
+    {
+        if (!savingMaster && !savingLine) showEditor = false;
+    }
+
+    private async Task SaveMasterAsync()
+    {
+        pageError = null;
+        if (!TryDecimal(form.MoshtariInfoSN, out var moshtariSn) || moshtariSn == 0)
+        { pageError = "انتخاب مشتری الزامی است."; return; }
+        if (!TryDecimal(form.VisitorSN, out var visitorSn) || visitorSn == 0)
+        { pageError = "انتخاب ویزیتور الزامی است."; return; }
+        if (!TryParsePersianDate(form.SodoorDateText, out var sodoorDate))
+        { pageError = "تاریخ صدور معتبر نیست."; return; }
+
+        var sodoor = ToPersianDate(sodoorDate).Replace("/", "");
+        savingMaster = true;
+        try
+        {
+            using var client = await ApiClient.CreateAuthorizedClientAsync();
+            var dto = new
+            {
+                PishFactorSN = 0,
+                Identifire = 0,
+                PishFactorDs = form.PishFactorDs,
+                PishFactorNo = (string?)null,
+                NoePardakhtSN = ParseNullableDecimal(form.NoePardakhtSN),
+                NoeTahvilSN = ParseNullableDecimal(form.NoeTahvilSN),
+                SodoorDate = sodoor,
+                Status = (byte)1,
+                VahedeTejariSN,
+                TakhfifKol = form.TakhfifKol,
+                MablaghKol = 0,
+                Avarez = 0,
+                Maliat = 0,
+                RezAvarez = 0,
+                MoshtariInfoSN = moshtariSn,
+                VisitorSN = visitorSn
+            };
+
+            var response = await PostAsync(client, CreateEndpoint, dto);
+            savedPishFactorSN = ReadReturnedDecimal(response);
+            if (savedPishFactorSN == 0)
+                throw new InvalidOperationException("درخواست ثبت سربرگ موفق بود، اما شناسه پیش‌فاکتور از پاسخ سرویس دریافت نشد.");
+
+            form.SodoorDateText = ToPersianDate(sodoorDate);
+            masterSaved = true;
+            pageError = null;
+        }
+        catch (Exception ex) { pageError = "ثبت سربرگ انجام نشد: " + ex.Message; }
+        finally { savingMaster = false; }
+    }
+
+    private async Task AddProductAsync()
+    {
+        pageError = null;
+        if (!masterSaved || savedPishFactorSN == 0)
+        { pageError = "ابتدا باید سربرگ پیش‌فاکتور ثبت شود."; return; }
+        if (!TryDecimal(lineForm.KalaSN, out var kalaSn) || kalaSn == 0)
+        { pageError = "یک کالا انتخاب کنید."; return; }
+        if (lineForm.Tedad <= 0)
+        { pageError = "تعداد کالا باید بیشتر از صفر باشد."; return; }
+
+        savingLine = true;
+        try
+        {
+            using var client = await ApiClient.CreateAuthorizedClientAsync();
+            var dto = new
+            {
+                PishFactorHaSN = 0,
+                Identifire = 0,
+                PishFactorSN = savedPishFactorSN,
+                KalaSN = kalaSn,
+                Tedad = lineForm.Tedad,
+                Status = (byte)1,
+                IsJayeze = lineForm.IsJayeze,
+                NerkheVahed = (long?)null,
+                DarsadeTakhfif = (decimal?)null,
+                MablagheTakhfif = (decimal?)null,
+                Avarez = (decimal?)null,
+                Maliat = (decimal?)null,
+                RezAvarez = (decimal?)0
+            };
+
+            var created = await PostAsync(client, CreateHaEndpoint, dto);
+            var detailSn = ReadReturnedDecimal(created);
+            if (detailSn == 0)
+                throw new InvalidOperationException("ردیف کالا ثبت شد اما شناسه ردیف از پاسخ سرویس دریافت نشد؛ محاسبات قابل اجرا نیست.");
+
+            var date = ToPersianDate(DateTime.Today);
+            if (TryParsePersianDate(form.SodoorDateText, out var parsedDate))
+                date = ToPersianDate(parsedDate).Replace("/", "");
+
+            var calculateUrl = $"{CalculateHaEndpoint}?PishFactorHaSN={detailSn.ToString(CultureInfo.InvariantCulture)}"
+                + $"&KalaSN={kalaSn.ToString(CultureInfo.InvariantCulture)}"
+                + $"&VahedeTejariSN={VahedeTejariSN.ToString(CultureInfo.InvariantCulture)}"
+                + $"&SodoorDate={Uri.EscapeDataString(date)}";
+            using var calculateResponse = await client.PostAsync(calculateUrl, null);
+            var calculateJson = await calculateResponse.Content.ReadAsStringAsync();
+            EnsureSuccess(calculateResponse, calculateJson);
+
+            var details = await GetJsonAsync(client, AllHaEndpoint);
+            var detail = ReadArray(details).Select(ReadSavedLine).FirstOrDefault(x => x.PishFactorHaSN == detailSn);
+            var title = kalas.FirstOrDefault(x => x.Id == kalaSn.ToString(CultureInfo.InvariantCulture))?.Title ?? kalaSn.ToString(CultureInfo.InvariantCulture);
+            savedLines.Add(detail is null
+                ? new SavedLine { PishFactorHaSN = detailSn, KalaTitle = title, Tedad = lineForm.Tedad, IsJayeze = lineForm.IsJayeze }
+                : new SavedLine
+                {
+                    PishFactorHaSN = detail.PishFactorHaSN,
+                    KalaTitle = title,
+                    Tedad = detail.Tedad,
+                    NerkheVahed = detail.NerkheVahed ?? 0,
+                    DarsadeTakhfif = detail.DarsadeTakhfif ?? 0,
+                    MablagheTakhfif = detail.MablagheTakhfif ?? 0,
+                    Maliat = detail.Maliat ?? 0,
+                    Avarez = detail.Avarez ?? 0,
+                    IsJayeze = detail.IsJayeze
+                });
+
+            await RefreshMasterTotalsAsync(client);
+            lineForm = new LineForm();
+        }
+        catch (Exception ex) { pageError = "ثبت یا محاسبه کالا با خطا مواجه شد: " + ex.Message; }
+        finally { savingLine = false; }
+    }
+
+    private async Task RefreshMasterTotalsAsync(HttpClient client)
+    {
+        try
+        {
+            var data = await GetJsonAsync(client, AllEndpoint);
+            var master = ReadArray(data).Select(ReadMasterSummary).FirstOrDefault(x => x.PishFactorSN == savedPishFactorSN);
+            if (master is not null)
+            {
+                form.MablaghKol = master.MablaghKol ?? 0;
+                form.Avarez = master.Avarez ?? 0;
+                form.Maliat = master.Maliat ?? 0;
+                form.Karton = master.Karton ?? 0;
+                form.Vazn = master.Vazn ?? 0;
+                form.Hajm = master.Hajm ?? 0;
+            }
+        }
+        catch { /* ثبت ردیف و محاسبه مستقل از تازه‌سازی نمای جمع سربرگ است. */ }
+    }
+
+    private async Task FinishAsync()
+    {
+        showEditor = false;
+        masterSaved = false;
+        savedPishFactorSN = 0;
+        savedLines.Clear();
+        await Task.CompletedTask;
+    }
+
     private async Task LoadCombosAsync()
     {
         loadingCombos = true;
         comboError = null;
         try
         {
-            using var c = await ApiClient.CreateAuthorizedClientAsync();
+            using var client = await ApiClient.CreateAuthorizedClientAsync();
             var definitions = new[]
             {
-                ("نوع پرداخت", NoePardakhtEndpoint, noePardakhts),
-                ("نوع تحویل", NoeTahvilEndpoint, noeTahvil),
-                ("ویزیتور", VisitorEndpoint, visitors),
-                ("مشتری", MoshtariEndpoint, moshtaris)
+                ("نوع پرداخت", "api/v1/NoePardakht/GetNoePardakhtByCombo", noePardakhts),
+                ("نوع تحویل", "api/v1/NoeTahvil/GetNoeTahvilByCombo", noeTahvil),
+                ("ویزیتور", "api/v1/Visitor/GetVisitorByCombo", visitors),
+                ("مشتری", "api/v1/Moshtari/GetMoshtariInfoByCombo", moshtaris),
+                ("کالا", "api/v1/Kala/GetKalaByCombo", kalas)
             };
             var errors = new List<string>();
             foreach (var definition in definitions)
             {
                 try
                 {
-                    var payload = await GetLookupPayloadAsync(c, definition.Item2);
+                    var payload = await GetJsonAsync(client, definition.Item2);
                     var parsed = ReadArray(payload).Select(ReadLookup)
                         .Where(x => x.Id != "0" && !string.IsNullOrWhiteSpace(x.Title)).ToList();
                     Set(definition.Item3, parsed);
-                    if (parsed.Count == 0)
-                        errors.Add($"{definition.Item1}: سرویس پاسخ داده اما گزینه قابل نمایشی برنگردانده است.");
+                    if (parsed.Count == 0) errors.Add($"{definition.Item1}: گزینه‌ای از سرویس دریافت نشد.");
                 }
                 catch (Exception ex)
                 {
@@ -100,17 +314,10 @@
                     errors.Add($"{definition.Item1}: {ex.Message}");
                 }
             }
-            if (errors.Count > 0)
-                comboError = string.Join(" | ", errors);
+            if (errors.Count > 0) comboError = string.Join(" | ", errors);
         }
-        catch (Exception ex)
-        {
-            comboError = "دریافت فهرست‌های انتخاب با خطا مواجه شد: " + ex.Message;
-        }
-        finally
-        {
-            loadingCombos = false;
-        }
+        catch (Exception ex) { comboError = "دریافت فهرست‌ها ناموفق بود: " + ex.Message; }
+        finally { loadingCombos = false; }
     }
 
     private static void Set(List<LookupItem> target, List<LookupItem> source)
@@ -119,38 +326,40 @@
         target.AddRange(source);
     }
 
-    private static async Task<JsonElement> GetLookupPayloadAsync(HttpClient client, string endpoint)
+    private static async Task<JsonElement> GetJsonAsync(HttpClient client, string endpoint)
     {
         using var response = await client.GetAsync(endpoint);
         var json = await response.Content.ReadAsStringAsync();
-        if (!response.IsSuccessStatusCode)
-            throw new InvalidOperationException($"HTTP {(int)response.StatusCode} - {json}");
-        using var document = JsonDocument.Parse(json);
-        return FindPayload(document.RootElement.Clone(), 0);
+        EnsureSuccess(response, json);
+        return Extract(json);
+    }
+
+    private static async Task<JsonElement> PostAsync(HttpClient client, string endpoint, object body)
+    {
+        using var response = await client.PostAsJsonAsync(endpoint, body);
+        var json = await response.Content.ReadAsStringAsync();
+        EnsureSuccess(response, json);
+        return Extract(json);
     }
 
     private static LookupItem ReadLookup(JsonElement element)
     {
-        var id = ReadDecimal(element, "Id", "ID", "SN", "Value", "Key",
+        var id = ReadDecimal(element, "Id", "ID", "SN", "Value", "Key", "KalaSN",
             "VisitorSN", "MoshtariInfoSN", "MoshtariSN", "NoePardakhtSN", "NoeTahvilSN");
         var title = ReadText(element, "Title", "Text", "Label", "Name", "DS", "Ds",
-            "DisplayName", "FullName",
+            "DisplayName", "FullName", "KalaDs", "KalaDS", "KalaName", "KalaTitle", "KalaNo",
             "VisitorDs", "VisitorDS", "VisitorName", "VisitorTitle", "VisitorFullName",
             "MoshtariDs", "MoshtariDS", "MoshtariInfoDs", "MoshtariInfoDS",
             "MoshtariInfoTitle", "MoshtariName", "MoshtariTitle", "MoshtariFullName", "MoshtariNo",
             "NoePardakhtDs", "NoePardakhtDS", "NoePardakhtName", "NoePardakhtTitle",
             "NoeTahvilDs", "NoeTahvilDS", "NoeTahvilName", "NoeTahvilTitle");
-
         if ((id == 0m || string.IsNullOrWhiteSpace(title)) && element.ValueKind == JsonValueKind.Object)
         {
             foreach (var property in element.EnumerateObject())
             {
                 if (property.Value.ValueKind != JsonValueKind.Object) continue;
                 var nested = ReadLookup(property.Value);
-                if (id == 0m &&
-                    decimal.TryParse(Normalize(nested.Id), NumberStyles.Any,
-                        CultureInfo.InvariantCulture, out var nestedId))
-                    id = nestedId;
+                if (id == 0m && decimal.TryParse(Normalize(nested.Id), NumberStyles.Any, CultureInfo.InvariantCulture, out var nestedId)) id = nestedId;
                 if (string.IsNullOrWhiteSpace(title)) title = nested.Title;
                 if (id != 0m && !string.IsNullOrWhiteSpace(title)) break;
             }
@@ -158,19 +367,45 @@
         return new LookupItem { Id = id.ToString(CultureInfo.InvariantCulture), Title = title };
     }
 
+    private static SavedLineData ReadSavedLine(JsonElement x) => new()
+    {
+        PishFactorHaSN = ReadDecimal(x, "PishFactorHaSN"),
+        Tedad = ReadDecimal(x, "Tedad"),
+        NerkheVahed = ReadNullableDecimal(x, "NerkheVahed"),
+        DarsadeTakhfif = ReadNullableDecimal(x, "DarsadeTakhfif"),
+        MablagheTakhfif = ReadNullableDecimal(x, "MablagheTakhfif"),
+        Maliat = ReadNullableDecimal(x, "Maliat"),
+        Avarez = ReadNullableDecimal(x, "Avarez"),
+        IsJayeze = ReadBoolean(x, "IsJayeze")
+    };
+
+    private static MasterSummary ReadMasterSummary(JsonElement x) => new()
+    {
+        PishFactorSN = ReadDecimal(x, "PishFactorSN"),
+        MablaghKol = ReadNullableDecimal(x, "MablaghKol"),
+        Avarez = ReadNullableDecimal(x, "Avarez"),
+        Maliat = ReadNullableDecimal(x, "Maliat"),
+        Karton = ReadNullableDecimal(x, "Karton"),
+        Vazn = ReadNullableDecimal(x, "Vazn"),
+        Hajm = ReadNullableDecimal(x, "Hajm")
+    };
+
+    private static JsonElement Extract(string json)
+    {
+        using var document = JsonDocument.Parse(json);
+        return FindPayload(document.RootElement.Clone(), 0);
+    }
+
     private static JsonElement FindPayload(JsonElement element, int depth)
     {
         if (element.ValueKind == JsonValueKind.Array) return element;
         if (depth > 8 || element.ValueKind != JsonValueKind.Object) return element;
-
         foreach (var key in new[] { "data", "result", "items", "list", "records", "results", "value" })
         {
             if (!TryGet(element, key, out var value)) continue;
             var found = FindPayload(value, depth + 1);
-            if (found.ValueKind == JsonValueKind.Array || found.ValueKind == JsonValueKind.Object)
-                return found;
+            if (found.ValueKind == JsonValueKind.Array || found.ValueKind == JsonValueKind.Object) return found;
         }
-
         foreach (var property in element.EnumerateObject())
         {
             var found = FindPayload(property.Value, depth + 1);
@@ -179,69 +414,123 @@
         return element;
     }
 
-    private static List<JsonElement> ReadArray(JsonElement element)
-    {
-        if (element.ValueKind == JsonValueKind.Array)
-            return element.EnumerateArray().Select(x => x.Clone()).ToList();
-        if (element.ValueKind == JsonValueKind.Object)
-            return new List<JsonElement> { element.Clone() };
-        return new List<JsonElement>();
-    }
+    private static List<JsonElement> ReadArray(JsonElement element) =>
+        element.ValueKind == JsonValueKind.Array ? element.EnumerateArray().Select(x => x.Clone()).ToList()
+        : element.ValueKind == JsonValueKind.Object ? new List<JsonElement> { element.Clone() }
+        : new List<JsonElement>();
 
-    private static decimal ReadDecimal(JsonElement element, params string[] names)
+    private static decimal ReadDecimal(JsonElement element, params string[] names) =>
+        ReadNullableDecimal(element, names) ?? 0m;
+
+    private static decimal? ReadNullableDecimal(JsonElement element, params string[] names)
     {
         foreach (var name in names)
         {
             if (!TryGet(element, name, out var value)) continue;
-            if (decimal.TryParse(Normalize(value.ToString()), NumberStyles.Any,
-                CultureInfo.InvariantCulture, out var number))
-                return number;
+            if (value.ValueKind == JsonValueKind.Null) return null;
+            if (decimal.TryParse(Normalize(value.ToString()), NumberStyles.Any, CultureInfo.InvariantCulture, out var number)) return number;
         }
-        return 0;
+        return null;
     }
 
     private static string ReadText(JsonElement element, params string[] names)
     {
         foreach (var name in names)
-        {
-            if (!TryGet(element, name, out var value)) continue;
-            if (value.ValueKind == JsonValueKind.String || value.ValueKind == JsonValueKind.Number)
-            {
-                var text = value.ToString();
-                if (!string.IsNullOrWhiteSpace(text)) return text;
-            }
-        }
+            if (TryGet(element, name, out var value) && (value.ValueKind == JsonValueKind.String || value.ValueKind == JsonValueKind.Number))
+                if (!string.IsNullOrWhiteSpace(value.ToString())) return value.ToString();
         return "";
+    }
+
+    private static bool ReadBoolean(JsonElement element, string name)
+    {
+        if (!TryGet(element, name, out var value)) return false;
+        return value.ValueKind == JsonValueKind.True || value.ToString() == "1";
     }
 
     private static bool TryGet(JsonElement element, string name, out JsonElement value)
     {
         if (element.ValueKind == JsonValueKind.Object)
-        {
             foreach (var property in element.EnumerateObject())
-            {
-                if (property.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
-                {
-                    value = property.Value;
-                    return true;
-                }
-            }
-        }
+                if (property.Name.Equals(name, StringComparison.OrdinalIgnoreCase)) { value = property.Value; return true; }
         value = default;
         return false;
     }
+
+    private static decimal ReadReturnedDecimal(JsonElement element)
+    {
+        if (element.ValueKind == JsonValueKind.Number && element.TryGetDecimal(out var number)) return number;
+        if (decimal.TryParse(ReadText(element, "PishFactorSN", "PishFactorHaSN", "id", "value", "sn"), NumberStyles.Any, CultureInfo.InvariantCulture, out number)) return number;
+        foreach (var key in new[] { "data", "result", "value" })
+            if (TryGet(element, key, out var nested))
+            {
+                var found = ReadReturnedDecimal(nested);
+                if (found != 0) return found;
+            }
+        return 0;
+    }
+
+    private static void EnsureSuccess(HttpResponseMessage response, string json)
+    {
+        if (!response.IsSuccessStatusCode) throw new InvalidOperationException($"HTTP {(int)response.StatusCode}: {json}");
+        using var document = JsonDocument.Parse(json);
+        var root = document.RootElement;
+        if (TryGet(root, "success", out var success) && success.ValueKind == JsonValueKind.False)
+            throw new InvalidOperationException(ReadText(root, "message", "errMsg", "errorMessage") is string message && message != "" ? message : "عملیات ناموفق بود.");
+        if (TryGet(root, "isSuccess", out var isSuccess) && isSuccess.ValueKind == JsonValueKind.False)
+            throw new InvalidOperationException(ReadText(root, "message", "errMsg", "errorMessage"));
+        if (TryGet(root, "errMsg", out var error) && error.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(error.GetString()))
+            throw new InvalidOperationException(error.GetString()!);
+    }
+
+    private static bool TryDecimal(string? value, out decimal number) =>
+        decimal.TryParse(Normalize(value), NumberStyles.Any, CultureInfo.InvariantCulture, out number);
+
+    private static decimal? ParseNullableDecimal(string? value) =>
+        TryDecimal(value, out var number) && number != 0 ? number : null;
 
     private static string Normalize(string? value) =>
         (value ?? "").Trim().Replace('۰','0').Replace('۱','1').Replace('۲','2')
         .Replace('۳','3').Replace('۴','4').Replace('۵','5').Replace('۶','6')
         .Replace('۷','7').Replace('۸','8').Replace('۹','9');
-    private static string ToPersianDate(DateTime d){var c=new PersianCalendar();return $"{c.GetYear(d):0000}/{c.GetMonth(d):00}/{c.GetDayOfMonth(d):00}";}
-    private static string FormatNumber(decimal n)=>n.ToString("N0",CultureInfo.GetCultureInfo("fa-IR"));
-    private sealed class LookupItem{public string Id{get;set;}="";public string Title{get;set;}="";}
-    private sealed class CreateForm{
-        public string NoePardakhtSN{get;set;}="";public string PishFactorDs{get;set;}="";public string NoeTahvilSN{get;set;}="";
-        public string SodoorDateText{get;set;}="";public decimal Karton{get;set;}public decimal Vazn{get;set;}public decimal Hajm{get;set;}
-        public string VosoolDateText{get;set;}="";public decimal TakhfifKol{get;set;}public decimal MablaghKol{get;set;}public decimal Avarez{get;set;}public decimal Maliat{get;set;}
-        public string MoshtariInfoSN{get;set;}="";public string VisitorSN{get;set;}="";
+
+    private static bool TryParsePersianDate(string? value, out DateTime date)
+    {
+        date = default;
+        var normalized = Normalize(value);
+        var parts = normalized.Split('/', '-', '.');
+        if (parts.Length != 3 || !int.TryParse(parts[0], out var year) || !int.TryParse(parts[1], out var month) || !int.TryParse(parts[2], out var day)) return false;
+        try { date = new PersianCalendar().ToDateTime(year, month, day, 0, 0, 0, 0); return true; }
+        catch (ArgumentOutOfRangeException) { return false; }
     }
+
+    private static string ToPersianDate(DateTime date)
+    {
+        var calendar = new PersianCalendar();
+        return $"{calendar.GetYear(date):0000}/{calendar.GetMonth(date):00}/{calendar.GetDayOfMonth(date):00}";
+    }
+
+    private static string FormatNumber(decimal number) => number.ToString("N0", CultureInfo.GetCultureInfo("fa-IR"));
+
+    private sealed class LookupItem { public string Id { get; set; } = ""; public string Title { get; set; } = ""; }
+    private sealed class CreateForm
+    {
+        public string NoePardakhtSN { get; set; } = "";
+        public string PishFactorDs { get; set; } = "";
+        public string NoeTahvilSN { get; set; } = "";
+        public string SodoorDateText { get; set; } = "";
+        public decimal Karton { get; set; }
+        public decimal Vazn { get; set; }
+        public decimal Hajm { get; set; }
+        public string VosoolDateText { get; set; } = "";
+        public decimal TakhfifKol { get; set; }
+        public decimal MablaghKol { get; set; }
+        public decimal Avarez { get; set; }
+        public decimal Maliat { get; set; }
+        public string MoshtariInfoSN { get; set; } = "";
+        public string VisitorSN { get; set; } = "";
+    }
+    private sealed class LineForm { public string KalaSN { get; set; } = ""; public decimal Tedad { get; set; } = 1; public bool IsJayeze { get; set; } }
+    private sealed class SavedLine { public decimal PishFactorHaSN { get; set; } public string KalaTitle { get; set; } = ""; public decimal Tedad { get; set; } public decimal NerkheVahed { get; set; } public decimal DarsadeTakhfif { get; set; } public decimal MablagheTakhfif { get; set; } public decimal Maliat { get; set; } public decimal Avarez { get; set; } public bool IsJayeze { get; set; } }
+    private sealed class SavedLineData { public decimal PishFactorHaSN { get; set; } public decimal Tedad { get; set; } public decimal? NerkheVahed { get; set; } public decimal? DarsadeTakhfif { get; set; } public decimal? MablagheTakhfif { get; set; } public decimal? Maliat { get; set; } public decimal? Avarez { get; set; } public bool IsJayeze { get; set; } }
+    private sealed class MasterSummary { public decimal PishFactorSN { get; set; } public decimal? MablaghKol { get; set; } public decimal? Avarez { get; set; } public decimal? Maliat { get; set; } public decimal? Karton { get; set; } public decimal? Vazn { get; set; } public decimal? Hajm { get; set; } }
 }
