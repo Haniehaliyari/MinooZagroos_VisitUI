@@ -86,6 +86,7 @@
     private bool loading, showEditor, isEdit, saving, deleting, showKarmandOptions, showDaftarOptions, showNoeVisitorOptions, showSuccessModal;
     private string successMessage = "";
     private decimal editingSN;
+    private string editingVisitorNo = "";
     private List<VisitorItem> FilteredItems => items.Where(x => string.IsNullOrWhiteSpace(searchText) || new[] {x.Name,x.Family,x.VisitorNo,x.Father,x.MeliNo,x.MblPhone,x.KarmandDs,x.DaftarForooshDs,x.NoeVisitorDs,x.VahedeTejariDs}.Any(v => Contains(v,searchText))).OrderBy(x => x.Name).ThenBy(x => x.Family).ToList();
 
     protected override async Task OnInitializedAsync() => await Task.WhenAll(LoadAllAsync(), LoadCombosAsync());
@@ -103,9 +104,9 @@
     private static async Task<List<LookupItem>> ReadLookupAsync(HttpClient c,string endpoint,string name) {
         try { using var r=await c.GetAsync(endpoint); var j=await r.Content.ReadAsStringAsync(); EnsureSuccess(r,j); return ReadArray(ExtractPayload(j)).Select(x=>new LookupItem { Id=ReadDecimal(x,"Id","SN","KarmandSN","DaftarForooshSN","NoeVisitorSN"), Title=ReadString(x,"Title","Name","DS","NoeVisitorTitle","NoeVisitorName","NoeVisitorDS","NoeVisitorDs","NoeVisitorType","NoeVisitorDesc","KarmandDs","KarmandDS","DaftarForooshDs","DaftarForooshDS") }).Where(x=>x.Id!=0 && x.Title!="").ToList(); } catch { return []; }
     }
-    private void OpenCreate() { isEdit=false; editingSN=0; editorError=null; form=new VisitorForm { Status=1, OzviyatDate=DateTime.Today, OzviyatDateText=ToPersianDate(DateTime.Today) }; ResetLookupText(); showEditor=true; }
+    private void OpenCreate() { isEdit=false; editingSN=0; editingVisitorNo=""; editorError=null; form=new VisitorForm { Status=1, OzviyatDate=DateTime.Today, OzviyatDateText=ToPersianDate(DateTime.Today) }; ResetLookupText(); showEditor=true; }
     private void OpenEdit(VisitorItem x) {
-        isEdit=true; editingSN=x.VisitorSN; editorError=null;
+        isEdit=true; editingSN=x.VisitorSN; editingVisitorNo=x.VisitorNo; editorError=null;
         var memberDate=ToDateValue(x.OzviyatDate);
         form=new VisitorForm { Name=x.Name, Family=x.Family, Father=x.Father, Status=x.Status, OzviyatDate=memberDate, OzviyatDateText=ToPersianDate(memberDate??DateTime.Today), MblPhone=x.MblPhone, MeliNo=x.MeliNo, IsMasirVisit=x.IsMasirVisit, IsVisitDigita=x.IsVisitDigita, KarmandSN=x.KarmandSN, DaftarForooshSN=x.DaftarForooshSN, NoeVisitorSN=x.NoeVisitorSN };
         karmandSearch=FindTitle(karmands,form.KarmandSN)??x.KarmandDs; daftarSearch=FindTitle(daftars,form.DaftarForooshSN)??x.DaftarForooshDs; noeVisitorSearch=FindTitle(noeVisitors,form.NoeVisitorSN)??x.NoeVisitorDs;
@@ -121,45 +122,23 @@
         saving=true; await InvokeAsync(StateHasChanged);
         try {
             var membershipDate=ToPersianDate(date).Replace("/", "");
-            object payload = isEdit
-                ? new {
-                    dto = new {
-                        VisitorSN = editingSN,
-                        VisitorNo = "0",
-                        Name = form.Name,
-                        Family = form.Family,
-                        Father = form.Father.Trim(),
-                        IDNo = "0",
-                        Status = form.Status,
-                        OzviyatDate = membershipDate,
-                        MblPhone = NullIfEmpty(form.MblPhone),
-                        MeliNo = NullIfEmpty(form.MeliNo),
-                        IsMasirVisit = form.IsMasirVisit,
-                        IsVisitDigital = form.IsVisitDigita,
-                        KarmandSN = form.KarmandSN,
-                        DaftarForooshSN = form.DaftarForooshSN,
-                        VahedeTejariSN = 0m,
-                        NoeVisitorSN = form.NoeVisitorSN
-                    },
-                    VisitorSN = editingSN
-                }
-                : new {
-                    VisitorSN = editingSN,
-                    VisitorNo = "0",
-                    Name = form.Name,
-                    Family = form.Family,
-                    Father = form.Father.Trim(),
-                    IDNo = "0",
-                    Status = form.Status,
-                    OzviyatDate = membershipDate,
-                    MblPhone = NullIfEmpty(form.MblPhone),
-                    MeliNo = NullIfEmpty(form.MeliNo),
-                    IsMasirVisit = form.IsMasirVisit,
-                    IsVisitDigital = form.IsVisitDigita,
-                    KarmandSN = form.KarmandSN,
-                    DaftarForooshSN = form.DaftarForooshSN,
-                    NoeVisitorSN = form.NoeVisitorSN
-                };
+            object payload = new {
+                VisitorSN = editingSN,
+                VisitorNo = isEdit ? editingVisitorNo : "0",
+                Name = form.Name,
+                Family = form.Family,
+                Father = form.Father.Trim(),
+                IDNo = "0",
+                Status = form.Status,
+                OzviyatDate = membershipDate,
+                MblPhone = NullIfEmpty(form.MblPhone),
+                MeliNo = NullIfEmpty(form.MeliNo),
+                IsMasirVisit = form.IsMasirVisit,
+                IsVisitDigital = form.IsVisitDigita,
+                KarmandSN = form.KarmandSN,
+                DaftarForooshSN = form.DaftarForooshSN,
+                NoeVisitorSN = form.NoeVisitorSN
+            };
             using var c=await ApiClient.CreateAuthorizedClientAsync(); using var r=await c.PostAsJsonAsync(isEdit?UpdateEndpoint:CreateEndpoint,payload); var j=await r.Content.ReadAsStringAsync(); EnsureSuccess(r,j);
             showEditor=false; successMessage=isEdit?"اطلاعات ویزیتور با موفقیت ویرایش شد.":"ویزیتور جدید با موفقیت ثبت شد."; showSuccessModal=true;
         } catch(Exception ex){editorError=ex.Message;} finally{saving=false;}
