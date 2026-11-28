@@ -121,7 +121,27 @@
         saving=true; await InvokeAsync(StateHasChanged);
         try {
             var membershipDate=ToPersianDate(date).Replace("/", "");
-            object payload = new { dto = new { Name=form.Name, Family=form.Family, Father=form.Father.Trim(), Status=form.Status, OzviyatDate=membershipDate, MblPhone=NullIfEmpty(form.MblPhone), MeliNo=NullIfEmpty(form.MeliNo), IsMasirVisit=form.IsMasirVisit, IsVisitDigita=form.IsVisitDigita, KarmandSN=form.KarmandSN, DaftarForooshSN=form.DaftarForooshSN, NoeVisitorSN=form.NoeVisitorSN }, VisitorSN=editingSN };
+            object payload = new {
+                dto = new {
+                    VisitorSN = editingSN,
+                    VisitorNo = "",
+                    Name = form.Name,
+                    Family = form.Family,
+                    Father = form.Father.Trim(),
+                    IDNo = "0",
+                    Status = form.Status,
+                    OzviyatDate = membershipDate,
+                    MblPhone = NullIfEmpty(form.MblPhone),
+                    MeliNo = NullIfEmpty(form.MeliNo),
+                    IsMasirVisit = form.IsMasirVisit,
+                    IsVisitDigital = form.IsVisitDigita,
+                    KarmandSN = form.KarmandSN,
+                    DaftarForooshSN = form.DaftarForooshSN,
+                    VahedeTejariSN = 0m,
+                    NoeVisitorSN = form.NoeVisitorSN
+                },
+                VisitorSN = editingSN
+            };
             using var c=await ApiClient.CreateAuthorizedClientAsync(); using var r=await c.PostAsJsonAsync(isEdit?UpdateEndpoint:CreateEndpoint,payload); var j=await r.Content.ReadAsStringAsync(); EnsureSuccess(r,j);
             showEditor=false; successMessage=isEdit?"اطلاعات ویزیتور با موفقیت ویرایش شد.":"ویزیتور جدید با موفقیت ثبت شد."; showSuccessModal=true;
         } catch(Exception ex){editorError=ex.Message;} finally{saving=false;}
