@@ -16,9 +16,12 @@
     <NavLink href="/tozie" class="side-link" @onclick="OnNavigate">
         <svg class="side-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 5h12v12H2zM14 9h4l4 4v4h-8z"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="19" r="2"/></svg><span>توزیع</span>
     </NavLink>
-    <div class="side-link side-link-disabled" aria-disabled="true">
-        <svg class="side-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9h18l-2 12H5zM2 9l3-6h14l3 6M9 9l2-6m4 6-2-6"/></svg><span>فروش</span>
-    </div>
+    <NavLink href="/foroosh/visitor" class="side-link" @onclick="OnNavigate">
+        <svg class="side-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="4"/><path d="M2 21v-2a7 7 0 0 1 14 0v2m3-13v6m-3-3h6"/></svg><span>ویزیتورها</span>
+    </NavLink>
+    <NavLink href="/foroosh/pish-factor" class="side-link" @onclick="OnNavigate">
+        <svg class="side-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h8l4 4v14H5V3zM15 3v5h5M8 12h8M8 16h8"/></svg><span>پیش‌فاکتورها</span>
+    </NavLink>
     <div class="side-link side-link-disabled" aria-disabled="true">
         <svg class="side-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 10 5-10 5L2 7zM2 7v10l10 5 10-5V7M12 12v10"/></svg><span>انبار</span>
     </div>
