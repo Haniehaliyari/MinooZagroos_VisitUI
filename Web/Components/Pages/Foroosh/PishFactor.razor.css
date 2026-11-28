@@ -1051,3 +1051,26 @@
 .visitor-success-modal .visitor-modal-footer{justify-content:center}
 @media(max-width:760px){.visitor-page{padding:22px 15px 36px}.pish-form-section{padding:18px}.visitor-modal{width:min(100%,900px)}}
 @media(max-width:600px){.pish-form-section{padding:16px}.visitor-form-grid{grid-template-columns:1fr;padding:17px}.pish-section-title{align-items:flex-start;flex-direction:column}.visitor-modal-footer .visitor-button{min-width:0;flex:1}}
+
+/* پیش‌فاکتور: نمایش فیلدهای محاسباتی به‌صورت فقط‌خواندنی و کنترل جایزه */
+.visitor-lines input[readonly]{
+    background:color-mix(in srgb,var(--surface-soft) 72%,var(--surface));
+    color:var(--muted);
+    cursor:default;
+}
+.visitor-lines input[readonly]:focus{
+    border-color:var(--line);
+    box-shadow:none;
+}
+.visitor-lines input.visitor-prize-checkbox{
+    display:inline-block;
+    width:18px!important;
+    min-width:18px!important;
+    height:18px!important;
+    min-height:18px!important;
+    margin:0 auto;
+    padding:0;
+    accent-color:var(--accent);
+    vertical-align:middle;
+    cursor:pointer;
+}
