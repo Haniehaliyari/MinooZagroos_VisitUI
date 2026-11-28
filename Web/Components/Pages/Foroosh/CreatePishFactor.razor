@@ -68,46 +68,170 @@
     protected override Task OnInitializedAsync()=>LoadCombosAsync();
     private void OpenCreate(){form=new CreateForm{SodoorDateText=ToPersianDate(DateTime.Today)};showEditor=true;}
     private void CloseEditor()=>showEditor=false;
-    private async Task LoadCombosAsync(){
-        loadingCombos=true;comboError=null;
-        try{
-            using var c=await ApiClient.CreateAuthorizedClientAsync();
-            var results=await Task.WhenAll(
-                ReadLookupAsync(c,NoePardakhtEndpoint,new[]{"NoePardakhtSN"},new[]{"NoePardakhtDs","NoePardakhtName"}),
-                ReadLookupAsync(c,NoeTahvilEndpoint,new[]{"NoeTahvilSN"},new[]{"NoeTahvilDs","NoeTahvilName"}),
-                ReadLookupAsync(c,VisitorEndpoint,new[]{"VisitorSN"},new[]{"VisitorDs","VisitorName","Name","Family"}),
-                ReadLookupAsync(c,MoshtariEndpoint,new[]{"MoshtariInfoSN","MoshtariSN"},new[]{"MoshtariDs","MoshtariName","MoshtariNo"}));
-            Set(noePardakhts,results[0]);Set(noeTahvil,results[1]);Set(visitors,results[2]);Set(moshtaris,results[3]);
-            var missing=new[]{("نوع پرداخت",noePardakhts),("نوع تحویل",noeTahvil),("ویزیتور",visitors),("مشتری",moshtaris)}.Where(x=>x.Item2.Count==0).Select(x=>x.Item1).ToArray();
-            if(missing.Length>0)comboError="فهرست این موارد دریافت نشد یا خالی است: "+string.Join("، ",missing);
-        }catch(Exception ex){comboError="دریافت فهرست‌های انتخاب با خطا مواجه شد: "+ex.Message;}
-        finally{loadingCombos=false;}
-    }
-    private static void Set(List<LookupItem> target,List<LookupItem> source){target.Clear();target.AddRange(source);}
-    private static async Task<List<LookupItem>> ReadLookupAsync(HttpClient c,string endpoint,string[] idAliases,string[] titleAliases){
-        using var r=await c.GetAsync(endpoint);var json=await r.Content.ReadAsStringAsync();
-        if(!r.IsSuccessStatusCode)throw new InvalidOperationException(endpoint+": "+json);
-        using var doc=JsonDocument.Parse(json);var arr=FindArray(doc.RootElement);var list=new List<LookupItem>();
-        if(arr.ValueKind!=JsonValueKind.Array)return list;
-        foreach(var e in arr.EnumerateArray()){
-            if(e.ValueKind!=JsonValueKind.Object)continue;
-            var id=ReadValue(e,new[]{"Id","ID","SN","Value","Key"}.Concat(idAliases).ToArray());
-            var title=ReadValue(e,new[]{"Title","Name","DS","Ds","Description"}.Concat(titleAliases).ToArray());
-            if(!string.IsNullOrWhiteSpace(id)&&id!="0"&&!string.IsNullOrWhiteSpace(title))list.Add(new LookupItem{Id=id,Title=title});
+    private async Task LoadCombosAsync()
+    {
+        loadingCombos = true;
+        comboError = null;
+        try
+        {
+            using var c = await ApiClient.CreateAuthorizedClientAsync();
+            var definitions = new[]
+            {
+                ("نوع پرداخت", NoePardakhtEndpoint, noePardakhts),
+                ("نوع تحویل", NoeTahvilEndpoint, noeTahvil),
+                ("ویزیتور", VisitorEndpoint, visitors),
+                ("مشتری", MoshtariEndpoint, moshtaris)
+            };
+            var errors = new List<string>();
+            foreach (var definition in definitions)
+            {
+                try
+                {
+                    var payload = await GetLookupPayloadAsync(c, definition.Item2);
+                    var parsed = ReadArray(payload).Select(ReadLookup)
+                        .Where(x => x.Id != 0 && !string.IsNullOrWhiteSpace(x.Title)).ToList();
+                    Set(definition.Item3, parsed);
+                    if (parsed.Count == 0)
+                        errors.Add($"{definition.Item1}: سرویس پاسخ داده اما گزینه قابل نمایشی برنگردانده است.");
+                }
+                catch (Exception ex)
+                {
+                    definition.Item3.Clear();
+                    errors.Add($"{definition.Item1}: {ex.Message}");
+                }
+            }
+            if (errors.Count > 0)
+                comboError = string.Join(" | ", errors);
         }
-        return list;
-    }
-    private static JsonElement FindArray(JsonElement e){
-        if(e.ValueKind==JsonValueKind.Array)return e;
-        if(e.ValueKind==JsonValueKind.Object){
-            foreach(var p in e.EnumerateObject()){var a=FindArray(p.Value);if(a.ValueKind==JsonValueKind.Array)return a;}
+        catch (Exception ex)
+        {
+            comboError = "دریافت فهرست‌های انتخاب با خطا مواجه شد: " + ex.Message;
         }
-        return default;
+        finally
+        {
+            loadingCombos = false;
+        }
     }
-    private static string ReadValue(JsonElement e,string[] names){
-        foreach(var n in names)if(e.TryGetProperty(n,out var v)&&v.ValueKind!=JsonValueKind.Null){var s=v.ToString();if(!string.IsNullOrWhiteSpace(s))return s;}
+
+    private static void Set(List<LookupItem> target, List<LookupItem> source)
+    {
+        target.Clear();
+        target.AddRange(source);
+    }
+
+    private static async Task<JsonElement> GetLookupPayloadAsync(HttpClient client, string endpoint)
+    {
+        using var response = await client.GetAsync(endpoint);
+        var json = await response.Content.ReadAsStringAsync();
+        if (!response.IsSuccessStatusCode)
+            throw new InvalidOperationException($"HTTP {(int)response.StatusCode} - {json}");
+        using var document = JsonDocument.Parse(json);
+        return FindPayload(document.RootElement.Clone(), 0);
+    }
+
+    private static LookupItem ReadLookup(JsonElement element)
+    {
+        var id = ReadDecimal(element, "Id", "ID", "SN", "Value", "Key",
+            "VisitorSN", "MoshtariInfoSN", "MoshtariSN", "NoePardakhtSN", "NoeTahvilSN");
+        var title = ReadText(element, "Title", "Text", "Label", "Name", "DS", "Ds",
+            "DisplayName", "FullName",
+            "VisitorDs", "VisitorDS", "VisitorName", "VisitorTitle", "VisitorFullName",
+            "MoshtariDs", "MoshtariDS", "MoshtariInfoDs", "MoshtariInfoDS",
+            "MoshtariInfoTitle", "MoshtariName", "MoshtariTitle", "MoshtariFullName", "MoshtariNo",
+            "NoePardakhtDs", "NoePardakhtDS", "NoePardakhtName", "NoePardakhtTitle",
+            "NoeTahvilDs", "NoeTahvilDS", "NoeTahvilName", "NoeTahvilTitle");
+
+        if ((id == 0 || string.IsNullOrWhiteSpace(title)) && element.ValueKind == JsonValueKind.Object)
+        {
+            foreach (var property in element.EnumerateObject())
+            {
+                if (property.Value.ValueKind != JsonValueKind.Object) continue;
+                var nested = ReadLookup(property.Value);
+                if (id == 0) id = nested.Id;
+                if (string.IsNullOrWhiteSpace(title)) title = nested.Title;
+                if (id != 0 && !string.IsNullOrWhiteSpace(title)) break;
+            }
+        }
+        return new LookupItem { Id = id.ToString(CultureInfo.InvariantCulture), Title = title };
+    }
+
+    private static JsonElement FindPayload(JsonElement element, int depth)
+    {
+        if (element.ValueKind == JsonValueKind.Array) return element;
+        if (depth > 8 || element.ValueKind != JsonValueKind.Object) return element;
+
+        foreach (var key in new[] { "data", "result", "items", "list", "records", "results", "value" })
+        {
+            if (!TryGet(element, key, out var value)) continue;
+            var found = FindPayload(value, depth + 1);
+            if (found.ValueKind == JsonValueKind.Array || found.ValueKind == JsonValueKind.Object)
+                return found;
+        }
+
+        foreach (var property in element.EnumerateObject())
+        {
+            var found = FindPayload(property.Value, depth + 1);
+            if (found.ValueKind == JsonValueKind.Array) return found;
+        }
+        return element;
+    }
+
+    private static List<JsonElement> ReadArray(JsonElement element)
+    {
+        if (element.ValueKind == JsonValueKind.Array)
+            return element.EnumerateArray().Select(x => x.Clone()).ToList();
+        if (element.ValueKind == JsonValueKind.Object)
+            return new List<JsonElement> { element.Clone() };
+        return new List<JsonElement>();
+    }
+
+    private static decimal ReadDecimal(JsonElement element, params string[] names)
+    {
+        foreach (var name in names)
+        {
+            if (!TryGet(element, name, out var value)) continue;
+            if (decimal.TryParse(Normalize(value.ToString()), NumberStyles.Any,
+                CultureInfo.InvariantCulture, out var number))
+                return number;
+        }
+        return 0;
+    }
+
+    private static string ReadText(JsonElement element, params string[] names)
+    {
+        foreach (var name in names)
+        {
+            if (!TryGet(element, name, out var value)) continue;
+            if (value.ValueKind == JsonValueKind.String || value.ValueKind == JsonValueKind.Number)
+            {
+                var text = value.ToString();
+                if (!string.IsNullOrWhiteSpace(text)) return text;
+            }
+        }
         return "";
     }
+
+    private static bool TryGet(JsonElement element, string name, out JsonElement value)
+    {
+        if (element.ValueKind == JsonValueKind.Object)
+        {
+            foreach (var property in element.EnumerateObject())
+            {
+                if (property.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
+                {
+                    value = property.Value;
+                    return true;
+                }
+            }
+        }
+        value = default;
+        return false;
+    }
+
+    private static string Normalize(string? value) =>
+        (value ?? "").Trim().Replace('۰','0').Replace('۱','1').Replace('۲','2')
+        .Replace('۳','3').Replace('۴','4').Replace('۵','5').Replace('۶','6')
+        .Replace('۷','7').Replace('۸','8').Replace('۹','9');
     private static string ToPersianDate(DateTime d){var c=new PersianCalendar();return $"{c.GetYear(d):0000}/{c.GetMonth(d):00}/{c.GetDayOfMonth(d):00}";}
     private static string FormatNumber(decimal n)=>n.ToString("N0",CultureInfo.GetCultureInfo("fa-IR"));
     private sealed class LookupItem{public string Id{get;set;}="";public string Title{get;set;}="";}
